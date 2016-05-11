@@ -1,0 +1,15 @@
+# OSX
+.DS_Store
+
+# Idea
+*.iml
+.idea/*
+!.idea/runConfigurations/
+
+# LibreOffice
+.~lock*
+
+# Java, Maven
+hs_err_pid*
+/*.hprof
+target/

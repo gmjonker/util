@@ -1,4 +1,4 @@
-package gmjonker;
+package gmjonker.util;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

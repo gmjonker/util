@@ -1,7 +1,7 @@
 package gmjonker.math;
 
 import com.google.common.primitives.Ints;
-import gmjonker.LambdaLogger;
+import gmjonker.util.LambdaLogger;
 import org.apache.commons.math3.analysis.function.Logit;
 import org.apache.commons.math3.analysis.function.Sigmoid;
 import org.apache.commons.math3.stat.StatUtils;

@@ -1,4 +1,4 @@
-package gmjonker;
+package gmjonker.util;
 
 import com.google.common.base.Strings;
 
@@ -44,16 +44,29 @@ public class Util
         return String.format("Mem used: %s, alloc: %s, max: %s, free: %s", used, allocated, max, max - used);
     }
 
+    public static String getEnvOrFail(String name)
+    {
+        String value = System.getenv(name);
+        // If docker is told to copy an env var from host to container, and the var is not set on the host, it will
+        // set the var on the container to ''
+        if (Strings.isNullOrEmpty(value)) {
+            log.error("Environment variable {} not set, exiting...", name);
+            System.exit(-1);
+        }
+        log.debug("{}={} (env)", name, value);
+        return value;
+    }
+
     public static String getEnvOrDefault(String name, String defaultValue)
     {
         String value = System.getenv(name);
         // If docker is told to copy an env var from host to container, and the var is not set on the host, it will
         // set the var on the container to ''
         if (Strings.isNullOrEmpty(value)) {
-            log.debug("Environment variable {} not set, falling back to '{}'", name, defaultValue);
             value = defaultValue;
+            log.debug("{}={} (default, override by setting env var)", name, value);
         } else {
-            log.debug("{}={}", name, value);
+            log.debug("{}={} (env)", name, value);
         }
         return value;
     }

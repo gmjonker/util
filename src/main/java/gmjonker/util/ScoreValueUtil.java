@@ -1,9 +1,9 @@
-package gmjonker;
+package gmjonker.util;
 
 import static gmjonker.math.GeneralMath.abs;
 import static gmjonker.math.NaType.isValue;
 
-public class ScoreUtil
+public class ScoreValueUtil
 {
     public static final double SCORE_VALUE_EPSILON = 5E-16;
 

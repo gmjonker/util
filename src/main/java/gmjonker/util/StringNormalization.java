@@ -1,4 +1,4 @@
-package gmjonker;
+package gmjonker.util;
 
 import org.apache.commons.lang3.StringUtils;
 

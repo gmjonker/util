@@ -1,6 +1,6 @@
 package gmjonker.math;
 
-import gmjonker.LambdaLogger;
+import gmjonker.util.LambdaLogger;
 
 /**
  * Provides special NA values for double and int. These can be used to indicate missing values.

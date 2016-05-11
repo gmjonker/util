@@ -1,4 +1,4 @@
-package gmjonker;
+package gmjonker.util;
 
 import com.google.common.base.Strings;
 
@@ -20,7 +20,7 @@ public class FormattingUtil
     /** Formats score value with two digits, or " -" for NA. **/
     public static String shortForm(double d)
     {
-        return isValue(d) ? ScoreUtil.scoreValueEquals(d, 0) ? "0" : String.format("%.2f", d)
+        return isValue(d) ? ScoreValueUtil.scoreValueEquals(d, 0) ? "0" : String.format("%.2f", d)
                           : " -";
     }
 
@@ -56,13 +56,13 @@ public class FormattingUtil
     {
         if ( ! isValue(d))
             return " -";
-        if (ScoreUtil.scoreValueEquals(d, 1))
+        if (ScoreValueUtil.scoreValueEquals(d, 1))
             return "HH";
         if (d > 1) {
             log.trace("Score {} is greater than 1", d);
             return "H!";
         }
-        if (d > ScoreUtil.SCORE_VALUE_EPSILON && d < .005)
+        if (d > ScoreValueUtil.SCORE_VALUE_EPSILON && d < .005)
             return "0.";
         if (d > .995 && d < 1)
             return "99";
@@ -77,9 +77,9 @@ public class FormattingUtil
     {
         if ( ! isValue(d))
             return "  -";
-        if (ScoreUtil.scoreValueEquals(d, 1))
+        if (ScoreValueUtil.scoreValueEquals(d, 1))
             return " HH";
-        if (ScoreUtil.scoreValueEquals(d, -1))
+        if (ScoreValueUtil.scoreValueEquals(d, -1))
             return "-HH";
         if (d > 1) {
             log.trace("Score {} is greater than 1", d);
@@ -89,9 +89,9 @@ public class FormattingUtil
             log.trace("Score {} is less than -1", d);
             return "-H!";
         }
-        if (d > ScoreUtil.SCORE_VALUE_EPSILON && d < .005)
+        if (d > ScoreValueUtil.SCORE_VALUE_EPSILON && d < .005)
             return " 0.";
-        if (d < -ScoreUtil.SCORE_VALUE_EPSILON && d > -.005)
+        if (d < -ScoreValueUtil.SCORE_VALUE_EPSILON && d > -.005)
             return "-0.";
         else
             return String.format("%3.0f", d * 100);

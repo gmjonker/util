@@ -1,12 +1,13 @@
-package gmjonker;
+package gmjonker.util;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -14,10 +15,8 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -112,5 +111,47 @@ public class IoUtil
         if (fileSystem != null)
             fileSystem.close();
         return results;
+    }
+
+    public static <R, C, T> void writeTableToCsv(Table<R, C, T> table, String fileName) throws IOException
+    {
+        CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
+        csvPrinter.print("");
+        for (C columnKey : table.columnKeySet())
+            csvPrinter.print(columnKey);
+        csvPrinter.println();
+        for (R rowKey : table.rowKeySet()) {
+            csvPrinter.print(rowKey);
+            for (C columnKey : table.columnKeySet())
+                csvPrinter.print(table.get(rowKey, columnKey));
+            csvPrinter.println();
+        }
+        csvPrinter.close();
+    }
+
+    /**
+     * Reads from a CSV file that has row and column headers.
+     */
+    public static <R, C, T> Table<R, C, T> readCsvIntoTable(String fileName, Function<String, R> rowTypeMapper,
+            Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper) throws IOException
+    {
+        Table<R, C, T> table = HashBasedTable.create();
+        CSVParser csvParser = readCsvFileWithHeaders(fileName);
+        Set<String> headers = csvParser.getHeaderMap().entrySet().stream()
+                .filter(entry -> entry.getValue() > 0) // skip the first column, it contains row headers
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+        for (CSVRecord record : csvParser.getRecords()) {
+            String rowHeader = record.get(0);
+            R r = rowTypeMapper.apply(rowHeader);
+            for (String header : headers) {
+                C c = columnTypeMapper.apply(header);
+                String cell = record.get(header);
+                T t = cellTypeMapper.apply(cell);
+                table.put(r, c, t);
+            }
+        }
+        csvParser.close();
+        return table;
     }
 }

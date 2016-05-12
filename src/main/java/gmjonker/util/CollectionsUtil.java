@@ -1,5 +1,7 @@
 package gmjonker.util;
 
+import gmjonker.math.Score;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
@@ -97,6 +99,15 @@ public class CollectionsUtil
         return doubles;
     }
 
+    public static Score[] toPrimitiveScoreArray(List<Score> scoreList)
+    {
+        Score[] scores = new Score[scoreList.size()];
+        for (int i = 0; i < scoreList.size(); i++) {
+            Score aScore = scoreList.get(i);
+            scores[i] = aScore;
+        }
+        return scores;
+    }
 
     /**
      * Sublist of list from fromIndex, inclusive, to toIndex, exclusive.

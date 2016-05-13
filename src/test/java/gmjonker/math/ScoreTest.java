@@ -33,11 +33,11 @@ public class ScoreTest
     @Test
     public void deriveDoubleWorksCorrectly()
     {
-        assertThat(new Score(1 , 1 ).deriveDouble01(), equalsScoreDouble(1));
-        assertThat(new Score(1 , 0 ).deriveDouble01(), equalsScoreDouble(NEUTRAL_SCORE));
-        assertThat(new Score(0 , 1 ).deriveDouble01(), equalsScoreDouble(0));
-        assertThat(new Score(.8, .3).deriveDouble01(), equalsScoreDouble(NEUTRAL_SCORE + (.8 - NEUTRAL_SCORE) * .3));
-        assertThat(new Score(.2, .3).deriveDouble01(), equalsScoreDouble(NEUTRAL_SCORE + (.2 - NEUTRAL_SCORE) * .3));
+        assertThat(new Score(1 , 1 ).deriveDouble0101(), equalsScoreDouble(1));
+        assertThat(new Score(1 , 0 ).deriveDouble0101(), equalsScoreDouble(NEUTRAL_SCORE));
+        assertThat(new Score(0 , 1 ).deriveDouble0101(), equalsScoreDouble(0));
+        assertThat(new Score(.8, .3).deriveDouble0101(), equalsScoreDouble(NEUTRAL_SCORE + (.8 - NEUTRAL_SCORE) * .3));
+        assertThat(new Score(.2, .3).deriveDouble0101(), equalsScoreDouble(NEUTRAL_SCORE + (.2 - NEUTRAL_SCORE) * .3));
     }
 
     @Test

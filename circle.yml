@@ -4,4 +4,4 @@ machine:
 
 dependencies:
   post:
-    - mvn dependency:get -DgroupId=org.apache.maven.plugins -DartifactId=maven-resources-plugin -Dversion=2.6 
+    - mvn dependency:get -DgroupId=org.apache.maven.plugins -DartifactId=maven-resources-plugin -Dversion=2.6

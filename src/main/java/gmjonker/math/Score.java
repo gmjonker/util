@@ -75,8 +75,9 @@ public class Score
 
     /**
      * Derives a double in range (0,1). Note that it is assumed that score values are in range (0, 1).
+     * Note: will be removed when we go to (-1,1) range
      */
-    public double deriveDouble01()
+    public double deriveDouble0101()
     {
         if ( ! isValue(value) || ! isValue(confidence))
             return NA;
@@ -85,17 +86,28 @@ public class Score
 
     /**
      * Derives a double in range (-1,1). Note that it is assumed that score values are in range (0, 1).
+     * Note: will be removed when we go to (-1,1) range
      */
-    public double deriveDoubleM11()
+    public double deriveDouble01M11()
     {
         if ( ! isValue(value) || ! isValue(confidence))
             return NA;
         return ScoreMath.zeroOneRangeToMinusOneOneRange(value) * confidence;
     }
 
+    /**
+     * Derives a double in range (-1,1). Note that it is assumed that score values are in range (-1, 1).
+     */
+    public double deriveDoubleM11M11()
+    {
+        if ( ! isValue(value) || ! isValue(confidence))
+            return NA;
+        return value * confidence;
+    }
+
     public boolean isWeakOrNeutral()
     {
-        return abs(deriveDoubleM11()) < .25;
+        return abs(deriveDouble01M11()) < .25;
     }
 
     public Score withConfidence(double confidence)

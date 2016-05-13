@@ -27,6 +27,14 @@ public class CollectionsUtil
                 .collect(Collectors.toList());
     }
 
+    public static <T, R> Set<R> map(Set<T> set, Function<T, R> function)
+    {
+        return set.stream()
+                .filter(o -> o != null)
+                .map(function)
+                .collect(Collectors.toSet());
+    }
+
     public static <T, R> R[] map(T[] inputArray, Function<T, R> function, Class outputClass)
     {
         @SuppressWarnings("unchecked")
@@ -42,14 +50,6 @@ public class CollectionsUtil
         for (int i = 0; i < inputArray.length; i++)
              outputArray[i] = function.apply(inputArray[i]);
         return outputArray;
-    }
-
-    public static <T, R> Set<R> map(Set<T> set, Function<T, R> function)
-    {
-        return set.stream()
-                .filter(o -> o != null)
-                .map(function)
-                .collect(Collectors.toSet());
     }
 
     public static <T> List<T> filter(List<T> list, Function<T, Boolean> function)

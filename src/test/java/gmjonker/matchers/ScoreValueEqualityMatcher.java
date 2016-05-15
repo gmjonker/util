@@ -11,11 +11,12 @@ import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
 /**
  * Verifies that a score double is equal to a value. Using this matcher saves having to supply an epsilon all the time.
  */
-public class ScoreDoubleEqualityMatcher extends TypeSafeMatcher<Double>
+@SuppressWarnings("WeakerAccess")
+public class ScoreValueEqualityMatcher extends TypeSafeMatcher<Double>
 {
     public final double value;
 
-    public ScoreDoubleEqualityMatcher(double value)
+    public ScoreValueEqualityMatcher(double value)
     {
         this.value = value;
     }
@@ -36,9 +37,9 @@ public class ScoreDoubleEqualityMatcher extends TypeSafeMatcher<Double>
      * Verifies that a score double is equal to a value. Using this matcher saves having to supply an epsilon all the time.
      */
      @Factory
-    public static <T> Matcher<Double> equalsScoreDouble(double value)
+    public static <T> Matcher<Double> equalsScoreValue(double value)
     {
-        return new ScoreDoubleEqualityMatcher(value);
+        return new ScoreValueEqualityMatcher(value);
     }
 
 }

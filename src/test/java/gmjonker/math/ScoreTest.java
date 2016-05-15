@@ -3,7 +3,7 @@ package gmjonker.math;
 import gmjonker.util.ScoreValueUtil;
 import org.junit.*;
 
-import static gmjonker.matchers.ScoreDoubleEqualityMatcher.equalsScoreDouble;
+import static gmjonker.matchers.ScoreValueEqualityMatcher.equalsScoreValue;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.Score.NEUTRAL_SCORE;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -34,11 +34,11 @@ public class ScoreTest
     @Test
     public void deriveDoubleWorksCorrectly()
     {
-        assertThat(new Score(1 , 1 ).deriveDouble0101(), equalsScoreDouble(1));
-        assertThat(new Score(1 , 0 ).deriveDouble0101(), equalsScoreDouble(NEUTRAL_SCORE));
-        assertThat(new Score(0 , 1 ).deriveDouble0101(), equalsScoreDouble(0));
-        assertThat(new Score(.8, .3).deriveDouble0101(), equalsScoreDouble(NEUTRAL_SCORE + (.8 - NEUTRAL_SCORE) * .3));
-        assertThat(new Score(.2, .3).deriveDouble0101(), equalsScoreDouble(NEUTRAL_SCORE + (.2 - NEUTRAL_SCORE) * .3));
+        assertThat(new Score(1 , 1 ).deriveDouble0101(), equalsScoreValue(1));
+        assertThat(new Score(1 , 0 ).deriveDouble0101(), equalsScoreValue(NEUTRAL_SCORE));
+        assertThat(new Score(0 , 1 ).deriveDouble0101(), equalsScoreValue(0));
+        assertThat(new Score(.8, .3).deriveDouble0101(), equalsScoreValue(NEUTRAL_SCORE + (.8 - NEUTRAL_SCORE) * .3));
+        assertThat(new Score(.2, .3).deriveDouble0101(), equalsScoreValue(NEUTRAL_SCORE + (.2 - NEUTRAL_SCORE) * .3));
     }
 
     @Test

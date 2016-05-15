@@ -2,7 +2,7 @@ package gmjonker.math;
 
 import org.junit.*;
 
-import static gmjonker.matchers.ScoreDoubleEqualityMatcher.equalsScoreDouble;
+import static gmjonker.matchers.ScoreValueEqualityMatcher.equalsScoreValue;
 import static gmjonker.math.NaType.NA;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
@@ -32,11 +32,11 @@ public class IndicationTest
     public void deriveDoubleWorksCorrectly()
     {
         double neutralValue = .3;
-        assertThat(new Indication(1 , 1 ).deriveDouble01(neutralValue), equalsScoreDouble(1));
-        assertThat(new Indication(1 , 0 ).deriveDouble01(neutralValue), equalsScoreDouble(neutralValue));
-        assertThat(new Indication(0 , 1 ).deriveDouble01(neutralValue), equalsScoreDouble(0));
-        assertThat(new Indication(.8, .3).deriveDouble01(neutralValue), equalsScoreDouble(neutralValue + (.8 - neutralValue) * .3));
-        assertThat(new Indication(.2, .3).deriveDouble01(neutralValue), equalsScoreDouble(neutralValue + (.2 - neutralValue) * .3));
+        assertThat(new Indication(1 , 1 ).deriveDouble01(neutralValue), equalsScoreValue(1));
+        assertThat(new Indication(1 , 0 ).deriveDouble01(neutralValue), equalsScoreValue(neutralValue));
+        assertThat(new Indication(0 , 1 ).deriveDouble01(neutralValue), equalsScoreValue(0));
+        assertThat(new Indication(.8, .3).deriveDouble01(neutralValue), equalsScoreValue(neutralValue + (.8 - neutralValue) * .3));
+        assertThat(new Indication(.2, .3).deriveDouble01(neutralValue), equalsScoreValue(neutralValue + (.2 - neutralValue) * .3));
     }
 
     @Test

@@ -16,6 +16,8 @@ import static org.hamcrest.core.AnyOf.anyOf;
 
 /**
  */
+@Deprecated
+@SuppressWarnings("WeakerAccess")
 public class ScoreMatcher extends TypeSafeMatcher<Score>
 {
     public static final double VALUE_MIN = 0;

@@ -10,4 +10,7 @@ dependencies:
     # - mvn dependency:get -DgroupId=org.apache.maven.plugins -DartifactId=maven-compiler-plugin -Dversion=3.1
     # - mvn dependency:get -DgroupId=org.apache.maven.plugins -DartifactId=maven-surefire-plugin -Dversion=2.12.4
     # - mvn dependency:get -DgroupId=org.apache.maven.plugins -DartifactId=maven-jar-plugin -Dversion=2.4
-    - mvn dependency:resolve-plugins
+
+test:
+  override:
+    - mvn integration-test -o

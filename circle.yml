@@ -1,16 +1,4 @@
 machine:
   java:
     version: oraclejdk8
-
-dependencies:
-  post:
-    # These pre-downloads help a bit in build time; they download the jars, but not the poms unfortunately. Also, they
-    # are quite slow in themselves. Therefore commented. Note that adding -Dpackaging=pom doesn't help.
-    # - mvn dependency:get -DgroupId=org.apache.maven.plugins -DartifactId=maven-resources-plugin -Dversion=2.6
-    # - mvn dependency:get -DgroupId=org.apache.maven.plugins -DartifactId=maven-compiler-plugin -Dversion=3.1
-    # - mvn dependency:get -DgroupId=org.apache.maven.plugins -DartifactId=maven-surefire-plugin -Dversion=2.12.4
-    # - mvn dependency:get -DgroupId=org.apache.maven.plugins -DartifactId=maven-jar-plugin -Dversion=2.4
-
-test:
-  override:
-    - mvn integration-test -o
+    

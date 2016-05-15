@@ -9,6 +9,7 @@ import static gmjonker.math.Score.NEUTRAL_SCORE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
+@Deprecated
 public class ScoreTest
 {
     @Test

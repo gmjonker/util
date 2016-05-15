@@ -3,6 +3,9 @@ package gmjonker.util;
 import static gmjonker.math.GeneralMath.abs;
 import static gmjonker.math.NaType.isValue;
 
+/**
+ * Utility class to work with "score" values in ranges (-1,1), (0,1) and (1,10).
+ */
 public class ScoreValueUtil
 {
     public static final double SCORE_VALUE_EPSILON = 5E-16;
@@ -43,6 +46,7 @@ public class ScoreValueUtil
     /**
      * Converts 1->0, 10->1, and other values interpolated.
      */
+    @Deprecated
     public static double tenBasedScoreToScore(double tenBasedScore)
     {
         return (tenBasedScore - 1) / 9.0;
@@ -51,6 +55,7 @@ public class ScoreValueUtil
     /**
      * Converts 0->1, 1->10, and other values interpolated.
      */
+    @Deprecated
     public static double scoreToTenBasedScore(double score)
     {
         return 1 + 9 * score;

@@ -99,16 +99,6 @@ public class CollectionsUtil
         return doubles;
     }
 
-    public static Score[] toPrimitiveScoreArray(List<Score> scoreList)
-    {
-        Score[] scores = new Score[scoreList.size()];
-        for (int i = 0; i < scoreList.size(); i++) {
-            Score aScore = scoreList.get(i);
-            scores[i] = aScore;
-        }
-        return scores;
-    }
-
     /**
      * Sublist of list from fromIndex, inclusive, to toIndex, exclusive.
      * Always returns a list. If fromIndex or toIndex is null, 0 or list.size() is used respectively.

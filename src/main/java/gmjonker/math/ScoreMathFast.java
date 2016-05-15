@@ -16,6 +16,7 @@ import static gmjonker.math.NaType.NA;
  *
  * <p>If, at some point, we fully switch to ScoreMathFast, it can replace ScoreMath.
  */
+@Deprecated
 public class ScoreMathFast
 {
     private static final double SIGMOID_RANGE_LOW = -1.1;

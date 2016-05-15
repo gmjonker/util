@@ -22,6 +22,7 @@ import static gmjonker.math.Score.NEUTRAL_SCORE;
  * <p>All score values in range [-1..1], all confidences in range [0..1]. There are two conversion methods for when one
  * wants to use values in range [0..1].
  */
+@Deprecated
 public class ScoreMath
 {
     private static long totalTime = 0;

@@ -20,6 +20,7 @@ import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
  *     <li>.75 &lt; confidence: strong indication</li>
  * </ul>
  */
+@Deprecated
 public class Score
 {
     // This is actually problematic, because the neutral score can differ per application
@@ -169,5 +170,15 @@ public class Score
     public boolean isNa()
     {
         return this.equals(NA_SCORE);
+    }
+
+    public static Score[] toPrimitiveScoreArray(List<Score> scoreList)
+    {
+        Score[] scores = new Score[scoreList.size()];
+        for (int i = 0; i < scoreList.size(); i++) {
+            Score aScore = scoreList.get(i);
+            scores[i] = aScore;
+        }
+        return scores;
     }
 }

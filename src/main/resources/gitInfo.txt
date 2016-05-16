@@ -1,7 +1,7 @@
-Tag: v0.2.2 Set neutral score to Pimmr value
+Tag: v0.2.3 Set neutral score to Pimmr value
 Last commit: 
-commit 1a921ed3a27d61b5541c7b4914b0a085dfb4d835
+commit e3f67f5e237651e237b8d6e04f84c31f133a9ec3
 Author: Geert Jonker <gmjonker@gmail.com>
-Date:   Mon May 16 12:58:45 2016 +0200
+Date:   Mon May 16 12:58:55 2016 +0200
 
-    Set tag to 0.2.1 (Set neutral score to Pimmr value)
+    Set tag to 0.2.2 (Set neutral score to Pimmr value)

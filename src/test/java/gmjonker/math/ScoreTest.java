@@ -32,13 +32,23 @@ public class ScoreTest
     }
 
     @Test
-    public void deriveDoubleWorksCorrectly()
+    public void deriveDouble0101WorksCorrectly()
     {
         assertThat(new Score(1 , 1 ).deriveDouble0101(), equalsScoreValue(1));
         assertThat(new Score(1 , 0 ).deriveDouble0101(), equalsScoreValue(NEUTRAL_SCORE));
         assertThat(new Score(0 , 1 ).deriveDouble0101(), equalsScoreValue(0));
         assertThat(new Score(.8, .3).deriveDouble0101(), equalsScoreValue(NEUTRAL_SCORE + (.8 - NEUTRAL_SCORE) * .3));
         assertThat(new Score(.2, .3).deriveDouble0101(), equalsScoreValue(NEUTRAL_SCORE + (.2 - NEUTRAL_SCORE) * .3));
+    }
+
+    @Test
+    public void deriveDouble01M11WorksCorrectly()
+    {
+        assertThat(new Score(1 , 1 ).deriveDouble01M11(), equalsScoreValue(1));
+        assertThat(new Score(1 , 0 ).deriveDouble01M11(), equalsScoreValue(0));
+        assertThat(new Score(0 , 1 ).deriveDouble01M11(), equalsScoreValue(-1));
+        assertThat(new Score(.8, .3).deriveDouble01M11(), equalsScoreValue(IndicationMath.zeroOneRangeToMinusOneOneRange(.8, NEUTRAL_SCORE) * .3));
+        assertThat(new Score(.2, .3).deriveDouble01M11(), equalsScoreValue(IndicationMath.zeroOneRangeToMinusOneOneRange(.2, NEUTRAL_SCORE) * .3));
     }
 
     @Test

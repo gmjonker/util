@@ -15,6 +15,7 @@ import static gmjonker.util.CollectionsUtil.toPrimitiveDoubleArray;
 import static gmjonker.util.FormattingUtil.asPercentage;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.closeTo;
 
 @Deprecated
 public class ScoreMathTest
@@ -192,5 +193,27 @@ public class ScoreMathTest
                     asPercentage(abs(result.value - desiredScore.value)),
                     asPercentage(abs(result.confidence - desiredScore.confidence)));
         }
+    }
+
+    @Test
+    public void zeroOneRangeToMinusOneOneRange()
+    {
+        double eps = .000001;
+        assertThat(ScoreMath.zeroOneRangeToMinusOneOneRange(0), closeTo(-1, eps));
+        assertThat(ScoreMath.zeroOneRangeToMinusOneOneRange(NEUTRAL_SCORE / 2), closeTo(-0.5, eps));
+        assertThat(ScoreMath.zeroOneRangeToMinusOneOneRange(NEUTRAL_SCORE), closeTo(0, eps));
+        assertThat(ScoreMath.zeroOneRangeToMinusOneOneRange(NEUTRAL_SCORE + (1 - NEUTRAL_SCORE) / 2), closeTo(0.5, eps));
+        assertThat(ScoreMath.zeroOneRangeToMinusOneOneRange(1), closeTo(1, eps));
+    }
+
+    @Test
+    public void minusOneOneRangeToZeroOneRange()
+    {
+        double eps = .000001;
+        assertThat(ScoreMath.minusOneOneRangeToZeroOneRange(-1), closeTo(0, eps));
+        assertThat(ScoreMath.minusOneOneRangeToZeroOneRange(-0.5), closeTo(NEUTRAL_SCORE / 2, eps));
+        assertThat(ScoreMath.minusOneOneRangeToZeroOneRange(0), closeTo(NEUTRAL_SCORE, eps));
+        assertThat(ScoreMath.minusOneOneRangeToZeroOneRange(.5), closeTo(NEUTRAL_SCORE + (1 - NEUTRAL_SCORE) / 2, eps));
+        assertThat(ScoreMath.minusOneOneRangeToZeroOneRange(1), closeTo(1, eps));
     }
 }

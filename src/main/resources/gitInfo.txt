@@ -1,0 +1,7 @@
+Tag: v0.2.1 Set neutral score to Pimmr value
+Last commit: 
+commit a56d3c083ec4a76e05acc028ff3aba22a0bba935
+Author: Geert Jonker <gmjonker@gmail.com>
+Date:   Mon May 16 11:53:37 2016 +0200
+
+    Added Score.deriveDoubleM1101()

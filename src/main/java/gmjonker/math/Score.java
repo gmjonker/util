@@ -2,6 +2,7 @@ package gmjonker.math;
 
 import gmjonker.util.FormattingUtil;
 import gmjonker.util.LambdaLogger;
+import gmjonker.util.ScoreValueUtil;
 
 import java.util.List;
 
@@ -24,7 +25,9 @@ import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
 public class Score
 {
     // This is actually problematic, because the neutral score can differ per application
-    public static final double NEUTRAL_SCORE = 0.5;
+    // We set it to the "Pimmr" value, as that one is used virtually everywhere
+    public static final double NEUTRAL_SCORE = ScoreValueUtil.tenBasedScoreToScore(6.5);
+
     public static final Score NA_SCORE = new Score(NA, NA);
     public static final Score UNKNOWN = new Score(NA, 0);
     public static final Score MAX = new Score(1, 1);

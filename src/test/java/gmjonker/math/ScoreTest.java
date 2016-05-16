@@ -48,8 +48,8 @@ public class ScoreTest
         assertTrue(new Score(NEUTRAL_SCORE, 1).isWeakOrNeutral());
         assertTrue(new Score(1, 0).isWeakOrNeutral());
         assertTrue(new Score(1, 0.2).isWeakOrNeutral());
+        assertTrue(new Score(ScoreValueUtil.tenBasedScoreToScore(7), 1).isWeakOrNeutral());
         assertTrue(new Score(ScoreValueUtil.tenBasedScoreToScore(6), 1).isWeakOrNeutral());
-        assertTrue(new Score(ScoreValueUtil.tenBasedScoreToScore(5), 1).isWeakOrNeutral());
     }
 
     @Test

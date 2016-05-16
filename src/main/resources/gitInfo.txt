@@ -1,7 +1,7 @@
-Tag: v0.2.3 Set neutral score to Pimmr value
+Tag: v0.2.4 Made CollectionsUtil null-safe, added some methods, updated some dependency version numbers
 Last commit: 
-commit e3f67f5e237651e237b8d6e04f84c31f133a9ec3
+commit 550a6a22bb949a06e6da24443ac7857421f84ec6
 Author: Geert Jonker <gmjonker@gmail.com>
-Date:   Mon May 16 12:58:55 2016 +0200
+Date:   Mon May 16 16:50:39 2016 +0200
 
-    Set tag to 0.2.2 (Set neutral score to Pimmr value)
+    Made CollectionsUtil null-safe, added some methods, updated some dependency version numbers

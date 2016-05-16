@@ -75,7 +75,7 @@ public class Score
     }
 
     /**
-     * Derives a double in range (0,1). Note that it is assumed that score values are in range (0, 1).
+     * Derives a double in range (0,1) from a score with value in range (0, 1).
      * Note: will be removed when we go to (-1,1) range
      */
     public double deriveDouble0101()
@@ -86,7 +86,7 @@ public class Score
     }
 
     /**
-     * Derives a double in range (-1,1). Note that it is assumed that score values are in range (0, 1).
+     * Derives a double in range (-1,1) from a score with value in range (0, 1).
      * Note: will be removed when we go to (-1,1) range
      */
     public double deriveDouble01M11()
@@ -97,7 +97,17 @@ public class Score
     }
 
     /**
-     * Derives a double in range (-1,1). Note that it is assumed that score values are in range (-1, 1).
+     * Derives a double in range (0,1) from a score with value in range (-1, 1).
+     */
+    public double deriveDoubleM1101()
+    {
+        if ( ! isValue(value) || ! isValue(confidence))
+            return NA;
+        return ScoreMath.minusOneOneRangeToZeroOneRange(value) * confidence;
+    }
+
+    /**
+     * Derives a double in range (-1,1) from a score with value in range (-1, 1).
      */
     public double deriveDoubleM11M11()
     {

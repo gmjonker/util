@@ -1,7 +1,5 @@
 package gmjonker.util;
 
-import gmjonker.math.Score;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;

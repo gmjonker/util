@@ -1,7 +1,7 @@
 Tag: v0.2.1 Set neutral score to Pimmr value
 Last commit: 
-commit a56d3c083ec4a76e05acc028ff3aba22a0bba935
+commit e906252a837dca8e391229d609c93e14b81f4a4e
 Author: Geert Jonker <gmjonker@gmail.com>
-Date:   Mon May 16 11:53:37 2016 +0200
+Date:   Mon May 16 12:57:51 2016 +0200
 
-    Added Score.deriveDoubleM1101()
+    Set tag to 0.2.1 (Set neutral score to Pimmr value)

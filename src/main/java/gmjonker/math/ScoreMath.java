@@ -9,6 +9,7 @@ import java.util.List;
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
+import static gmjonker.math.Range.from01toM11;
 import static gmjonker.math.Score.NEUTRAL_SCORE;
 
 /**
@@ -19,8 +20,8 @@ import static gmjonker.math.Score.NEUTRAL_SCORE;
  * Knowledge about underlying probability distributions is not needed. As such, it is not statistically correct,
  * but does provide a significant improvement over not using any measure of confidence at all.
  *
- * <p>All score values in range [-1..1], all confidences in range [0..1]. There are two conversion methods for when one
- * wants to use values in range [0..1].
+ * <p>All score values in range (-1,1), all confidences in range (0,1). There are two conversion methods for when one
+ * wants to use values in range (0,1).
  */
 @Deprecated
 public class ScoreMath
@@ -32,7 +33,7 @@ public class ScoreMath
     /**
      * Infers a new score based on given scores.
      *
-     * <p>Score values in range [0..1]
+     * <p>Score values in range (0,1)
      **/
     public static Score combine01(Score... scores)
     {
@@ -42,7 +43,7 @@ public class ScoreMath
     /**
      * Infers a new score based on given scores.
      *
-     * <p>Score values in range [0..1]
+     * <p>Score values in range (0,1)
      **/
     public static Score combine01(List<Score> scores)
     {
@@ -56,7 +57,7 @@ public class ScoreMath
     /**
      * Infers a new score based on given scores.
      *
-     * <p>Score values in range [0..1]
+     * <p>Score values in range (0,1)
      **/
     public static Score combine01TightAndNoDisagreementEffect(List<Score> scores)
     {
@@ -71,44 +72,44 @@ public class ScoreMath
      * Infers a new score based on given scores, where scores may be weighted to indicate that some scores should have
      * more weight in the outcome than others.
      *
-     * <p>Score values in range [0..1]. Weights have no constraints (will be normalized on the fly).
+     * <p>Score values in range (0,1). Weights have no constraints (will be normalized on the fly).
      **/
     public static Score combine01(Score[] scores, @Nullable double[] weights)
     {
-        // Convert to [-1..1] range
+        // Convert to (-1,1) range
         Score[] newScores = new Score[scores.length];
         for (int i = 0; i < scores.length; i++) {
-            newScores[i] = new Score(zeroOneRangeToMinusOneOneRange(scores[i].value), scores[i].confidence);
+            newScores[i] = new Score(from01toM11(scores[i].value, NEUTRAL_SCORE), scores[i].confidence);
         }
         // Combine
         Score combinedScore = combine(newScores, weights);
         // Convert back
-        return new Score(minusOneOneRangeToZeroOneRange(combinedScore.value), combinedScore.confidence);
+        return new Score(Range.fromM11to01(combinedScore.value, NEUTRAL_SCORE), combinedScore.confidence);
     }
 
     /**
      * Infers a new score based on given scores, where scores may be weighted to indicate that some scores should have
      * more weight in the outcome than others.
      *
-     * <p>Score values in range [0..1]. Weights have no constraints (will be normalized on the fly).
+     * <p>Score values in range (0,1). Weights have no constraints (will be normalized on the fly).
      **/
     public static Score combine01TightAndNoDisagreementEffect(Score[] scores, @Nullable double[] weights)
     {
-        // Convert to [-1..1] range
+        // Convert to (-1,1) range
         Score[] newScores = new Score[scores.length];
         for (int i = 0; i < scores.length; i++) {
-            newScores[i] = new Score(zeroOneRangeToMinusOneOneRange(scores[i].value), scores[i].confidence);
+            newScores[i] = new Score(from01toM11(scores[i].value, NEUTRAL_SCORE), scores[i].confidence);
         }
         // Combine
         Score combinedScore = combineTightAndNoDisagreementEffect(newScores, weights);
         // Convert back
-        return new Score(minusOneOneRangeToZeroOneRange(combinedScore.value), combinedScore.confidence);
+        return new Score(Range.fromM11to01(combinedScore.value, NEUTRAL_SCORE), combinedScore.confidence);
     }
 
     /**
      * Infers a new score based on given scores.
      *
-     * <p>Score values in range [-1..1]
+     * <p>Score values in range (-1,1)
      **/
     public static Score combine(Score... scores)
     {
@@ -118,7 +119,7 @@ public class ScoreMath
     /**
      * Infers a new score based on given scores.
      *
-     * <p>Score values in range [-1..1]
+     * <p>Score values in range (-1,1)
      **/
     public static Score combine(List<Score> scores)
     {
@@ -132,7 +133,7 @@ public class ScoreMath
      *
      * <p>Disagreement among the scores has a negative effect on confidence.</p>
      *
-     * <p>Score values in range [-1..1]. Weights have no constraints (will be normalized on the fly).
+     * <p>Score values in range (-1,1). Weights have no constraints (will be normalized on the fly).
      **/
     public static Score combine(Score[] scores, @Nullable double[] weights)
     {
@@ -271,24 +272,7 @@ public class ScoreMath
     }
 
     /**
-     * Converts a [0..1] value into a [-1..1] value, where
-     * <ul>
-     * <li>0 -> -1</li>
-     * <li>NEUTRAL_SCORE -> 0</li>
-     * <li>1 -> 1</li>
-     * </ul>
-     * and the other values are interpolated.
-     */
-    public static double zeroOneRangeToMinusOneOneRange(double value)
-    {
-        if (value < NEUTRAL_SCORE)
-            return (NEUTRAL_SCORE - value) / NEUTRAL_SCORE * -1;
-        else
-            return (value - NEUTRAL_SCORE) / (1 - NEUTRAL_SCORE);
-    }
-
-    /**
-     * Converts a [-1..1] value into a [0..1] value, where
+     * Converts a score with (-1,1) value into a score with (0,1) value, where
      * <ul>
      * <li>-1 -> 0</li>
      * <li>0 -> NEUTRAL_SCORE</li>
@@ -296,24 +280,7 @@ public class ScoreMath
      * </ul>
      * and the other values are interpolated.
      */
-    public static double minusOneOneRangeToZeroOneRange(double value)
-    {
-        if (value < 0)
-            return (value + 1) * NEUTRAL_SCORE;
-        else
-            return NEUTRAL_SCORE + value * (1 - NEUTRAL_SCORE);
-    }
-
-    /**
-     * Converts a score with [-1..1] value into a score with [0..1] value, where
-     * <ul>
-     * <li>-1 -> 0</li>
-     * <li>0 -> NEUTRAL_SCORE</li>
-     * <li>1 -> 1</li>
-     * </ul>
-     * and the other values are interpolated.
-     */
-    public static Score minusOneOneRangeToZeroOneRange(Score score)
+    public static Score minusOneOneScoreToZeroOneScore(Score score)
     {
         if (score.value < 0)
             return new Score((score.value + 1) * NEUTRAL_SCORE, score.confidence);

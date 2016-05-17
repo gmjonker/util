@@ -2,13 +2,14 @@ package gmjonker.math;
 
 import gmjonker.util.FormattingUtil;
 import gmjonker.util.LambdaLogger;
-import gmjonker.util.ScoreValueUtil;
 
 import java.util.List;
 
 import static gmjonker.math.GeneralMath.abs;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
+import static gmjonker.math.Range.from01toM11;
+import static gmjonker.math.ScoreMath.combine01;
 import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
 
 /**
@@ -24,9 +25,12 @@ import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
 @Deprecated
 public class Score
 {
-    // This is actually problematic, because the neutral score can differ per application
-    // We set it to the "Pimmr" value, as that one is used virtually everywhere
-    public static final double NEUTRAL_SCORE = ScoreValueUtil.tenBasedScoreToScore(6.5);
+    // What we consider the neutral score. Scores above this score indicate a positive preference, scores below this
+    // score indicate a negative preference.
+    // This is actually problematic, because the neutral score can differ per application.
+    // We set it to the "Pimmr" value, as that one is used virtually everywhere.
+    @Deprecated
+    public static final double NEUTRAL_SCORE = Range.tenBasedScoreToScore(6.5); // = .611111111111111
 
     public static final Score NA_SCORE = new Score(NA, NA);
     public static final Score UNKNOWN = new Score(NA, 0);
@@ -46,7 +50,7 @@ public class Score
     /** Converts from (-1,1) range to (0,1) range. **/
     public static Score fromMinusOneOneRange(double value, double confidence)
     {
-        return new Score(ScoreMath.minusOneOneRangeToZeroOneRange(value), confidence);
+        return new Score(Range.fromM11to01(value, NEUTRAL_SCORE), confidence);
     }
 
     public static boolean isValidScore(Score score)
@@ -68,12 +72,13 @@ public class Score
         return isValid() && confidence > 0;
     }
 
-    public Score combineWith(Score score)
+    /**
+     * Values are assumed to be in (-1,1)
+     */
+    public Score combineWith01(Score score)
     {
-        Score result = ScoreMath.combine01(this, score);
-        log.trace("this: {}", this);
-        log.trace("score: {}", score);
-        log.trace("combined Score: {}", result);
+        Score result = combine01(this, score);
+        log.trace("Combining {} and {} into {}", this, score, result);
         return result;
     }
 
@@ -96,7 +101,7 @@ public class Score
     {
         if ( ! isValue(value) || ! isValue(confidence))
             return NA;
-        return ScoreMath.zeroOneRangeToMinusOneOneRange(value) * confidence;
+        return from01toM11(value, NEUTRAL_SCORE) * confidence;
     }
 
     /**
@@ -106,7 +111,7 @@ public class Score
     {
         if ( ! isValue(value) || ! isValue(confidence))
             return NA;
-        return ScoreMath.minusOneOneRangeToZeroOneRange(value) * confidence;
+        return Range.fromM11to01(value, NEUTRAL_SCORE) * confidence;
     }
 
     /**
@@ -134,6 +139,14 @@ public class Score
         return new Score(value, confidence * factor);
     }
 
+    /**
+     * Converts this Score, assumed to have value range (0,1), to an Indication (which has by definition range (-1,1))
+     */
+    public Indication toIndication01()
+    {
+        return new Indication(from01toM11(value, NEUTRAL_SCORE), confidence);
+    }
+
     @Override
     public boolean equals(Object o)
     {
@@ -156,6 +169,13 @@ public class Score
         return result;
     }
 
+    @Override
+    public String toString()
+    {
+        //return "Score{" + toShortString() + "}";
+        return FormattingUtil.asPercentageTwoSpaces(value).trim() + "/" + FormattingUtil.asPercentageTwoSpaces(confidence).trim();
+    }
+
     public String toShortString()
     {
         return FormattingUtil.asPercentage(value) + "/" + FormattingUtil.asPercentage(confidence);
@@ -164,12 +184,6 @@ public class Score
     public String toAlignedString()
     {
         return FormattingUtil.asPercentageTwoSpaces(value) + "/" + FormattingUtil.asPercentageTwoSpaces(confidence);
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Score{" + toShortString() + "}";
     }
 
     public static String printScoresAligned(List<Score> scores)

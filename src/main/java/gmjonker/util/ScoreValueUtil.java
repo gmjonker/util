@@ -42,22 +42,4 @@ public class ScoreValueUtil
             return false;
         return value1 >= value2 - SCORE_VALUE_EPSILON;
     }
-
-    /**
-     * Converts 1->0, 10->1, and other values interpolated.
-     */
-    @Deprecated
-    public static double tenBasedScoreToScore(double tenBasedScore)
-    {
-        return (tenBasedScore - 1) / 9.0;
-    }
-
-    /**
-     * Converts 0->1, 1->10, and other values interpolated.
-     */
-    @Deprecated
-    public static double scoreToTenBasedScore(double score)
-    {
-        return 1 + 9 * score;
-    }
 }

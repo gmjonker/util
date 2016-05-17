@@ -24,13 +24,15 @@ import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
  *     <li>.75 &lt; confidence $lt; 1: strong indication</li>
  *     <li>confidence = 1: certainty</li>
  * </ul>
+ *
+ * Indication replaces Score, which didn't have a range defined which was inconvenient w.r.t. the neutral score.
  */
 @SuppressWarnings("WeakerAccess")
 public class Indication
 {
     public static final Indication NA_INDICATION = new Indication(NA, NA);
     public static final Indication UNKNOWN = new Indication(NA, 0);
-    public static final Indication MAX = new Indication(1, 1);
+    public static final Indication CERTAINTY = new Indication(1, 1);
 
     public final double value;
     public final double confidence;
@@ -77,6 +79,14 @@ public class Indication
     }
 
     /**
+     * Simply multiplies respective values and indications.
+     */
+    public Indication multiplyWith(Indication indication)
+    {
+        return new Indication(this.value * indication.value, this.confidence * indication.confidence);
+    }
+
+    /**
      * Derives a double in range (0,1).
      * @param neutralIndication Value in (0,1) that corresponds with the neutral point (0 in range (-1,1)). For instance: .5
      */
@@ -92,6 +102,8 @@ public class Indication
      */
     public double deriveDouble()
     {
+        if (confidence == 0)
+            return 0;
         if ( ! isValue(value) || ! isValue(confidence))
             return NA;
         return value * confidence;

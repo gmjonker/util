@@ -124,11 +124,11 @@ public class IndicationMathFast
 //        // Convert to (-1,1) range
 //        Indication[] newIndications = new Indication[indications.length];
 //        for (int i = 0; i < indications.length; i++) {
-//            newIndications[i] = new Indication(IndicationMath.zeroOneRangeToMinusOneOneRange(indications[i].value), indications[i].confidence);
+//            newIndications[i] = new Indication(IndicationMath.from01toM11(indications[i].value), indications[i].confidence);
 //        }
 //        // Combine
 //        Indication combinedIndication = combine(newIndications, weights);
 //        // Convert back
-//        return new Indication(IndicationMath.minusOneOneRangeToZeroOneRange(combinedIndication.value), combinedIndication.confidence);
+//        return new Indication(IndicationMath.fromM11to01(combinedIndication.value), combinedIndication.confidence);
 //    }
 }

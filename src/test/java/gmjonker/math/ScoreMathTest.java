@@ -199,21 +199,21 @@ public class ScoreMathTest
     public void zeroOneRangeToMinusOneOneRange()
     {
         double eps = .000001;
-        assertThat(ScoreMath.zeroOneRangeToMinusOneOneRange(0), closeTo(-1, eps));
-        assertThat(ScoreMath.zeroOneRangeToMinusOneOneRange(NEUTRAL_SCORE / 2), closeTo(-0.5, eps));
-        assertThat(ScoreMath.zeroOneRangeToMinusOneOneRange(NEUTRAL_SCORE), closeTo(0, eps));
-        assertThat(ScoreMath.zeroOneRangeToMinusOneOneRange(NEUTRAL_SCORE + (1 - NEUTRAL_SCORE) / 2), closeTo(0.5, eps));
-        assertThat(ScoreMath.zeroOneRangeToMinusOneOneRange(1), closeTo(1, eps));
+        assertThat(Range.from01toM11(0, NEUTRAL_SCORE), closeTo(-1, eps));
+        assertThat(Range.from01toM11(NEUTRAL_SCORE / 2, NEUTRAL_SCORE), closeTo(-0.5, eps));
+        assertThat(Range.from01toM11(NEUTRAL_SCORE, NEUTRAL_SCORE), closeTo(0, eps));
+        assertThat(Range.from01toM11(NEUTRAL_SCORE + (1 - NEUTRAL_SCORE) / 2, NEUTRAL_SCORE), closeTo(0.5, eps));
+        assertThat(Range.from01toM11(1, NEUTRAL_SCORE), closeTo(1, eps));
     }
 
     @Test
     public void minusOneOneRangeToZeroOneRange()
     {
         double eps = .000001;
-        assertThat(ScoreMath.minusOneOneRangeToZeroOneRange(-1), closeTo(0, eps));
-        assertThat(ScoreMath.minusOneOneRangeToZeroOneRange(-0.5), closeTo(NEUTRAL_SCORE / 2, eps));
-        assertThat(ScoreMath.minusOneOneRangeToZeroOneRange(0), closeTo(NEUTRAL_SCORE, eps));
-        assertThat(ScoreMath.minusOneOneRangeToZeroOneRange(.5), closeTo(NEUTRAL_SCORE + (1 - NEUTRAL_SCORE) / 2, eps));
-        assertThat(ScoreMath.minusOneOneRangeToZeroOneRange(1), closeTo(1, eps));
+        assertThat(Range.fromM11to01(-1, NEUTRAL_SCORE), closeTo(0, eps));
+        assertThat(Range.fromM11to01(-0.5, NEUTRAL_SCORE), closeTo(NEUTRAL_SCORE / 2, eps));
+        assertThat(Range.fromM11to01(0, NEUTRAL_SCORE), closeTo(NEUTRAL_SCORE, eps));
+        assertThat(Range.fromM11to01(.5, NEUTRAL_SCORE), closeTo(NEUTRAL_SCORE + (1 - NEUTRAL_SCORE) / 2, eps));
+        assertThat(Range.fromM11to01(1, NEUTRAL_SCORE), closeTo(1, eps));
     }
 }

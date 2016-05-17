@@ -9,6 +9,7 @@ import java.util.List;
 
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.NA;
+import static gmjonker.math.Score.NEUTRAL_SCORE;
 
 /**
  * Alternative to ScoreMath using faster math. The results are a bit different, so take care when switching from
@@ -31,7 +32,7 @@ public class ScoreMathFast
     /**
      * Infers a new score based on given scores.
      *
-     * <p>Score values in range [0..1]
+     * <p>Score values in range (0,1)
      **/
     public static Score combine01(Score... scores)
     {
@@ -41,7 +42,7 @@ public class ScoreMathFast
     /**
      * Infers a new score based on given scores.
      *
-     * <p>Score values in range [0..1]
+     * <p>Score values in range (0,1)
      **/
     public static Score combine01(List<Score> scores)
     {
@@ -57,25 +58,30 @@ public class ScoreMathFast
      * Infers a new score based on given scores, where scores may be weighted to indicate that some scores should have
      * more weight in the outcome than others.
      *
-     * <p>Score values in range [0..1]. Weights have no constraints (will be normalized on the fly).
+     * <p>Score values in range (0,1). Weights have no constraints (will be normalized on the fly).
      **/
     public static Score combine01(Score[] scores, double[] weights)
     {
-        // Convert to [-1..1] range
+        // Convert to (-1,1) range
         Score[] newScores = new Score[scores.length];
         for (int i = 0; i < scores.length; i++) {
-            newScores[i] = new Score(ScoreMath.zeroOneRangeToMinusOneOneRange(scores[i].value), scores[i].confidence);
+            newScores[i] = new Score(Range.from01toM11(scores[i].value, NEUTRAL_SCORE), scores[i].confidence);
+            log.trace("newScores[{}] = {}", i, newScores[i]);
         }
         // Combine
         Score combinedScore = combine(newScores, weights);
+        log.trace("combinedScore = {}", combinedScore);
+
         // Convert back
-        return new Score(ScoreMath.minusOneOneRangeToZeroOneRange(combinedScore.value), combinedScore.confidence);
+        Score result = new Score(Range.fromM11to01(combinedScore.value, NEUTRAL_SCORE), combinedScore.confidence);
+        log.trace("result = {}", result);
+        return result;
     }
 
     /**
      * Infers a new score based on given scores.
      *
-     * <p>Score values in range [-1..1]
+     * <p>Score values in range (-1,1)
      **/
     static Score combine(Score... scores)
     {
@@ -86,7 +92,7 @@ public class ScoreMathFast
      * Infers a new score based on given scores, where scores may be weighted to indicate that some scores should have
      * more weight in the outcome than others.
      *
-     * <p>Score values in range [-1..1]. Weights have no constraints (will be normalized on the fly).
+     * <p>Score values in range (-1,1). Weights have no constraints (will be normalized on the fly).
      **/
     static Score combine(Score[] scores, @Nullable double[] weights)
     {

@@ -6,7 +6,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
- * Verifies that a double is a score, i.e., it is in [0..1]
+ * Verifies that a double is a score, i.e., it is in (0,1)
  */
 public class IsValidScoreValueMatcher extends TypeSafeMatcher<Double>
 {
@@ -21,7 +21,7 @@ public class IsValidScoreValueMatcher extends TypeSafeMatcher<Double>
         description.appendText("a value between 0 and 1");
     }
 
-    /** Verifies that a double is a score, i.e., it is in [0..1] **/
+    /** Verifies that a double is a score, i.e., it is in (0,1) **/
      @Factory
     public static <T> Matcher<Double> isValidScoreValue()
     {

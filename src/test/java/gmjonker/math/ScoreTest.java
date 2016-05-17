@@ -1,6 +1,5 @@
 package gmjonker.math;
 
-import gmjonker.util.ScoreValueUtil;
 import org.junit.*;
 
 import static gmjonker.matchers.ScoreValueEqualityMatcher.equalsScoreValue;
@@ -47,8 +46,8 @@ public class ScoreTest
         assertThat(new Score(1 , 1 ).deriveDouble01M11(), equalsScoreValue(1));
         assertThat(new Score(1 , 0 ).deriveDouble01M11(), equalsScoreValue(0));
         assertThat(new Score(0 , 1 ).deriveDouble01M11(), equalsScoreValue(-1));
-        assertThat(new Score(.8, .3).deriveDouble01M11(), equalsScoreValue(IndicationMath.zeroOneRangeToMinusOneOneRange(.8, NEUTRAL_SCORE) * .3));
-        assertThat(new Score(.2, .3).deriveDouble01M11(), equalsScoreValue(IndicationMath.zeroOneRangeToMinusOneOneRange(.2, NEUTRAL_SCORE) * .3));
+        assertThat(new Score(.8, .3).deriveDouble01M11(), equalsScoreValue(Range.from01toM11(.8, NEUTRAL_SCORE) * .3));
+        assertThat(new Score(.2, .3).deriveDouble01M11(), equalsScoreValue(Range.from01toM11(.2, NEUTRAL_SCORE) * .3));
     }
 
     @Test
@@ -58,8 +57,8 @@ public class ScoreTest
         assertTrue(new Score(NEUTRAL_SCORE, 1).isWeakOrNeutral());
         assertTrue(new Score(1, 0).isWeakOrNeutral());
         assertTrue(new Score(1, 0.2).isWeakOrNeutral());
-        assertTrue(new Score(ScoreValueUtil.tenBasedScoreToScore(7), 1).isWeakOrNeutral());
-        assertTrue(new Score(ScoreValueUtil.tenBasedScoreToScore(6), 1).isWeakOrNeutral());
+        assertTrue(new Score(Range.tenBasedScoreToScore(7), 1).isWeakOrNeutral());
+        assertTrue(new Score(Range.tenBasedScoreToScore(6), 1).isWeakOrNeutral());
     }
 
     @Test

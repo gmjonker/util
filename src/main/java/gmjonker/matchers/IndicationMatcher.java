@@ -146,49 +146,49 @@ public class IndicationMatcher extends TypeSafeMatcher<Indication>
     }
 
     @Factory
-    public static <T> Matcher<Indication> isIndicationOfPositivePreference()
+    public static <T> Matcher<Indication> isIndicationOfPositiveValue()
     {
         return new IndicationMatcher(HIGH_VALUE_MIN, null, WEAK_INDICATION_MIN_CONFIDENCE, null);
     }
 
     @Factory
-    public static <T> Matcher<Indication> isWeakIndicationOfPositivePreference()
+    public static <T> Matcher<Indication> isWeakIndicationOfPositiveValue()
     {
         return new IndicationMatcher(HIGH_VALUE_MIN, null, WEAK_INDICATION_MIN_CONFIDENCE, WEAK_INDICATION_MAX_CONFIDENCE);
     }
 
     @Factory
-    public static <T> Matcher<Indication> isMediumIndicationOfPositivePreference()
+    public static <T> Matcher<Indication> isMediumIndicationOfPositiveValue()
     {
         return new IndicationMatcher(HIGH_VALUE_MIN, null, MEDIUM_INDICATION_MIN_CONFIDENCE, MEDIUM_INDICATION_MAX_CONFIDENCE);
     }
 
     @Factory
-    public static <T> Matcher<Indication> isStrongIndicationOfPositivePreference()
+    public static <T> Matcher<Indication> isStrongIndicationOfPositiveValue()
     {
         return new IndicationMatcher(HIGH_VALUE_MIN, null, STRONG_INDICATION_MIN_CONFIDENCE, null);
     }
 
     @Factory
-    public static <T> Matcher<Indication> isIndicationOfNegativePreference()
+    public static <T> Matcher<Indication> isIndicationOfNegativeValue()
     {
         return new IndicationMatcher(null, LOW_VALUE_MAX, WEAK_INDICATION_MIN_CONFIDENCE, null);
     }
 
     @Factory
-    public static <T> Matcher<Indication> isWeakIndicationOfNegativePreference()
+    public static <T> Matcher<Indication> isWeakIndicationOfNegativeValue()
     {
         return new IndicationMatcher(null, LOW_VALUE_MAX, WEAK_INDICATION_MIN_CONFIDENCE, WEAK_INDICATION_MAX_CONFIDENCE);
     }
 
     @Factory
-    public static <T> Matcher<Indication> isMediumIndicationOfNegativePreference()
+    public static <T> Matcher<Indication> isMediumIndicationOfNegativeValue()
     {
         return new IndicationMatcher(null, LOW_VALUE_MAX, MEDIUM_INDICATION_MIN_CONFIDENCE, MEDIUM_INDICATION_MAX_CONFIDENCE);
     }
 
     @Factory
-    public static <T> Matcher<Indication> isStrongIndicationOfNegativePreference()
+    public static <T> Matcher<Indication> isStrongIndicationOfNegativeValue()
     {
         return new IndicationMatcher(null, LOW_VALUE_MAX, STRONG_INDICATION_MIN_CONFIDENCE, null);
     }

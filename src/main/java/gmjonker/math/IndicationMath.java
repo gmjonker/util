@@ -186,40 +186,6 @@ public class IndicationMath
     }
 
     /**
-     * Converts a (0,1) value into a (-1,1) value, where
-     * <ul>
-     * <li>0 -> -1</li>
-     * <li>neutralValue -> 0</li>
-     * <li>1 -> 1</li>
-     * </ul>
-     * and the other values are interpolated.
-     */
-    public static double zeroOneRangeToMinusOneOneRange(double value, double neutralValue)
-    {
-        if (value < neutralValue)
-            return (neutralValue - value) / neutralValue * -1;
-        else
-            return (value - neutralValue) / (1 - neutralValue);
-    }
-
-    /**
-     * Converts a (-1,1) value into a (0,1) value, where
-     * <ul>
-     * <li>-1 -> 0</li>
-     * <li>0 -> neutralValue</li>
-     * <li>1 -> 1</li>
-     * </ul>
-     * and the other values are linearly interpolated.
-     */
-    public static double minusOneOneRangeToZeroOneRange(double value, double neutralValue)
-    {
-        if (value < 0)
-            return (value + 1) * neutralValue;
-        else
-            return neutralValue + value * (1 - neutralValue);
-    }
-
-    /**
      * Converts a indication with (-1,1) value into a indication with (0,1) value, where
      * <ul>
      * <li>-1 -> 0</li>
@@ -285,12 +251,12 @@ public class IndicationMath
 //        // Convert to (-1,1) range
 //        Indication[] newIndications = new Indication[indications.length];
 //        for (int i = 0; i < indications.length; i++) {
-//            newIndications[i] = new Indication(zeroOneRangeToMinusOneOneRange(indications[i].value), indications[i].confidence);
+//            newIndications[i] = new Indication(from01toM11(indications[i].value), indications[i].confidence);
 //        }
 //        // Combine
 //        Indication combinedIndication = combine(newIndications, weights);
 //        // Convert back
-//        return new Indication(minusOneOneRangeToZeroOneRange(combinedIndication.value), combinedIndication.confidence);
+//        return new Indication(fromM11to01(combinedIndication.value), combinedIndication.confidence);
 //    }
 //
 //    /**
@@ -304,11 +270,11 @@ public class IndicationMath
 //        // Convert to (-1,1) range
 //        Indication[] newIndications = new Indication[indications.length];
 //        for (int i = 0; i < indications.length; i++) {
-//            newIndications[i] = new Indication(zeroOneRangeToMinusOneOneRange(indications[i].value), indications[i].confidence);
+//            newIndications[i] = new Indication(from01toM11(indications[i].value), indications[i].confidence);
 //        }
 //        // Combine
 //        Indication combinedIndication = combineTightAndNoDisagreementEffect(newIndications, weights);
 //        // Convert back
-//        return new Indication(minusOneOneRangeToZeroOneRange(combinedIndication.value), combinedIndication.confidence);
+//        return new Indication(fromM11to01(combinedIndication.value), combinedIndication.confidence);
 //    }
 }

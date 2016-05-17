@@ -170,6 +170,30 @@ public class IndicationMatcher extends TypeSafeMatcher<Indication>
     }
 
     @Factory
+    public static <T> Matcher<Indication> isIndicationOfNeutralValue()
+    {
+        return new IndicationMatcher(NEUTRAL_VALUE_MIN, NEUTRAL_VALUE_MAX, WEAK_INDICATION_MIN_CONFIDENCE, null);
+    }
+
+    @Factory
+    public static <T> Matcher<Indication> isWeakIndicationOfNeutralValue()
+    {
+        return new IndicationMatcher(NEUTRAL_VALUE_MIN, NEUTRAL_VALUE_MAX, WEAK_INDICATION_MIN_CONFIDENCE, WEAK_INDICATION_MAX_CONFIDENCE);
+    }
+
+    @Factory
+    public static <T> Matcher<Indication> isMediumIndicationOfNeutralValue()
+    {
+        return new IndicationMatcher(NEUTRAL_VALUE_MIN, NEUTRAL_VALUE_MAX, MEDIUM_INDICATION_MIN_CONFIDENCE, MEDIUM_INDICATION_MAX_CONFIDENCE);
+    }
+
+    @Factory
+    public static <T> Matcher<Indication> isStrongIndicationOfNeutralValue()
+    {
+        return new IndicationMatcher(NEUTRAL_VALUE_MIN, NEUTRAL_VALUE_MAX, STRONG_INDICATION_MIN_CONFIDENCE, null);
+    }
+
+    @Factory
     public static <T> Matcher<Indication> isIndicationOfNegativeValue()
     {
         return new IndicationMatcher(null, LOW_VALUE_MAX, WEAK_INDICATION_MIN_CONFIDENCE, null);

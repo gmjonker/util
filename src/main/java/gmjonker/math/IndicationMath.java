@@ -59,7 +59,7 @@ public class IndicationMath
         final double sigmoidRangeLow = -1.1;
         final double sigmoidRangeHigh = 1.1;
 
-        log.trace("combine({}, {})", () -> Arrays.toString(indications), () -> Arrays.toString(weights));
+        log.trace("combineM11({}, {})", () -> Arrays.toString(indications), () -> Arrays.toString(weights));
         double[] values = new double[indications.length];
         double[] confidences = new double[indications.length];
         double[] adjustedWeights = new double[indications.length];
@@ -111,7 +111,7 @@ public class IndicationMath
     }
 
     /**
-     * A variant of combine with the following feature: Regardless of the weights, if all indications are 1/1, the end result
+     * A variant of combineM11 with the following feature: Regardless of the weights, if all indications are 1/1, the end result
      * will be 1/1.
      *
      * <p>Also, no disagreement effect on confidence.</p>
@@ -130,7 +130,7 @@ public class IndicationMath
         final double sigmoidRangeLow = -1.2;
         final double sigmoidRangeHigh = 1.2;
 
-        log.trace("combine({}, {})", () -> Arrays.toString(indications), () -> Arrays.toString(weights));
+        log.trace("combineM11({}, {})", () -> Arrays.toString(indications), () -> Arrays.toString(weights));
         double[] values = new double[indications.length];
         double[] adjustedConfidences = new double[indications.length];
         double[] logitConfidences = new double[indications.length];
@@ -254,7 +254,7 @@ public class IndicationMath
 //            newIndications[i] = new Indication(from01toM11(indications[i].value), indications[i].confidence);
 //        }
 //        // Combine
-//        Indication combinedIndication = combine(newIndications, weights);
+//        Indication combinedIndication = combineM11(newIndications, weights);
 //        // Convert back
 //        return new Indication(fromM11to01(combinedIndication.value), combinedIndication.confidence);
 //    }
@@ -273,7 +273,7 @@ public class IndicationMath
 //            newIndications[i] = new Indication(from01toM11(indications[i].value), indications[i].confidence);
 //        }
 //        // Combine
-//        Indication combinedIndication = combineTightAndNoDisagreementEffect(newIndications, weights);
+//        Indication combinedIndication = combineM11TightAndNoDisagreementEffect(newIndications, weights);
 //        // Convert back
 //        return new Indication(fromM11to01(combinedIndication.value), combinedIndication.confidence);
 //    }

@@ -12,20 +12,39 @@ import java.util.List;
  */
 public class IsSortedMatcher<T extends Comparable> extends TypeSafeMatcher<List<T>>
 {
+    private final boolean reverse;
+
+    public IsSortedMatcher(boolean reverse)
+    {
+        this.reverse = reverse;
+    }
+
     @Override
     public boolean matchesSafely(List<T> list)
     {
-        return Ordering.natural().isOrdered(list);
+        if (reverse)
+            return Ordering.natural().reverse().isOrdered(list);
+        else
+            return Ordering.natural().isOrdered(list);
     }
 
     public void describeTo(Description description)
     {
-        description.appendText("a sorted list");
+        if (reverse)
+            description.appendText("a inversly sorted list");
+        else
+            description.appendText("a sorted list");
     }
 
     @Factory
-    public static IsSortedMatcher isSorted()
+    public static <S extends Comparable> IsSortedMatcher<S> isSortedNaturally()
     {
-        return new IsSortedMatcher<>();
+        return new IsSortedMatcher<S>(false);
+    }
+
+    @Factory
+    public static <S extends Comparable> IsSortedMatcher<S> isSortedInversly()
+    {
+        return new IsSortedMatcher<S>(true);
     }
 }

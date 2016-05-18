@@ -78,7 +78,7 @@ public class ScoreMathTest
             Score desired = new Score(row[row.length - 2], row[row.length - 1]);
 
             // When:
-            Score result = ScoreMath.combine(scores);
+            Score result = ScoreMath.combineM11(scores);
 
             // Then:
             for (Score score : scores)
@@ -89,7 +89,7 @@ public class ScoreMathTest
             // Also check that combine is consistent with combine-weighted.
             double[] weights = new double[scores.length];
             Arrays.fill(weights, 1.0);
-            Score result2 = ScoreMath.combine(scores, weights);
+            Score result2 = ScoreMath.combineM11(scores, weights);
             assertThat(result2, equalTo(result));
         }
     }
@@ -134,7 +134,7 @@ public class ScoreMathTest
             Score desiredCombinedScore = new Score(row[6], row[7]);
 
             // When:
-            Score score = ScoreMath.combine(new Score[]{popularityScore, contentBasedScore, userBasedScore}, weights);
+            Score score = ScoreMath.combineM11(new Score[]{popularityScore, contentBasedScore, userBasedScore}, weights);
 
             // Then:
             System.out.printf("%s/1 + %s/2 + %s/3 = %s (des: %s, dif:%d/%d)%n", popularityScore.toShortString(),

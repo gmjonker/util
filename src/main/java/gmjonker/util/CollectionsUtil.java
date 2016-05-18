@@ -130,7 +130,7 @@ public class CollectionsUtil
      * Null-safe variant of {@code new ArrayList<T>(Collection<T> collection)}
      */
     @Nonnull
-    public static <T> List<T> newArrayList(Collection<T> collection)
+    public static <T> List<T> newListFrom(Collection<T> collection)
     {
         List<T> list = new ArrayList<>();
         if (collection == null)

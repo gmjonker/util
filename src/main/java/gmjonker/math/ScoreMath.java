@@ -20,8 +20,8 @@ import static gmjonker.math.Score.NEUTRAL_SCORE;
  * Knowledge about underlying probability distributions is not needed. As such, it is not statistically correct,
  * but does provide a significant improvement over not using any measure of confidence at all.
  *
- * <p>All score values in range (-1,1), all confidences in range (0,1). There are two conversion methods for when one
- * wants to use values in range (0,1).
+ * <p>Suffixes are used to indicate whether the value is assumed to be in range (-1,1) (M11) or in range (0,1) (01).
+ * Note that the (0,1) range methods internally convert to (-1,1) range first.
  */
 @Deprecated
 public class ScoreMath
@@ -63,7 +63,7 @@ public class ScoreMath
     {
         long now = System.nanoTime();
         Score[] scoreArray = new Score[scores.size()];
-        Score score = combine01(scores.toArray(scoreArray), null);
+        Score score = combine01TightAndNoDisagreementEffect(scores.toArray(scoreArray), null);
         totalTime += System.nanoTime() - now;
         return score;
     }
@@ -82,7 +82,7 @@ public class ScoreMath
             newScores[i] = new Score(from01toM11(scores[i].value, NEUTRAL_SCORE), scores[i].confidence);
         }
         // Combine
-        Score combinedScore = combine(newScores, weights);
+        Score combinedScore = combineM11(newScores, weights);
         // Convert back
         return new Score(Range.fromM11to01(combinedScore.value, NEUTRAL_SCORE), combinedScore.confidence);
     }
@@ -101,7 +101,7 @@ public class ScoreMath
             newScores[i] = new Score(from01toM11(scores[i].value, NEUTRAL_SCORE), scores[i].confidence);
         }
         // Combine
-        Score combinedScore = combineTightAndNoDisagreementEffect(newScores, weights);
+        Score combinedScore = combineM11TightAndNoDisagreementEffect(newScores, weights);
         // Convert back
         return new Score(Range.fromM11to01(combinedScore.value, NEUTRAL_SCORE), combinedScore.confidence);
     }
@@ -111,9 +111,9 @@ public class ScoreMath
      *
      * <p>Score values in range (-1,1)
      **/
-    public static Score combine(Score... scores)
+    public static Score combineM11(Score... scores)
     {
-        return combine(scores, null);
+        return combineM11(scores, null);
     }
 
     /**
@@ -121,10 +121,10 @@ public class ScoreMath
      *
      * <p>Score values in range (-1,1)
      **/
-    public static Score combine(List<Score> scores)
+    public static Score combineM11(List<Score> scores)
     {
         Score[] scoreArray = new Score[scores.size()];
-        return combine(scores.toArray(scoreArray), null);
+        return combineM11(scores.toArray(scoreArray), null);
     }
 
     /**
@@ -135,12 +135,12 @@ public class ScoreMath
      *
      * <p>Score values in range (-1,1). Weights have no constraints (will be normalized on the fly).
      **/
-    public static Score combine(Score[] scores, @Nullable double[] weights)
+    public static Score combineM11(Score[] scores, @Nullable double[] weights)
     {
         final double sigmoidRangeLow = -1.1;
         final double sigmoidRangeHigh = 1.1;
 
-        log.trace("combine({}, {})", () -> Arrays.toString(scores), () -> Arrays.toString(weights));
+        log.trace("combineM11({}, {})", () -> Arrays.toString(scores), () -> Arrays.toString(weights));
         double[] values = new double[scores.length];
         double[] confidences = new double[scores.length];
         double[] adjustedWeights = new double[scores.length];
@@ -192,7 +192,7 @@ public class ScoreMath
     }
 
     /**
-     * A variant of combine with the following feature: Regardless of the weights, if all scores are 1/1, the end result
+     * A variant of combineM11 with the following feature: Regardless of the weights, if all scores are 1/1, the end result
      * will be 1/1.
      *
      * <p>Also, no disagreement effect on confidence.</p>
@@ -204,14 +204,14 @@ public class ScoreMath
      * If you manually scale your weights such that max weight &lt; 0, the effect is that the lowest weighted scores will
      * have relatively more effect on the end result, and the highest weighted scores relatively less.</p>
      **/
-    public static Score combineTightAndNoDisagreementEffect(Score[] scores, @Nullable double[] weights)
+    public static Score combineM11TightAndNoDisagreementEffect(Score[] scores, @Nullable double[] weights)
     {
         // Taking relatively wide bounds here lessens the effect of individual scores on the end score confidence, or, in other
         // words, accumulation of confidences resembles lineair addition a bit more
         final double sigmoidRangeLow = -1.2;
         final double sigmoidRangeHigh = 1.2;
 
-        log.trace("combine({}, {})", () -> Arrays.toString(scores), () -> Arrays.toString(weights));
+        log.trace("combineM11({}, {})", () -> Arrays.toString(scores), () -> Arrays.toString(weights));
         double[] values = new double[scores.length];
         double[] adjustedConfidences = new double[scores.length];
         double[] logitConfidences = new double[scores.length];

@@ -69,7 +69,7 @@ public class ScoreMathFast
             log.trace("newScores[{}] = {}", i, newScores[i]);
         }
         // Combine
-        Score combinedScore = combine(newScores, weights);
+        Score combinedScore = combineM11(newScores, weights);
         log.trace("combinedScore = {}", combinedScore);
 
         // Convert back
@@ -83,9 +83,9 @@ public class ScoreMathFast
      *
      * <p>Score values in range (-1,1)
      **/
-    static Score combine(Score... scores)
+    static Score combineM11(Score... scores)
     {
-        return combine(scores, null);
+        return combineM11(scores, null);
     }
 
     /**
@@ -94,7 +94,7 @@ public class ScoreMathFast
      *
      * <p>Score values in range (-1,1). Weights have no constraints (will be normalized on the fly).
      **/
-    static Score combine(Score[] scores, @Nullable double[] weights)
+    static Score combineM11(Score[] scores, @Nullable double[] weights)
     {
         log.trace("scores: {}", () -> Arrays.toString(scores));
         log.trace("weights:{}", () -> Arrays.toString(weights));

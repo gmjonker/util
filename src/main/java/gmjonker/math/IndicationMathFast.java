@@ -127,7 +127,7 @@ public class IndicationMathFast
 //            newIndications[i] = new Indication(IndicationMath.from01toM11(indications[i].value), indications[i].confidence);
 //        }
 //        // Combine
-//        Indication combinedIndication = combine(newIndications, weights);
+//        Indication combinedIndication = combineM11(newIndications, weights);
 //        // Convert back
 //        return new Indication(IndicationMath.fromM11to01(combinedIndication.value), combinedIndication.confidence);
 //    }

@@ -228,9 +228,9 @@ public class CollectionsUtil
      * @return A map that, when iterated over, returns keys, values or entries sorted by value
      */
     @Nonnull
-    public static <K, V extends Comparable<? super V>> Map<K, V> sortMapByValue(Map<K, V> map, boolean ascending)
+    public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortMapByValue(Map<K, V> map, boolean ascending)
     {
-        Map<K,V> result = new LinkedHashMap<>();
+        LinkedHashMap<K,V> result = new LinkedHashMap<>();
 
         if (map == null)
             return result;
@@ -250,9 +250,9 @@ public class CollectionsUtil
      * @return A map that, when iterated over, returns keys, values or entries sorted by value
      */
     @Nonnull
-    public static <K, V> Map<K, V> sortMapByValue(Map<K, V> map, Function<V, Comparable> function, boolean ascending)
+    public static <K, V> LinkedHashMap<K, V> sortMapByValue(Map<K, V> map, Function<V, Comparable> function, boolean ascending)
     {
-        Map<K,V> result = new LinkedHashMap<>();
+        LinkedHashMap<K,V> result = new LinkedHashMap<>();
 
         if (map == null)
             return result;
@@ -279,9 +279,9 @@ public class CollectionsUtil
      * @return New hash map, sorted.
      */
     @Nonnull
-    public static <K, V> Map<K, V> sortMap(Map<K, V> map, Function<V, Double> function)
+    public static <K, V> LinkedHashMap<K, V> sortMap(Map<K, V> map, Function<V, Double> function)
     {
-        Map<K,V> result = new LinkedHashMap<>();
+        LinkedHashMap<K,V> result = new LinkedHashMap<>();
 
         if (map == null)
             return result;

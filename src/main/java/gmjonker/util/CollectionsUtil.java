@@ -97,6 +97,15 @@ public class CollectionsUtil
         return list.stream().filter(function::apply).collect(Collectors.toList());
     }
 
+    @Nonnull
+    public static <T> Collection<T> filter(Collection<T> collection, Function<T, Boolean> function)
+    {
+        if (collection == null)
+            return emptyList();
+
+        return collection.stream().filter(function::apply).collect(Collectors.toList());
+    }
+
     /**
      * Returns the results of pairwise applying {@code function} on the elements of {@code list1} and {@code list2}.
      */
@@ -182,6 +191,28 @@ public class CollectionsUtil
         if (fromIndex >= toIndex)
             return emptyList();
         return list.subList(fromIndex, toIndex);
+    }
+
+    /**
+     * Take the first X items of list, or less if there are less.
+     */
+    @Nonnull
+    public static <T> List<T> take(List<T> list, @Nullable Integer max)
+    {
+        return sublist(list, 0, max);
+    }
+
+    /**
+     * Take the first X items of collection, or less if there are less.
+     */
+    @Nonnull
+    public static <T> Collection<T> take(Iterable<T> iterable, int max)
+    {
+        Collection<T> collection = new ArrayList<>();
+        Iterator<T> iterator = iterable.iterator();
+        while (iterator.hasNext() && collection.size() < max)
+            collection.add(iterator.next());
+        return collection;
     }
 
     /**

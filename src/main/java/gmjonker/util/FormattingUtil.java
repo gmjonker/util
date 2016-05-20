@@ -1,6 +1,10 @@
 package gmjonker.util;
 
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,6 +16,7 @@ import static gmjonker.math.GeneralMath.min;
 import static gmjonker.math.GeneralMath.round;
 import static gmjonker.math.NaType.isValue;
 import static java.util.concurrent.TimeUnit.*;
+import static jdk.nashorn.internal.objects.NativeString.substring;
 
 public class FormattingUtil
 {
@@ -96,6 +101,26 @@ public class FormattingUtil
         else
             return String.format("%3.0f", d * 100);
     }
+
+    /**
+     * Formats a positive score value as a single character, where 0=0, 1=.1, 2=.2, ..., 9=.1, T=1, +=>1
+     **/
+    public static String toMicroFormat(double d)
+    {
+        if ( ! isValue(d))
+            return "-";
+        long rounded = round(d * 10);
+        if (rounded < 0)
+            return "<";
+        if (rounded < 10)
+            return String.valueOf(rounded);
+        else if (rounded == 10)
+            return "A";
+        else if (rounded > 10)
+            return "+";
+        throw new RuntimeException("This is not supposed to happen");
+    }
+
 
     /**
      * Produces string representations of numbers like 1, 11, 111, 1.1k, 1m, etc.
@@ -188,5 +213,18 @@ public class FormattingUtil
     public static String toWidth(String string, int width)
     {
         return Strings.padEnd("" + string, width, ' ').substring(0, width);
+    }
+
+    public static String take(String string, int width)
+    {
+        return substring(string, 0, width);
+    }
+
+    public static String prettyJson(String json)
+    {
+        final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonParser jp = new JsonParser();
+        JsonElement je = jp.parse(json);
+        return gson.toJson(je);
     }
 }

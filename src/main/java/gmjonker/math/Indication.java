@@ -1,6 +1,6 @@
 package gmjonker.math;
 
-import gmjonker.util.FormattingUtil;
+import com.google.common.primitives.Ints;
 import gmjonker.util.LambdaLogger;
 
 import java.util.List;
@@ -8,6 +8,9 @@ import java.util.List;
 import static gmjonker.math.GeneralMath.abs;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
+import static gmjonker.util.FormattingUtil.asPercentage;
+import static gmjonker.util.FormattingUtil.asPercentageTwoSpaces;
+import static gmjonker.util.FormattingUtil.toMicroFormat;
 import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
 
 /**
@@ -146,20 +149,25 @@ public class Indication
         return result;
     }
 
+    @Override
+    public String toString()
+    {
+        return asPercentage(value).trim() + "/" + asPercentage(confidence).trim();
+    }
+
     public String toShortString()
     {
-        return FormattingUtil.asPercentage(value) + "/" + FormattingUtil.asPercentage(confidence);
+        return asPercentage(value) + "/" + asPercentage(confidence);
+    }
+
+    public String toMicroString()
+    {
+        return toMicroFormat(value) + "/" + toMicroFormat(confidence);
     }
 
     public String toAlignedString()
     {
-        return FormattingUtil.asPercentageTwoSpaces(value) + "/" + FormattingUtil.asPercentageTwoSpaces(confidence);
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Indication{" + toShortString() + "}";
+        return asPercentageTwoSpaces(value) + "/" + asPercentageTwoSpaces(confidence);
     }
 
     public static String printIndicationsAligned(List<Indication> indications)
@@ -168,6 +176,14 @@ public class Indication
         for (Indication indication : indications)
             result += "  " + indication.toAlignedString() + "\n";
         return result;
+    }
+
+    public static Indication parseString(String s)
+    {
+        String[] split = s.split("/");
+        Integer value = Ints.tryParse(split[0]);
+        Integer confidence = Ints.tryParse(split[1]);
+        return new Indication(value != null ? .01 * value : NA, confidence != null ? .01 * confidence : NA);
     }
 
     public static Indication[] toPrimitiveIndicationArray(List<Indication> indicationList)

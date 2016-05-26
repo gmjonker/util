@@ -35,6 +35,7 @@ public class Score
     public static final Score NA_SCORE = new Score(NA, NA);
     public static final Score UNKNOWN = new Score(NA, 0);
     public static final Score MAX = new Score(1, 1);
+    public static final Score MIN = new Score(0, 1);
 
     public final double value;
     public final double confidence;

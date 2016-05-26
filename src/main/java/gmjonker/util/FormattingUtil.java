@@ -1,19 +1,16 @@
 package gmjonker.util;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Table;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static gmjonker.math.GeneralMath.min;
-import static gmjonker.math.GeneralMath.round;
+import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.isValue;
 import static java.util.concurrent.TimeUnit.*;
 import static jdk.nashorn.internal.objects.NativeString.substring;
@@ -112,15 +109,32 @@ public class FormattingUtil
         long rounded = round(d * 10);
         if (rounded < 0)
             return "<";
-        if (rounded < 10)
+        else if (rounded < 10)
             return String.valueOf(rounded);
         else if (rounded == 10)
-            return "A";
+            return "T";
         else if (rounded > 10)
-            return "+";
+            return ">";
         throw new RuntimeException("This is not supposed to happen");
     }
 
+    /**
+     * Formats a positive score value as a single character, where 0=A, ... , 1=E
+     **/
+    public static String toMicroFormatABC(double d)
+    {
+        final int numSteps = 4;
+        if ( ! isValue(d))
+            return "-";
+        long rounded = round(d * numSteps);
+        if (rounded < 0)
+            return "<";
+        else if (rounded <= numSteps)
+            return "" + (char)('A' + rounded);
+        else if (rounded > numSteps)
+            return ">";
+        throw new RuntimeException("This is not supposed to happen");
+    }
 
     /**
      * Produces string representations of numbers like 1, 11, 111, 1.1k, 1m, etc.
@@ -226,5 +240,38 @@ public class FormattingUtil
         JsonParser jp = new JsonParser();
         JsonElement je = jp.parse(json);
         return gson.toJson(je);
+    }
+
+    public static <R, C, T> String format(Table<R, C, T> table)
+    {
+        String result = "";
+        HashMap<C, Integer> maxWidths = new HashMap<>();
+        for (C col : table.columnKeySet()) {
+            Integer width = col.toString().length();
+            maxWidths.compute(col, (k, v) -> (v == null) ? width : max(v, width));
+        }
+        for (R rowKey : table.rowKeySet()) {
+            Map<C, T> row = table.row(rowKey);
+            for (C col : row.keySet()) {
+                T value = row.get(col);
+                Integer width = value.toString().length();
+                maxWidths.compute(col, (k, v) -> (v == null) ? width : max(v, width));
+            }
+        }
+        for (C col : table.columnKeySet()) {
+            String string = toWidth(col.toString(), maxWidths.get(col) + 1);
+            result += string;
+        }
+        result += System.lineSeparator();
+        for (R rowKey : table.rowKeySet()) {
+            Map<C, T> row = table.row(rowKey);
+            for (C col : row.keySet()) {
+                T value = row.get(col);
+                String string = toWidth(value.toString(), maxWidths.get(col) + 1);
+                result += string;
+            }
+            result += System.lineSeparator();
+        }
+        return result;
     }
 }

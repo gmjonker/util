@@ -63,6 +63,21 @@ public class CollectionsUtil
         return newMap;
     }
 
+    @Nonnull
+    public static <K1,V1,K2,V2> LinkedHashMap<K2,V2> map(LinkedHashMap<K1,V1> map, Function<K1,K2> keyMapper, Function<V1,V2> valueMapper)
+    {
+        if (map == null)
+            return new LinkedHashMap<>();
+
+        LinkedHashMap<K2,V2> newMap = new LinkedHashMap<>();
+        for (Map.Entry<K1, V1> entry : map.entrySet()) {
+            K1 key = entry.getKey();
+            V1 value = entry.getValue();
+            newMap.put(keyMapper.apply(key), valueMapper.apply(value));
+        }
+        return newMap;
+    }
+
     @SuppressWarnings("unchecked")
     @Nonnull
     public static <T, R> R[] map(T[] inputArray, Function<T, R> function, Class outputClass)
@@ -197,7 +212,7 @@ public class CollectionsUtil
      * Take the first X items of list, or less if there are less.
      */
     @Nonnull
-    public static <T> List<T> take(List<T> list, @Nullable Integer max)
+    public static <T> List<T> take(List<T> list, int max)
     {
         return sublist(list, 0, max);
     }

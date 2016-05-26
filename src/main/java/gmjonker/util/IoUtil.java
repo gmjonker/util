@@ -72,6 +72,46 @@ public class IoUtil
         return CSVParser.parse(fileContent, CSVFormat.EXCEL.withIgnoreEmptyLines().withIgnoreSurroundingSpaces());
     }
 
+    /**
+     * Reads from a CSV file that has row and column headers.
+     */
+    public static <R, C, T> Table<R, C, T> readCsvIntoTable(String fileName, Function<String, R> rowTypeMapper,
+            Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper) throws IOException
+    {
+        Table<R, C, T> table = HashBasedTable.create();
+        CSVParser csvParser = readCsvFileWithHeaders(fileName);
+        Set<String> headers = csvParser.getHeaderMap().entrySet().stream()
+                .filter(entry -> entry.getValue() > 0) // skip the first column, it contains row headers
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+        for (CSVRecord record : csvParser.getRecords()) {
+            String rowHeader = record.get(0);
+            R r = rowTypeMapper.apply(rowHeader);
+            for (String header : headers) {
+                C c = columnTypeMapper.apply(header);
+                String cell = record.get(header);
+                T t = cellTypeMapper.apply(cell);
+                table.put(r, c, t);
+            }
+        }
+        csvParser.close();
+        return table;
+    }
+
+    /** CSV file must not have headers. **/
+    public static <K, V> LinkedHashMap<K,V> readTwoColumnCsvIntoMap(String fileName, Function<String, K> keyTransform,
+            Function<String, V> valueTransform) throws IOException
+    {
+        LinkedHashMap<K, V> map = new LinkedHashMap<>();
+        CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
+        for (CSVRecord record : csvParser.getRecords()) {
+            K key = keyTransform.apply(record.get(0));
+            V value = valueTransform.apply(record.get(1));
+            map.put(key, value);
+        }
+        return map;
+    }
+
     /** Returns relative filenames, e.g. "restaurantTaggings/Amersfoort.csv". **/
     public static List<String> getFilenamesInDirectory(String directoryName) throws IOException
     {
@@ -127,31 +167,5 @@ public class IoUtil
             csvPrinter.println();
         }
         csvPrinter.close();
-    }
-
-    /**
-     * Reads from a CSV file that has row and column headers.
-     */
-    public static <R, C, T> Table<R, C, T> readCsvIntoTable(String fileName, Function<String, R> rowTypeMapper,
-            Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper) throws IOException
-    {
-        Table<R, C, T> table = HashBasedTable.create();
-        CSVParser csvParser = readCsvFileWithHeaders(fileName);
-        Set<String> headers = csvParser.getHeaderMap().entrySet().stream()
-                .filter(entry -> entry.getValue() > 0) // skip the first column, it contains row headers
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toSet());
-        for (CSVRecord record : csvParser.getRecords()) {
-            String rowHeader = record.get(0);
-            R r = rowTypeMapper.apply(rowHeader);
-            for (String header : headers) {
-                C c = columnTypeMapper.apply(header);
-                String cell = record.get(header);
-                T t = cellTypeMapper.apply(cell);
-                table.put(r, c, t);
-            }
-        }
-        csvParser.close();
-        return table;
     }
 }

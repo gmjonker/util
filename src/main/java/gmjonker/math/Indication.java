@@ -6,11 +6,10 @@ import gmjonker.util.LambdaLogger;
 import java.util.List;
 
 import static gmjonker.math.GeneralMath.abs;
+import static gmjonker.math.GeneralMath.sign;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
-import static gmjonker.util.FormattingUtil.asPercentage;
-import static gmjonker.util.FormattingUtil.asPercentageTwoSpaces;
-import static gmjonker.util.FormattingUtil.toMicroFormat;
+import static gmjonker.util.FormattingUtil.*;
 import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
 
 /**
@@ -31,7 +30,7 @@ import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
  * Indication replaces Score, which didn't have a range defined which was inconvenient w.r.t. the neutral score.
  */
 @SuppressWarnings("WeakerAccess")
-public class Indication
+public class Indication implements Comparable<Indication>
 {
     public static final Indication NA_INDICATION = new Indication(NA, NA);
     public static final Indication UNKNOWN = new Indication(NA, 0);
@@ -165,6 +164,11 @@ public class Indication
         return toMicroFormat(value) + "/" + toMicroFormat(confidence);
     }
 
+    public String toPicoString()
+    {
+        return toMicroFormat(value) + toMicroFormatABC(confidence);
+    }
+
     public String toAlignedString()
     {
         return asPercentageTwoSpaces(value) + "/" + asPercentageTwoSpaces(confidence);
@@ -180,10 +184,15 @@ public class Indication
 
     public static Indication parseString(String s)
     {
-        String[] split = s.split("/");
-        Integer value = Ints.tryParse(split[0]);
-        Integer confidence = Ints.tryParse(split[1]);
-        return new Indication(value != null ? .01 * value : NA, confidence != null ? .01 * confidence : NA);
+        try {
+            String[] split = s.split("/");
+            Integer value = Ints.tryParse(split[0]);
+            Integer confidence = Ints.tryParse(split[1]);
+            return new Indication(value != null ? .01 * value : NA, confidence != null ? .01 * confidence : NA);
+        } catch (Exception ex) {
+            log.error("Could not parse '{}'", s);
+            throw ex;
+        }
     }
 
     public static Indication[] toPrimitiveIndicationArray(List<Indication> indicationList)
@@ -194,5 +203,15 @@ public class Indication
             indications[i] = indication;
         }
         return indications;
+    }
+
+    @Override
+    public int compareTo(Indication indication)
+    {
+        if ( ! isValid())
+            return -1;
+        if ( ! indication.isValid())
+            return 1;
+        return sign(this.deriveDouble() - indication.deriveDouble());
     }
 }

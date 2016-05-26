@@ -1,9 +1,14 @@
 package gmjonker.math;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.*;
+
+import java.util.Collections;
+import java.util.List;
 
 import static gmjonker.matchers.ScoreValueEqualityMatcher.equalsScoreValue;
 import static gmjonker.math.NaType.NA;
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
@@ -56,5 +61,18 @@ public class IndicationTest
         assertTrue(new Indication(0, 1).equals(new Indication(0, 1)));
         assertTrue(new Indication(1, 1).equals(new Indication(a - b, a - b)));
         assertTrue(new Indication(NA, NA).equals(new Indication(NA, NA)));
+    }
+
+    @Test
+    public void isSortable()
+    {
+        List<Indication> indications = asList(new Indication(.2, .2), new Indication(.1, 1), new Indication(.1, .1),
+                Indication.CERTAINTY, Indication.UNKNOWN, Indication.NA_INDICATION);
+        Collections.sort(indications);
+        Assert.assertThat(indications.get(2), CoreMatchers.is(new Indication(.1, .1)));
+        Assert.assertThat(indications.get(3), CoreMatchers.is(new Indication(.2, .2)));
+        Assert.assertThat(indications.get(4), CoreMatchers.is(new Indication(.1, 1)));
+        Assert.assertThat(indications.get(5), CoreMatchers.is(Indication.CERTAINTY));
+        System.out.println("indications = " + indications);
     }
 }

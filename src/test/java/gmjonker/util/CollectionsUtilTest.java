@@ -40,7 +40,7 @@ public class CollectionsUtilTest
 
     // Test taken from http://stackoverflow.com/a/2581754/1901037
     @Test
-    public void testSortByValue()
+    public void sortMapByValue()
     {
         Random random = new Random(System.currentTimeMillis());
         Map<String, Integer> testMap = new HashMap<String, Integer>(1000);

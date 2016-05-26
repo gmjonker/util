@@ -1,5 +1,6 @@
 package gmjonker.math;
 
+import gmjonker.util.LambdaLogger;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ public class TextHistogram
     private List<Double> values = new ArrayList<>();
     private double min = Double.MAX_VALUE;
     private double max = Double.MIN_VALUE;
+
+    protected static final LambdaLogger log = new LambdaLogger(TextHistogram.class);
 
     public TextHistogram() {}
 
@@ -73,6 +76,7 @@ public class TextHistogram
             Arrays.fill(points[v], ' ');
 
         for (int v = 0; v < numBins; v++) {
+            log.trace("bin {}: {}", v, counts[v]);
             int w = (int) Math.round((double)counts[v] / maxBinCount * height);
             if (w < 0)
                 points[v][0] = '?';

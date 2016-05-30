@@ -211,7 +211,8 @@ public class ScoreMath
         final double sigmoidRangeLow = -1.2;
         final double sigmoidRangeHigh = 1.2;
 
-        log.trace("combineM11({}, {})", () -> Arrays.toString(scores), () -> Arrays.toString(weights));
+        log.trace("combineM11(scores = {}, weights = {})", () -> Arrays.toString(scores), () -> Arrays.toString(weights));
+
         double[] values = new double[scores.length];
         double[] adjustedConfidences = new double[scores.length];
         double[] logitConfidences = new double[scores.length];
@@ -223,6 +224,7 @@ public class ScoreMath
                 values[i] = scores[i].value;
                 adjustedConfidences[i] = scores[i].confidence;
                 logitConfidences[i] = logit(adjustedConfidences[i], sigmoidRangeLow, sigmoidRangeHigh);
+                maxLogitConfidences[i] = logit(1, sigmoidRangeLow, sigmoidRangeHigh);
             }
         } else {
             double maxWeight = max(weights);

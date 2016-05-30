@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 
 import java.util.Map;
 
+import static com.sun.corba.se.spi.activation.IIOP_CLEAR_TEXT.value;
 import static gmjonker.math.GeneralMath.round;
 import static gmjonker.math.NaType.NA_I;
 
@@ -72,6 +73,26 @@ public class Util
         return value;
     }
 
+    public static int getEnvOrDefault(String name, int defaultValue)
+    {
+        String env = System.getenv(name);
+        Integer result;
+        // If docker is told to copy an env var from host to container, and the var is not set on the host, it will
+        // set the var on the container to ''
+        if (Strings.isNullOrEmpty(env)) {
+            result = defaultValue;
+            log.debug("{}={} (default)", name, result);
+        } else {
+            result = tryParseInt(env);
+            if (result == null) {
+                log.error("Could not parse '{}' for env variable '{}', exiting", env, name);
+                System.exit(-1);
+            }
+            log.debug("{}={} (env)", name, result);
+        }
+        return result;
+    }
+
     public static void printAllEnvironmentVariables()
     {
         Map<String, String> getenv = System.getenv();
@@ -88,7 +109,7 @@ public class Util
             log.info(name + " not set");
     }
 
-    public Integer tryParseInt(String s)
+    public static Integer tryParseInt(String s)
     {
         try {
             return Integer.valueOf(s);

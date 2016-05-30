@@ -147,6 +147,16 @@ public class FormattingUtil
     }
 
     /**
+     * Produces string representations of numbers like 1, 11, 111, 1.1k, 1m, etc.
+     */
+    public static String toHumanReadableNumber(long number)
+    {
+        if (number > -9999 && number < 9999)
+            return "" + number;
+        return toHumanReadableNumber(number, 0);
+    }
+
+    /**
      * Recursive implementation, invokes itself for each factor of a thousand, increasing the class on each invokation.
      * Taken from http://stackoverflow.com/a/4753866/1901037
      * @param n the number to format

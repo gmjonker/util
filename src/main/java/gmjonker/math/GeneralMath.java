@@ -8,6 +8,7 @@ import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static gmjonker.math.NaType.NA;
@@ -231,6 +232,15 @@ public class GeneralMath
             temp += Math.pow(value, exponent);
         }
         return Math.pow(temp / values.length, 1.0 / exponent);
+    }
+
+    public static double powerMean(Collection<Double> values, double exponent)
+    {
+        double temp = 0;
+        for (double value : values) {
+            temp += Math.pow(value, exponent);
+        }
+        return Math.pow(temp / values.size(), 1.0 / exponent);
     }
 
     public static double rootMeanSquare(double[] values)

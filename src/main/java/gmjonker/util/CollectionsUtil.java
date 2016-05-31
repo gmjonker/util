@@ -25,6 +25,18 @@ public class CollectionsUtil
     protected static final LambdaLogger log = new LambdaLogger(CollectionsUtil.class);
 
     @Nonnull
+    public static <T, R> Collection<R> map(Collection<T> collection, Function<T, R> function)
+    {
+        if (collection == null)
+            return emptySet();
+
+        return collection.stream()
+                .filter(o -> o != null)
+                .map(function)
+                .collect(Collectors.toList());
+    }
+
+    @Nonnull
     public static <T, R> List<R> map(List<T> list, Function<T, R> function)
     {
         if (list == null)
@@ -169,6 +181,18 @@ public class CollectionsUtil
     {
         List<T> list = new ArrayList<>();
         Collections.addAll(list, objects);
+        return list;
+    }
+
+    /** Filters nulls from objects **/
+    @Nonnull
+    @SafeVarargs
+    public static <T> List<T> toList(T... objects)
+    {
+        List<T> list = new ArrayList<>();
+        for (T t : objects)
+            if (t != null)
+                list.add(t);
         return list;
     }
 

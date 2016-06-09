@@ -1,5 +1,6 @@
 package gmjonker.math;
 
+import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
 import gmjonker.util.LambdaLogger;
 
@@ -184,6 +185,8 @@ public class Indication implements Comparable<Indication>
 
     public static Indication parseString(String s)
     {
+        if (Strings.isNullOrEmpty(s))
+            return NA_INDICATION;
         try {
             String[] split = s.split("/");
             Integer value = Ints.tryParse(split[0]);

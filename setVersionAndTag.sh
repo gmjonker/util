@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-TAGFILE=src/main/resources/gitInfo.txt
+TAGFILE=src/main/resources/util/gitInfo.txt
 
 if [ $# -lt 1 ]
     then

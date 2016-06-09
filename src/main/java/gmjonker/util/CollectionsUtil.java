@@ -133,6 +133,12 @@ public class CollectionsUtil
         return collection.stream().filter(function::apply).collect(Collectors.toList());
     }
 
+    @Nonnull
+    public static <T> List<T> filterNulls(List<T> list)
+    {
+        return filter(list, element -> element != null);
+    }
+
     /**
      * Returns the results of pairwise applying {@code function} on the elements of {@code list1} and {@code list2}.
      */

@@ -3,6 +3,7 @@ package gmjonker.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
+import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.util.Arrays;
@@ -34,6 +35,8 @@ import java.util.function.Supplier;
  * Once you use one lambda method, you must use only lambda methods.
  *
  * TODO: have a look at http://stackoverflow.com/a/9039954/1901037
+ *
+ * TODO: use SubstituteLogger as delegate logger?
  */
 public class LambdaLogger implements Logger
 {
@@ -80,11 +83,13 @@ public class LambdaLogger implements Logger
     public final void errorOnce(String message, Object... argumentArray)
     {
         if (logger.isErrorEnabled()) {
-            String formattedMessage = MessageFormatter.arrayFormat(message, argumentArray).getMessage();
-            if (rememberedErrors.contains(formattedMessage))
+            FormattingTuple formattingTuple = MessageFormatter.arrayFormat(message, argumentArray);
+            String formattedMessage = formattingTuple.getMessage();
+            Throwable throwable = formattingTuple.getThrowable();
+            if (rememberedErrors.contains(formattedMessage + throwable.getMessage()))
                 return;
-            error(formattedMessage + " (Won't show this warning again)");
-            rememberedErrors.add(formattedMessage);
+            error(formattedMessage + " (Won't show this warning again)", throwable);
+            rememberedErrors.add(formattedMessage + throwable.getMessage());
         }
     }
 

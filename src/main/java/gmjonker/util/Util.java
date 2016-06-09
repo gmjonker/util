@@ -4,7 +4,6 @@ import com.google.common.base.Strings;
 
 import java.util.Map;
 
-import static com.sun.corba.se.spi.activation.IIOP_CLEAR_TEXT.value;
 import static gmjonker.math.GeneralMath.round;
 import static gmjonker.math.NaType.NA_I;
 
@@ -43,7 +42,7 @@ public class Util
         long allocated = round(1.0 * runtime.totalMemory() / 1024 / 1024);
         long free      = round(1.0 * runtime.freeMemory()  / 1024 / 1024);
         long used = allocated - free;
-        return String.format("Mem used: %s, alloc: %s, max: %s, free: %s", used, allocated, max, max - used);
+        return String.format("Mem used: %s, free: %s (alloc: %s, max: %s)", used, max - used, allocated, max);
     }
 
     public static String getEnvOrFail(String name)

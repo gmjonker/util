@@ -6,7 +6,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import org.apache.commons.collections4.CollectionUtils;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -33,8 +35,11 @@ public class FormattingUtil
     }
 
     /** Trims items to first three letters. **/
+    @Nonnull
     public static String shortForm(Collection<String> strings)
     {
+        if (CollectionUtils.isEmpty(strings))
+            return "";
         StringJoiner stringJoiner = new StringJoiner(",");
         for (String string : strings)
             stringJoiner.add(string.substring(0, min(3, string.length())));
@@ -260,7 +265,10 @@ public class FormattingUtil
             Integer width = col.toString().length();
             maxWidths.compute(col, (k, v) -> (v == null) ? width : max(v, width));
         }
+        int maxRowHeaderWidth = Integer.MAX_VALUE;
         for (R rowKey : table.rowKeySet()) {
+            if (rowKey.toString().length() < maxRowHeaderWidth)
+                maxRowHeaderWidth = rowKey.toString().length();
             Map<C, T> row = table.row(rowKey);
             for (C col : row.keySet()) {
                 T value = row.get(col);
@@ -268,12 +276,14 @@ public class FormattingUtil
                 maxWidths.compute(col, (k, v) -> (v == null) ? width : max(v, width));
             }
         }
+        result += toWidth("", maxRowHeaderWidth + 1);
         for (C col : table.columnKeySet()) {
             String string = toWidth(col.toString(), maxWidths.get(col) + 1);
             result += string;
         }
         result += System.lineSeparator();
         for (R rowKey : table.rowKeySet()) {
+            result += toWidth(rowKey.toString(), maxRowHeaderWidth) + " ";
             Map<C, T> row = table.row(rowKey);
             for (C col : row.keySet()) {
                 T value = row.get(col);

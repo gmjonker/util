@@ -2,6 +2,7 @@ package gmjonker.math;
 
 import com.google.common.primitives.Ints;
 import gmjonker.util.LambdaLogger;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.math3.analysis.function.Logit;
 import org.apache.commons.math3.analysis.function.Sigmoid;
 import org.apache.commons.math3.stat.StatUtils;
@@ -18,6 +19,7 @@ import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 /**
  * All methods are thread-safe.
  */
+@SuppressWarnings("WeakerAccess")
 public class GeneralMath
 {
     public static final double NANOS_TO_SECONDS = .001 * .001 * .001;
@@ -120,6 +122,16 @@ public class GeneralMath
         if (values.length == 0)
             return NA;
         return StatUtils.mean(values);
+    }
+
+    public static double mean(Collection<Double> values)
+    {
+        if (CollectionUtils.isEmpty(values))
+            return NA;
+        double sum = 0;
+        for (Double value : values)
+            sum += value;
+        return sum / values.size();
     }
 
     public static double weightedMean(double[] values, double[] weights)
@@ -465,4 +477,13 @@ public class GeneralMath
         }
     }
 
+    /**
+     * This function looks a bit like a non-tight rope between (0,0) and (1,1) within that interval.
+     * http://rechneronline.de/function-graphs/
+     * a0=2&a1=(1/(-1.5x+2) - .5) / 1.5&a2=&a3=&a4=1&a5=4&a6=8&a7=1&a8=1&a9=1&b0=480&b1=480&b2=-1&b3=2&b4=-1&b5=2&b6=12&b7=12&b8=3&b9=3&c0=3&c1=0&c2=1&c3=1&c4=1&c5=1&c6=1&c7=0&c8=0&c9=0&d0=1&d1=12&d2=12&d3=0&d4=&d5=&d6=&d7=&d8=&d9=&e0=&e1=&e2=&e3=&e4=14&e5=14&e6=13&e7=12&e8=0&e9=0&f0=0&f1=1&f2=1&f3=0&f4=0&f5=&f6=&f7=&f8=&f9=&g0=&g1=1&g2=1&g3=0&g4=0&g5=0&g6=Y&g7=ffffff&g8=a0b0c0&g9=6080a0&h0=1&z
+     */
+    public static double expand(double x)
+    {
+        return (1.0 /(-1.5 * x + 2) - .5) / 1.5;
+    }
 }

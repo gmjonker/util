@@ -6,8 +6,10 @@ import com.google.common.math.DoubleMath;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 import org.junit.*;
 
+import static com.google.common.primitives.Doubles.asList;
 import static gmjonker.math.GeneralMath.abs;
 import static gmjonker.math.GeneralMath.max;
+import static gmjonker.math.GeneralMath.mean;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
 import static junit.framework.Assert.assertEquals;
@@ -73,6 +75,12 @@ public class GeneralMathTest
         // Verify that x = logit(sigmoid(x))
         assertThat(maxDiff1, closeTo(0, .0000000001));
         assertThat(maxDiff2, closeTo(0, .0000000001));
+    }
+
+    @Test
+    public void testMean()
+    {
+        Assert.assertThat(mean(asList(1, 2, 3.3)), closeTo(6.3/3, .000001));
     }
 
     @Test
@@ -286,5 +294,11 @@ public class GeneralMathTest
         System.out.println(GeneralMath.exponentialMovingAverageV3(new double[]{0, 0, 1, 0, 0}, alpha));
         System.out.println(GeneralMath.exponentialMovingAverageV3(new double[]{0, 1, 0, 0, 0}, alpha));
         System.out.println(GeneralMath.exponentialMovingAverageV3(new double[]{1, 0, 0, 0, 0}, alpha));
+    }
+
+    @Test
+    public void expand()
+    {
+        TextPlot.plotf(GeneralMath::expand, 0, 1, -.2, 1, 100, 40);
     }
 }

@@ -26,11 +26,11 @@ public class IndicationTest
     @Test
     public void isIndication()
     {
-        assertTrue(new Indication(.1, .2).isIndication());
-        assertFalse(new Indication(.1, 0).isIndication());
-        assertFalse(new Indication(.1, -1).isIndication());
-        assertFalse(new Indication(.1, NA).isIndication());
-        assertFalse(Indication.NA_INDICATION.isIndication());
+        assertTrue(new Indication(.1, .2).indicatesSomething());
+        assertFalse(new Indication(.1, 0).indicatesSomething());
+        assertFalse(new Indication(.1, -1).indicatesSomething());
+        assertFalse(new Indication(.1, NA).indicatesSomething());
+        assertFalse(Indication.NA_INDICATION.indicatesSomething());
     }
 
     @Test

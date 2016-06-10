@@ -40,6 +40,8 @@ public class Indication implements Comparable<Indication>
     public final double value;
     public final double confidence;
 
+    public String comment; // can be handy for explanations
+
     protected static final LambdaLogger log = new LambdaLogger(Indication.class);
 
     public Indication(double value, double confidence)
@@ -62,7 +64,7 @@ public class Indication implements Comparable<Indication>
     }
 
     /** Is valid and confidence > 0. **/
-    public boolean isIndication()
+    public boolean indicatesSomething()
     {
         return isValid() && confidence > 0;
     }

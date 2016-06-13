@@ -168,6 +168,23 @@ public class CollectionsUtil
         return set;
     }
 
+    @Nonnull
+    public static <K,V> LinkedHashMap<K,V> asMap(K key, V value)
+    {
+        LinkedHashMap<K,V> map = new LinkedHashMap<K, V>();
+        map.put(key, value);
+        return map;
+    }
+
+    @Nonnull
+    public static <K,V> LinkedHashMap<K,V> asMap(K k1, V v1, K k2, V v2)
+    {
+        LinkedHashMap<K,V> map = new LinkedHashMap<K, V>();
+        map.put(k1, v1);
+        map.put(k2, v2);
+        return map;
+    }
+
     /**
      * Null-safe variant of {@code new ArrayList<T>(Collection<T> collection)}
      */

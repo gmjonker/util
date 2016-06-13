@@ -40,7 +40,7 @@ public class Indication implements Comparable<Indication>
     public final double value;
     public final double confidence;
 
-    public String comment; // can be handy for explanations
+    public String comment = ""; // can be handy for explanations
 
     protected static final LambdaLogger log = new LambdaLogger(Indication.class);
 
@@ -164,12 +164,12 @@ public class Indication implements Comparable<Indication>
 
     public String toMicroString()
     {
-        return toMicroFormat(value) + "/" + toMicroFormat(confidence);
+        return toMicroFormatM11(value) + "/" + toMicroFormat(confidence);
     }
 
     public String toPicoString()
     {
-        return toMicroFormat(value) + toMicroFormatABC(confidence);
+        return toMicroFormatM11(value) + toMicroFormatABC(confidence);
     }
 
     public String toAlignedString()

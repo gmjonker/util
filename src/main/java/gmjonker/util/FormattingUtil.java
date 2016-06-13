@@ -113,6 +113,26 @@ public class FormattingUtil
             return "-";
         long rounded = round(d * 10);
         if (rounded < 0)
+            return "" + (char)('\u2473' - rounded);
+        else if (rounded < 10)
+            return String.valueOf(rounded);
+        else if (rounded == 10)
+            return "T";
+        else if (rounded > 10)
+            return ">";
+        throw new RuntimeException("This is not supposed to happen");
+    }
+
+    /**
+     * Formats a value in (-1,1) as a single digit, where -1->0, -.8->2, ..., 0->5, .2->6, ... .8->9, 1->T, > 1 -> '>', < -1 -> '<'
+     * @param d value in (-1,1)
+     **/
+    public static String toMicroFormatM11(double d)
+    {
+        if ( ! isValue(d))
+            return "-";
+        long rounded = round(d * 5) + 5; // result in (0..10)
+        if (rounded < 0)
             return "<";
         else if (rounded < 10)
             return String.valueOf(rounded);
@@ -124,7 +144,7 @@ public class FormattingUtil
     }
 
     /**
-     * Formats a positive score value as a single character, where 0=A, ... , 1=E
+     * Formats a positive score value as a single character, where 0=A, ... , 1=E, -0=z, ..., -1=v
      **/
     public static String toMicroFormatABC(double d)
     {
@@ -132,8 +152,12 @@ public class FormattingUtil
         if ( ! isValue(d))
             return "-";
         long rounded = round(d * numSteps);
-        if (rounded < 0)
+        if (rounded < -numSteps) {
+            System.out.println("rounded = " + rounded);
             return "<";
+        }
+        else if (rounded >= -numSteps && rounded < 0)
+            return "" + (char)('m' + rounded);
         else if (rounded <= numSteps)
             return "" + (char)('A' + rounded);
         else if (rounded > numSteps)

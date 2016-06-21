@@ -4,6 +4,7 @@ import gmjonker.util.LambdaLogger;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static gmjonker.math.GeneralMath.*;
@@ -45,7 +46,7 @@ public class ScoreMath
      *
      * <p>Score values in range (0,1)
      **/
-    public static Score combine01(List<Score> scores)
+    public static Score combine01(Collection<Score> scores)
     {
         long now = System.nanoTime();
         Score[] scoreArray = new Score[scores.size()];

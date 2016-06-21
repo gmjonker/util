@@ -269,6 +269,15 @@ public class GeneralMath
         return Math.sqrt(temp / values.length);
     }
 
+    public static double rootMeanSquareError(Collection<Double> values)
+    {
+        double temp = 0;
+        for (double value : values) {
+            temp += Math.pow(1 - value, 2);
+        }
+        return Math.sqrt(temp / values.size());
+    }
+
     public static double rootWeightedMeanSquareError(double[] values, double[] weights)
     {
         double temp = 0;

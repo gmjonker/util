@@ -1,7 +1,7 @@
 package gmjonker.math;
 
 import com.google.common.base.Strings;
-import com.google.common.primitives.Ints;
+import com.google.common.primitives.Doubles;
 import gmjonker.util.LambdaLogger;
 
 import java.util.List;
@@ -159,7 +159,7 @@ public class Indication implements Comparable<Indication>
 
     public String toLongString()
     {
-        return value + "/" + confidence;
+        return String.format("%.5f/%.5f->%.5f", value, confidence, deriveDouble());
     }
 
     public String toShortString()
@@ -190,15 +190,20 @@ public class Indication implements Comparable<Indication>
         return result;
     }
 
-    public static Indication parseString(String s)
+    public String serialize()
+    {
+        return String.format("%.5f/%.5f", value, confidence);
+    }
+
+    public static Indication deserialize(String s)
     {
         if (Strings.isNullOrEmpty(s))
             return NA_INDICATION;
         try {
             String[] split = s.split("/");
-            Integer value = Ints.tryParse(split[0]);
-            Integer confidence = Ints.tryParse(split[1]);
-            return new Indication(value != null ? .01 * value : NA, confidence != null ? .01 * confidence : NA);
+            Double value = Doubles.tryParse(split[0]);
+            Double confidence = Doubles.tryParse(split[1]);
+            return new Indication(value != null ? value : NA, confidence != null ? confidence : NA);
         } catch (Exception ex) {
             log.error("Could not parse '{}'", s);
             throw ex;

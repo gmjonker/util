@@ -61,6 +61,14 @@ public class GeneralMath
         return Math.round(x);
     }
 
+    public static long floor(double x)
+    {
+        return (long) Math.floor(x);
+    }
+
+    /**
+     * @param decimals decimals after the dot.
+     */
     public static double round(double value, int decimals)
     {
         return Math.round(value * pow(10, decimals)) / pow(10, decimals);

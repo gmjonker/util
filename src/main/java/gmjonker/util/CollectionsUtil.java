@@ -315,6 +315,10 @@ public class CollectionsUtil
         return values;
     }
 
+    //
+    // ###################################################### SORTING ##################################################
+    //
+
     /**
      * Sorts a map by value. Adapted from http://stackoverflow.com/a/2581754/1901037
      *
@@ -366,7 +370,7 @@ public class CollectionsUtil
      *
      * <p>Example usage:</p>
      * <pre>
-     *  Map&lt;Integer, ContentBasedScore&gt; sortedContentBasedScoreColumn =
+     *  Map&lt;Integer, ContentBasedScore&gt; sortedcontentBasedScores =
      *      sortMap(recommendation.contentBasedScores, cbs -> cbs.contentBased);
      * </pre>
      * @return New hash map, sorted.
@@ -399,7 +403,7 @@ public class CollectionsUtil
      *
      * <p>Example usage:</p>
      * <pre>
-     *  Map&lt;Integer, ContentBasedScore&gt; sortedContentBasedScoreColumn =
+     *  Map&lt;Integer, ContentBasedScore&gt; sortedcontentBasedScores =
      *      sortMap(recommendation.contentBasedScores, cbs -> cbs.contentBasedScore);
      * </pre>
      *
@@ -414,7 +418,7 @@ public class CollectionsUtil
         Comparator<Map.Entry<K, V>> comparator =
                 Comparator.comparingDouble(e -> getValueOr(function.apply(e.getValue()), Double.MIN_VALUE));
         return map.entrySet().stream()
-                .sorted()
+                .sorted(comparator)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
@@ -424,7 +428,7 @@ public class CollectionsUtil
      *
      * <p>Example usage:</p>
      * <pre>
-     *  Map&lt;Integer, ContentBasedScore&gt; sortedContentBasedScoreColumn =
+     *  Map&lt;Integer, ContentBasedScore&gt; sortedcontentBasedScores =
      *      sortMap(recommendation.contentBasedScores, cbs -> cbs.contentBasedScore);
      * </pre>
      *

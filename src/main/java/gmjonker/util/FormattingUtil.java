@@ -144,25 +144,25 @@ public class FormattingUtil
     }
 
     /**
-     * Formats a positive score value as a single character, where 0=A, ... , 1=E, -0=z, ..., -1=v
+     * Formats a positive score value as a single character, where 0=F, ... , 1=A, -0=z, ..., -1=v
      **/
     public static String toMicroFormatABC(double d)
     {
-        final int numSteps = 4;
+        final int numSteps = 5;
         if ( ! isValue(d))
             return "-";
-        long rounded = round(d * numSteps);
-        if (rounded < -numSteps) {
-            System.out.println("rounded = " + rounded);
+        if (d < -1) {
             return "<";
         }
-        else if (rounded >= -numSteps && rounded < 0)
-            return "" + (char)('m' + rounded);
-        else if (rounded <= numSteps)
-            return "" + (char)('A' + rounded);
-        else if (rounded > numSteps)
+        if (d > 1) {
             return ">";
-        throw new RuntimeException("This is not supposed to happen");
+        }
+        long step = floor(d * numSteps);
+        if (d < 0)
+            return "" + (char)('z' + step + 1);
+        else if (d >= 0)
+            return "" + (char)('F' - step);
+        return "?";
     }
 
     /**
@@ -281,6 +281,7 @@ public class FormattingUtil
         return gson.toJson(je);
     }
 
+    // Implementation is a bit slow, beware.
     public static <R, C, T> String format(Table<R, C, T> table)
     {
         String result = "";
@@ -306,6 +307,7 @@ public class FormattingUtil
             result += string;
         }
         result += System.lineSeparator();
+        int count = 0;
         for (R rowKey : table.rowKeySet()) {
             result += toWidth(rowKey.toString(), maxRowHeaderWidth) + " ";
             Map<C, T> row = table.row(rowKey);
@@ -315,6 +317,8 @@ public class FormattingUtil
                 result += string;
             }
             result += System.lineSeparator();
+            if (count++ % 100 == 0)
+                System.out.print(".");
         }
         return result;
     }

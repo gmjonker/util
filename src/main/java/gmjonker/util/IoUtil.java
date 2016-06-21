@@ -153,7 +153,7 @@ public class IoUtil
         return results;
     }
 
-    public static <R, C, T> void writeTableToCsv(Table<R, C, T> table, String fileName) throws IOException
+    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName) throws IOException
     {
         CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
         csvPrinter.print("");
@@ -164,6 +164,38 @@ public class IoUtil
             csvPrinter.print(rowKey);
             for (C columnKey : table.columnKeySet())
                 csvPrinter.print(table.get(rowKey, columnKey));
+            csvPrinter.println();
+        }
+        csvPrinter.close();
+    }
+
+    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, Function<V, String> valueTransformer) throws IOException
+    {
+        CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
+        csvPrinter.print("");
+        for (C columnKey : table.columnKeySet())
+            csvPrinter.print(columnKey);
+        csvPrinter.println();
+        for (R rowKey : table.rowKeySet()) {
+            csvPrinter.print(rowKey);
+            for (C columnKey : table.columnKeySet())
+                csvPrinter.print(valueTransformer.apply(table.get(rowKey, columnKey)));
+            csvPrinter.println();
+        }
+        csvPrinter.close();
+    }
+
+    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, Function<C, String> columnHeaderTransformer, Function<V, String> valueTransformer) throws IOException
+    {
+        CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
+        csvPrinter.print("");
+        for (C columnKey : table.columnKeySet())
+            csvPrinter.print(columnHeaderTransformer.apply(columnKey));
+        csvPrinter.println();
+        for (R rowKey : table.rowKeySet()) {
+            csvPrinter.print(rowKey);
+            for (C columnKey : table.columnKeySet())
+                csvPrinter.print(valueTransformer.apply(table.get(rowKey, columnKey)));
             csvPrinter.println();
         }
         csvPrinter.close();

@@ -4,7 +4,7 @@ import gmjonker.util.LambdaLogger;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.NA;
@@ -40,7 +40,7 @@ public class IndicationMath
      *
      * <p>Indication values in range (-1,1)
      **/
-    public static Indication combine(List<Indication> indications)
+    public static Indication combine(Collection<Indication> indications)
     {
         Indication[] indicationArray = new Indication[indications.size()];
         return combine(indications.toArray(indicationArray), null);

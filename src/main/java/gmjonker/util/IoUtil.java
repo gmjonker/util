@@ -20,6 +20,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@SuppressWarnings("WeakerAccess")
 public class IoUtil
 {
     protected static final LambdaLogger log = new LambdaLogger(IoUtil.class);
@@ -36,27 +37,34 @@ public class IoUtil
 
     public static List<String> readFileOrThrowException(String name) throws IOException
     {
-        try {
-            // This way of getting to a resource seems to work in Docker, Maven and Intellij IDEA.
-            InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream));
-            return reader.lines().collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
+        return getFileAsStreamOfLines(name).collect(Collectors.toList());
     }
 
     public static String readFileAsOneStringOrThrowException(String name) throws IOException
     {
-        try {
-            log.debug("Getting resource {}", name);
-            // This way of getting to a resource seems to work in Docker, Maven and Intellij IDEA.
-            InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream));
-            return reader.lines().collect(Collectors.joining("\n"));
-        } catch (Exception e) {
-            throw new IOException(e);
+        return getFileAsStreamOfLines(name).collect(Collectors.joining(System.lineSeparator()));
+    }
+
+    private static Stream<String> getFileAsStreamOfLines(String name) throws IOException
+    {
+        log.debug("Getting file {}", name);
+        BufferedReader reader;
+        // This way of getting to a resource seems to work in Docker, Maven and Intellij IDEA.
+        InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
+        if (resourceAsStream != null) {
+            reader = new BufferedReader(new InputStreamReader(resourceAsStream));
+        } else {
+            log.info("Could not find resource '{}', will now try to attempt to read in working directory '{}'...", name,
+                    System.getProperty("user.dir"));
+            File file = new File(name);
+            if ( ! file.exists()) {
+                log.info("Couldn't find find resource '{}' in the working directory either", name);
+                throw new IOException("Could not find resource '" + name + "'");
+            } else {
+                reader = new BufferedReader(new FileReader(file));
+            }
         }
+        return reader.lines();
     }
 
     public static CSVParser readCsvFileWithHeaders(String fileName) throws IOException

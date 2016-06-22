@@ -3,6 +3,8 @@ package gmjonker.util;
 import com.google.common.base.Strings;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
 
 import static gmjonker.math.GeneralMath.round;
 import static gmjonker.math.NaType.NA_I;
@@ -114,6 +116,17 @@ public class Util
             return Integer.valueOf(s);
         } catch (NumberFormatException e) {
             return NA_I;
+        }
+    }
+
+    public static void continuationPrompt(String message)
+    {
+        System.out.println(message + " Continue? [Yn]");
+        Scanner scanner = new Scanner(System.in);
+        String answer = scanner.nextLine().toLowerCase();
+        if (!Objects.equals(answer, "y") && !Objects.equals(answer, "")) {
+            System.out.println("Exiting.");
+            System.exit(-1);
         }
     }
 }

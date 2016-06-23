@@ -27,17 +27,10 @@ public class Util
 
     public static void logMemory()
     {
-        Runtime runtime = Runtime.getRuntime();
-        long max       = round(1.0 * runtime.maxMemory()   / 1024 / 1024);
-        long allocated = round(1.0 * runtime.totalMemory() / 1024 / 1024);
-        long free      = round(1.0 * runtime.freeMemory()  / 1024 / 1024);
-        log.info("Allocated memory (mb):                       {}", allocated);
-        log.info("Free memory within allocated (mb):           {}", free);
-        log.info("Max usable memory (mb):                      {}", max);
-        log.info("Max memory that still can be allocated (mb): {}", max - allocated);
+        log.info(getConciseMemoryInfo());
     }
 
-    public static String getConciseMemoryInfo()
+    private static String getConciseMemoryInfo()
     {
         Runtime runtime = Runtime.getRuntime();
         long max       = round(1.0 * runtime.maxMemory()   / 1024 / 1024);

@@ -120,6 +120,18 @@ public class IoUtil
         return map;
     }
 
+    /** CSV file must not have headers. **/
+    public static <K, V> LinkedHashMap<K,V> readTwoColumnCsvIntoMapOrEmptyMap(String fileName,
+            Function<String, K> keyTransform, Function<String, V> valueTransform)
+    {
+        try {
+            return readTwoColumnCsvIntoMap(fileName, keyTransform, valueTransform);
+        } catch (IOException e) {
+            log.error("Could not read file '{}'", fileName,  e);
+            return new LinkedHashMap<>();
+        }
+    }
+
     /** Returns relative filenames, e.g. "restaurantTaggings/Amersfoort.csv". **/
     public static List<String> getFilenamesInDirectory(String directoryName) throws IOException
     {

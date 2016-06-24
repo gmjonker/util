@@ -11,6 +11,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.isValue;
@@ -105,26 +106,28 @@ public class FormattingUtil
     }
 
     /**
-     * Formats a positive score value as a single character, where 0=0, 1=.1, 2=.2, ..., 9=.1, T=1, +=>1
+     * Formats a positive score value as a single character, where 0->0, .1->1, .2->2, ..., .9->9, 1->T, <0 -> '<', >0 -> '>'
      **/
-    public static String toMicroFormat(double d)
+    public static String toMicroFormatM01(double d)
     {
         if ( ! isValue(d))
             return "-";
+        if (d < 0) {
+            return "<";
+        }
+        if (d > 1) {
+            return ">";
+        }
         long rounded = round(d * 10);
-        if (rounded < 0)
-            return "" + (char)('\u2473' - rounded);
-        else if (rounded < 10)
+        if (rounded < 10)
             return String.valueOf(rounded);
         else if (rounded == 10)
             return "T";
-        else if (rounded > 10)
-            return ">";
         throw new RuntimeException("This is not supposed to happen");
     }
 
     /**
-     * Formats a value in (-1,1) as a single digit, where -1->0, -.8->2, ..., 0->5, .2->6, ... .8->9, 1->T, > 1 -> '>', < -1 -> '<'
+     * Formats a value in (-1,1) as a single digit, where -1->0, -.8->2, ..., 0->5, .2->6, ... .8->9, 1->T, >1 -> '>', <-1 -> '<'
      * @param d value in (-1,1)
      **/
     public static String toMicroFormatM11(double d)
@@ -282,7 +285,13 @@ public class FormattingUtil
     }
 
     // Implementation is a bit slow, beware.
-    public static <R, C, T> String format(Table<R, C, T> table)
+    public static <R, C, V> String format(Table<R, C, V> table)
+    {
+        return format(table, Object::toString);
+    }
+
+    // Implementation is a bit slow, beware.
+    public static <R, C, V> String format(Table<R, C, V> table, Function<V, String> valueFormatter)
     {
         String result = "";
         HashMap<C, Integer> maxWidths = new HashMap<>();
@@ -294,10 +303,10 @@ public class FormattingUtil
         for (R rowKey : table.rowKeySet()) {
             if (rowKey.toString().length() < maxRowHeaderWidth)
                 maxRowHeaderWidth = rowKey.toString().length();
-            Map<C, T> row = table.row(rowKey);
+            Map<C, V> row = table.row(rowKey);
             for (C col : row.keySet()) {
-                T value = row.get(col);
-                Integer width = value.toString().length();
+                V value = row.get(col);
+                Integer width = valueFormatter.apply(value).length();
                 maxWidths.compute(col, (k, v) -> (v == null) ? width : max(v, width));
             }
         }
@@ -310,15 +319,15 @@ public class FormattingUtil
         int count = 0;
         for (R rowKey : table.rowKeySet()) {
             result += toWidth(rowKey.toString(), maxRowHeaderWidth) + " ";
-            Map<C, T> row = table.row(rowKey);
+            Map<C, V> row = table.row(rowKey);
             for (C col : row.keySet()) {
-                T value = row.get(col);
-                String string = toWidth(value.toString(), maxWidths.get(col) + 1);
+                V value = row.get(col);
+                String string = toWidth(valueFormatter.apply(value), maxWidths.get(col) + 1);
                 result += string;
             }
             result += System.lineSeparator();
-            if (count++ % 100 == 0)
-                System.out.print(".");
+//            if (count++ % 100 == 0)
+//                System.out.print(".");
         }
         return result;
     }

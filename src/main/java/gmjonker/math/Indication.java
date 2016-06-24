@@ -169,7 +169,7 @@ public class Indication implements Comparable<Indication>
 
     public String toMicroString()
     {
-        return toMicroFormatM11(value) + "/" + toMicroFormat(confidence);
+        return toMicroFormatM11(value) + "/" + toMicroFormatM01(confidence);
     }
 
     public String toPicoString()

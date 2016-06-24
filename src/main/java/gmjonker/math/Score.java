@@ -11,7 +11,7 @@ import static gmjonker.math.NaType.isValue;
 import static gmjonker.math.Range.from01toM11;
 import static gmjonker.math.ScoreMath.combine01;
 import static gmjonker.util.FormattingUtil.toMicroFormatABC;
-import static gmjonker.util.FormattingUtil.toMicroFormatM11;
+import static gmjonker.util.FormattingUtil.toMicroFormatM01;
 import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
 
 /**
@@ -191,7 +191,7 @@ public class Score
 
     public String toPicoString()
     {
-        return toMicroFormatM11(value) + toMicroFormatABC(confidence);
+        return toMicroFormatM01(value) + toMicroFormatABC(confidence);
     }
 
     public static String printScoresAligned(List<Score> scores)

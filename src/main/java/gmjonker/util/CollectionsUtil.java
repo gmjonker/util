@@ -1,5 +1,8 @@
 package gmjonker.util;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
@@ -218,6 +221,18 @@ public class CollectionsUtil
                 list.add(t);
         return list;
     }
+
+    @Nonnull
+    public static <R,C,V> Table<R,C,V> asTableSingleRow(R rowKey, Map<C,V> map)
+    {
+        Table<R,C,V> table = HashBasedTable.create();
+        for (C columnKey : map.keySet()) {
+            table.put(rowKey, columnKey, map.get(columnKey));
+        }
+        return table;
+    }
+
+
 
     @Nonnull
     public static double[] toPrimitiveDoubleArray(List<Double> doubleList)

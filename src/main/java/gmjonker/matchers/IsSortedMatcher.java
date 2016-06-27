@@ -7,9 +7,6 @@ import org.hamcrest.TypeSafeMatcher;
 
 import java.util.List;
 
-/**
- * Verifies that a double is not NaN
- */
 public class IsSortedMatcher<T extends Comparable> extends TypeSafeMatcher<List<T>>
 {
     private final boolean reverse;

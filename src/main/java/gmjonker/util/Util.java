@@ -30,7 +30,7 @@ public class Util
         log.info(getConciseMemoryInfo());
     }
 
-    private static String getConciseMemoryInfo()
+    public static String getConciseMemoryInfo()
     {
         Runtime runtime = Runtime.getRuntime();
         long max       = round(1.0 * runtime.maxMemory()   / 1024 / 1024);

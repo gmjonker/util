@@ -1,6 +1,7 @@
 package gmjonker.util;
 
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Multiset;
 import com.google.common.collect.Table;
 
 import javax.annotation.Nonnull;
@@ -461,5 +462,10 @@ public class CollectionsUtil
                 .sorted(comparator.reversed())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
+    }
+
+    public static <T> List<Multiset.Entry<T>> sortMultisetByCounts(Multiset<T> multiSet)
+    {
+        return multiSet.entrySet().stream().sorted((e1, e2) -> e2.getCount() - e1.getCount()).collect(Collectors.toList());
     }
 }

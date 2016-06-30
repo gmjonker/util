@@ -80,6 +80,12 @@ public class CollectionsUtil
     }
 
     @Nonnull
+    public static <K, V1, V2> Map<K, V2> mapValues(Map<K, V1> map, Function<V1, V2> valueMapper)
+    {
+        return map(map, Function.identity(), valueMapper);
+    }
+
+    @Nonnull
     public static <K1,V1,K2,V2> LinkedHashMap<K2,V2> map(LinkedHashMap<K1,V1> map, Function<K1,K2> keyMapper, Function<V1,V2> valueMapper)
     {
         if (map == null)

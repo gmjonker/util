@@ -21,6 +21,12 @@
     </repositories>
 
     <dependencies>
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.8</version>
+        </dependency>
         <!-- Various general utility packages -->
         <dependency>
             <groupId>org.apache.commons</groupId>

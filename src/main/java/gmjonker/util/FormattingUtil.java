@@ -268,6 +268,7 @@ public class FormattingUtil
 
     public static String toWidth(String string, int width)
     {
+        width = max(0, width);
         return Strings.padEnd("" + string, width, ' ').substring(0, width);
     }
 

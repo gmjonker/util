@@ -167,6 +167,8 @@ public class GeneralMathTest
     public void rootWeightedMeanSquareError()
     {
         assertEquals(GeneralMath.rootWeightedMeanSquareError(new double[]{.3, .5, .7}, new double[]{.5, 1., 2}), 0.439155, 0.00001);
+        assertEquals(GeneralMath.rootWeightedMeanSquareError(new double[]{.3, .5, .7}, new double[]{.5, 1., 2}),
+                GeneralMath.rootWeightedMeanSquareError(asList(.3, .5, .7), asList(.5, 1., 2)), 0.00001);
     }
 
     @Test

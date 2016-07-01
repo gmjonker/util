@@ -138,16 +138,10 @@ public class ScoreMath
      **/
     public static Score combineM11(Score[] scores, @Nullable double[] weights)
     {
-        final double sigmoidRangeLow = -1.1;
-        final double sigmoidRangeHigh = 1.1;
-
         log.trace("combineM11({}, {})", () -> Arrays.toString(scores), () -> Arrays.toString(weights));
         double[] values = new double[scores.length];
         double[] confidences = new double[scores.length];
         double[] adjustedWeights = new double[scores.length];
-        // We take the inverse fastSigmoidAlternative() of confidences, then accumulate them, then take the fastSigmoidAlternative(). This results in the
-        // effect of two confidences of .9 adding up to something like .98 for instance (if the values are equal or similar).
-        double[] logitConfidences = new double[scores.length];
         double maxWeight = weights == null ? NA : max(weights);
         for (int i = 0; i < scores.length; i++) {
             values[i] = scores[i].value;
@@ -155,7 +149,6 @@ public class ScoreMath
             adjustedWeights[i] = weights == null ? 1
                                                  : maxWeight > 1 ? weights[i] * 1 / maxWeight : weights[i];
             confidences[i] = scores[i].confidence * adjustedWeights[i];
-            logitConfidences[i] = logit(confidences[i], sigmoidRangeLow, sigmoidRangeHigh);
         }
 
         if (sum(confidences) == 0)
@@ -164,8 +157,31 @@ public class ScoreMath
         double weightedMean = weightedMeanIgnoreNAs(values, confidences);
         log.trace("    wgtdMn:{}", weightedMean);
 
+        double totalConf = calculateCombinedConfidenceM11(values, confidences);
+
+        Score result = new Score(weightedMean, totalConf);
+        log.trace("    lgttc: {}", totalConf);
+        log.trace("    totco: {}", totalConf);
+        log.trace("    rs-11: {}", result);
+        return result;
+    }
+
+    private static double calculateCombinedConfidenceM11(double[] values, double[] confidences)
+    {
+        final double sigmoidRangeLow = -1.1;
+        final double sigmoidRangeHigh = 1.1;
+
+        double weightedMean = weightedMeanIgnoreNAs(values, confidences);
+
+        // We take the inverse logit of confidences, then accumulate them, then take the sigmoid. This results in the
+        // effect of two confidences of .9 adding up to something like .98 for instance (if the values are equal or similar).
+        double[] logitConfidences = new double[values.length];
+        for (int i = 0; i < values.length; i++) {
+            logitConfidences[i] = logit(confidences[i], sigmoidRangeLow, sigmoidRangeHigh);
+        }
+
         double totalConf = 0;
-        for (int i = 0; i < scores.length; i++) {
+        for (int i = 0; i < values.length; i++) {
             if ( ! isValue(values[i]) || ! isValue(confidences[i]) )
                 continue;
             // Diff is how much this score is disagreeing with the average score
@@ -177,7 +193,7 @@ public class ScoreMath
             double agreement = 1 - diff;
             double totalConfAddition = logitConfidences[i] * pow(agreement, 2); // powering agreement gives less addition to total confidence
             totalConf += totalConfAddition;
-            log.trace("    score: {}", scores[i]);
+            log.trace("    score: {}", new Score(values[i], confidences[i]));
             log.trace("      diff : {}", diff);
             log.trace("      agrmnt:{}", agreement);
             log.trace("      logtco:{}", logitConfidences[i]);
@@ -185,11 +201,7 @@ public class ScoreMath
         }
         totalConf = sigmoid(totalConf, sigmoidRangeLow, sigmoidRangeHigh);
         totalConf = limit(totalConf, 0, 1);
-        Score result = new Score(weightedMean, totalConf);
-        log.trace("    lgttc: {}", totalConf);
-        log.trace("    totco: {}", totalConf);
-        log.trace("    rs-11: {}", result);
-        return result;
+        return totalConf;
     }
 
     /**

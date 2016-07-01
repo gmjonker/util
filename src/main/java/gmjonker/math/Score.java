@@ -2,6 +2,7 @@ package gmjonker.math;
 
 import gmjonker.util.FormattingUtil;
 import gmjonker.util.LambdaLogger;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
 import static gmjonker.math.Range.from01toM11;
 import static gmjonker.math.ScoreMath.combine01;
+import static gmjonker.util.FormattingUtil.asPercentageTwoSpaces;
 import static gmjonker.util.FormattingUtil.toMicroFormatABC;
 import static gmjonker.util.FormattingUtil.toMicroFormatM01;
 import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
@@ -39,8 +41,8 @@ public class Score
     public static final Score MAX = new Score(1, 1);
     public static final Score MIN = new Score(0, 1);
 
-    public final double value;
-    public final double confidence;
+    @Getter public final double value;
+    @Getter public final double confidence;
     
     protected static final LambdaLogger log = new LambdaLogger(Score.class);
 
@@ -175,8 +177,8 @@ public class Score
     @Override
     public String toString()
     {
-        //return "Score{" + toShortString() + "}";
-        return FormattingUtil.asPercentageTwoSpaces(value).trim() + "/" + FormattingUtil.asPercentageTwoSpaces(confidence).trim();
+        return asPercentageTwoSpaces(value).trim() + "/" + asPercentageTwoSpaces(confidence).trim()
+                + "(" + asPercentageTwoSpaces(deriveDouble0101()) + ")";
     }
 
     public String toShortString()
@@ -186,7 +188,7 @@ public class Score
 
     public String toAlignedString()
     {
-        return FormattingUtil.asPercentageTwoSpaces(value) + "/" + FormattingUtil.asPercentageTwoSpaces(confidence);
+        return asPercentageTwoSpaces(value) + "/" + asPercentageTwoSpaces(confidence);
     }
 
     public String toPicoString()

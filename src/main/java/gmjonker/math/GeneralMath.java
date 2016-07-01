@@ -297,6 +297,43 @@ public class GeneralMath
         return Math.sqrt(temp / weightsSum);
     }
 
+    public static double rootWeightedMeanSquareError(List<Double> values, List<Double> weights)
+    {
+        double temp = 0;
+        double weightsSum = 0;
+        for (int i = 0; i < values.size(); i++) {
+            temp += weights.get(i) * Math.pow(1 - values.get(i), 2);
+            weightsSum += weights.get(i);
+        }
+        return Math.sqrt(temp / weightsSum);
+    }
+
+    public static double rootWeightedMeanSquareErrorIgnoreNAs(double[] values, double[] weights)
+    {
+        double temp = 0;
+        double weightsSum = 0;
+        for (int i = 0; i < values.length; i++) {
+            if ( ! isValue(values[i]) || ! isValue(weights[i]))
+                continue;
+            temp += weights[i] * Math.pow(1 - values[i], 2);
+            weightsSum += weights[i];
+        }
+        return Math.sqrt(temp / weightsSum);
+    }
+
+    public static double rootWeightedMeanSquareErrorIgnoreNAs(List<Double> values, List<Double> weights)
+    {
+        double temp = 0;
+        double weightsSum = 0;
+        for (int i = 0; i < values.size(); i++) {
+            if ( ! isValue(values.get(i)) || ! isValue(weights.get(i)))
+                continue;
+            temp += weights.get(i) * Math.pow(1 - values.get(i), 2);
+            weightsSum += weights.get(i);
+        }
+        return Math.sqrt(temp / weightsSum);
+    }
+
     public static double harmonicMean(double[] values)
     {
         return powerMean(values, -1);

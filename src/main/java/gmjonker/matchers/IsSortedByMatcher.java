@@ -23,34 +23,19 @@ public class IsSortedByMatcher<T, U extends Comparable<U>> extends TypeSafeMatch
     @Override
     public boolean matchesSafely(List<T> list)
     {
-            if (reverse) {
-                Comparator<T> comparator = new Comparator<T>()
-                {
-                    @Override
-                    public int compare(T o1, T o2)
-                    {
-                        return mapper.apply(o1).compareTo(mapper.apply(o2));
-                    }
-                };
-                return Ordering.from(comparator).reverse().isOrdered(list);
-            }
-            else {
-                Comparator<T> comparator = new Comparator<T>()
-                {
-                    @Override
-                    public int compare(T o1, T o2)
-                    {
-                        return mapper.apply(o1).compareTo(mapper.apply(o2));
-                    }
-                };
-                return Ordering.from(comparator).isOrdered(list);
-            }
+        if (reverse) {
+            Comparator<T> comparator = (t1, t2) -> mapper.apply(t1).compareTo(mapper.apply(t2));
+            return Ordering.from(comparator).reverse().isOrdered(list);
+        } else {
+            Comparator<T> comparator = (t1, t2) -> mapper.apply(t1).compareTo(mapper.apply(t2));
+            return Ordering.from(comparator).isOrdered(list);
+        }
     }
 
     public void describeTo(Description description)
     {
         if (reverse)
-            description.appendText("a inversly sorted list after mapping" );
+            description.appendText("a reverse-sorted list after mapping" );
         else
             description.appendText("a sorted list after mapping");
     }
@@ -62,7 +47,7 @@ public class IsSortedByMatcher<T, U extends Comparable<U>> extends TypeSafeMatch
     }
 
     @Factory
-    public static <S, U extends Comparable<U>> IsSortedByMatcher<S,U> isSortedInverslyOn(Function<S,U> mapper)
+    public static <S, U extends Comparable<U>> IsSortedByMatcher<S,U> isSortedReverselyOn(Function<S,U> mapper)
     {
         return new IsSortedByMatcher<>(mapper, true);
     }

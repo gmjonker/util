@@ -6,9 +6,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import jdk.nashorn.internal.objects.NativeString;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -16,7 +18,6 @@ import java.util.function.Function;
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.isValue;
 import static java.util.concurrent.TimeUnit.*;
-import static jdk.nashorn.internal.objects.NativeString.substring;
 
 public class FormattingUtil
 {
@@ -274,7 +275,30 @@ public class FormattingUtil
 
     public static String take(String string, int width)
     {
-        return substring(string, 0, width);
+        return NativeString.substring(string, 0, width);
+    }
+
+    /**
+     * Substring of string from fromIndex, inclusive, to toIndex, exclusive.
+     * Always returns a string. If fromIndex or toIndex is null, 0 or string.length() is used respectively.
+     * Out of bounds indices are brought within range. Indices -1, -2, etc. may be used for
+     * string.length()-1, string.length()-2, etc.
+     */
+    @Nonnull
+    public static String substring(String string, @Nullable Integer fromIndex, @Nullable Integer toIndex)
+    {
+        if (string == null)
+            return "";
+
+        int length = string.length();
+        if (fromIndex == null) fromIndex = 0;
+        if (toIndex == null) toIndex = length;
+        if (fromIndex < 0) fromIndex = max(length + fromIndex, 0);
+        if (toIndex < 0) toIndex = max(length + toIndex, 0);
+        if (toIndex > length) toIndex = length;
+        if (fromIndex >= toIndex)
+            return "";
+        return NativeString.substring(string, fromIndex, toIndex);
     }
 
     public static String prettyJson(String json)

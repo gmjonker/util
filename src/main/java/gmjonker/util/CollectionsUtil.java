@@ -392,7 +392,7 @@ public class CollectionsUtil
      *
      * <p>Example usage:</p>
      * <pre>
-     *  Map&lt;Integer, ContentBasedScore&gt; sortedcontentBasedScores =
+     *  Map&lt;ItemId, ContentBasedScore&gt; sortedcontentBasedScores =
      *      sortMap(recommendation.contentBasedScores, cbs -> cbs.contentBased);
      * </pre>
      * @return New hash map, sorted.
@@ -425,7 +425,7 @@ public class CollectionsUtil
      *
      * <p>Example usage:</p>
      * <pre>
-     *  Map&lt;Integer, ContentBasedScore&gt; sortedcontentBasedScores =
+     *  Map&lt;ItemId, ContentBasedScore&gt; sortedcontentBasedScores =
      *      sortMap(recommendation.contentBasedScores, cbs -> cbs.contentBasedScore);
      * </pre>
      *
@@ -450,7 +450,7 @@ public class CollectionsUtil
      *
      * <p>Example usage:</p>
      * <pre>
-     *  Map&lt;Integer, ContentBasedScore&gt; sortedcontentBasedScores =
+     *  Map&lt;ItemId, ContentBasedScore&gt; sortedcontentBasedScores =
      *      sortMap(recommendation.contentBasedScores, cbs -> cbs.contentBasedScore);
      * </pre>
      *

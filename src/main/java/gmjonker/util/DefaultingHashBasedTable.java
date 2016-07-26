@@ -137,8 +137,14 @@ public class DefaultingHashBasedTable<R, C, V> implements Table<R, C, V>
         return hashBasedTable.values();
     }
 
-
-
+    @Override
+    public String toString()
+    {
+        return "DefaultingHashBasedTable{" +
+                "hashBasedTable=" + hashBasedTable +
+                ", defaultValue=" + defaultValue +
+                '}';
+    }
 
     private V or(V v, V defaultValue)
     {

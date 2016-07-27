@@ -2,6 +2,10 @@ package gmjonker.util;
 
 import com.google.common.base.Strings;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
@@ -12,6 +16,7 @@ import static gmjonker.math.NaType.NA_I;
 /**
  * Utility methods that do not fall in any of the other categories.
  */
+@SuppressWarnings("WeakerAccess")
 public class Util
 {
     protected static final LambdaLogger log = new LambdaLogger(Util.class);
@@ -120,6 +125,32 @@ public class Util
         if (!Objects.equals(answer, "y") && !Objects.equals(answer, "")) {
             System.out.println("Exiting.");
             System.exit(-1);
+        }
+    }
+
+    public static String executeCommandAndCaptureResult(String command) throws IOException
+    {
+        Runtime runtime = Runtime.getRuntime();
+        Process process = runtime.exec(command);
+        InputStream is = process.getInputStream();
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr);
+        log.trace("Output of running '{}' is:", command);
+        String result = "";
+        String line;
+        while ((line = br.readLine()) != null) {
+            log.trace(line);
+            result += line;
+        }
+        return result;
+    }
+
+    public static String getCurrentGitBranch()
+    {
+        try {
+            return Util.executeCommandAndCaptureResult("git rev-parse --abbrev-ref HEAD");
+        } catch (IOException e) {
+            return "Error: Could not get current git branch";
         }
     }
 }

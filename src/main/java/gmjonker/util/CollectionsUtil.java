@@ -150,6 +150,30 @@ public class CollectionsUtil
     }
 
     /**
+     * Filter map by key and/or value. Entries must satify both the key filter and the value filter to be passed through.
+     */
+    @Nonnull
+    public static <K, V> Map<K, V> filter(Map<K, V> map, Function<K, Boolean> keyFilter, Function<V, Boolean> valueFilter)
+    {
+        if (map == null)
+            return new HashMap<>();
+
+        HashMap<K,V> newMap = new HashMap<>();
+
+        for (Map.Entry<K, V> kvEntry : map.entrySet()) {
+            K key = kvEntry.getKey();
+            if ( ! keyFilter.apply(key))
+                continue;
+            V value = kvEntry.getValue();
+            if ( ! valueFilter.apply(value))
+                continue;
+            newMap.put(key, value);
+        }
+
+        return newMap;
+    }
+
+    /**
      * Returns the results of pairwise applying {@code function} on the elements of {@code list1} and {@code list2}.
      */
     @Nonnull

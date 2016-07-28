@@ -316,6 +316,12 @@ public class FormattingUtil
     }
 
     // Implementation is a bit slow, beware.
+    public static <R, C, V> String tableToString(Table<R, C, V> table)
+    {
+        return format(table, Object::toString);
+    }
+
+    // Implementation is a bit slow, beware.
     public static <R, C, V> String format(Table<R, C, V> table, Function<V, String> valueFormatter)
     {
         String result = "";

@@ -174,7 +174,7 @@ public class Score
         return result;
     }
 
-    public String toString01()
+    public String toString()
     {
         return asPercentageTwoSpaces(value).trim() + "/" + asPercentageTwoSpaces(confidence).trim()
                 + "(" + asPercentageTwoSpaces(deriveDouble0101()) + ")";

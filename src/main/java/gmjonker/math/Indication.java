@@ -35,6 +35,7 @@ public class Indication implements Comparable<Indication>
 {
     public static final Indication NA_INDICATION = new Indication(NA, NA);
     public static final Indication UNKNOWN = new Indication(NA, 0);
+    public static final Indication NONE = new Indication(0, 0);
     public static final Indication CERTAINTY = new Indication(1, 1);
 
     public final double value;

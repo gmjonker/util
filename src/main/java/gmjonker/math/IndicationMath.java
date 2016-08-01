@@ -47,6 +47,28 @@ public class IndicationMath
     }
 
     /**
+     * Infers a new indication based on given indications.
+     *
+     * <p>Indication values in range (-1,1)
+     **/
+    public static Indication combineNoDisagreementEffect(Collection<Indication> indications)
+    {
+        Indication[] indicationArray = new Indication[indications.size()];
+        return combineNoDisagreementEffect(indications.toArray(indicationArray), null);
+    }
+
+    /**
+     * Infers a new indication based on given indications.
+     *
+     * <p>Indication values in range (-1,1)
+     **/
+    public static Indication combineTightAndNoDisagreementEffect(Collection<Indication> indications)
+    {
+        Indication[] indicationArray = new Indication[indications.size()];
+        return combineTightAndNoDisagreementEffect(indications.toArray(indicationArray), null);
+    }
+
+    /**
      * Infers a new indication based on given indications, where indications may be weighted to indicate that some indications should have
      * more weight in the outcome than others.
      *
@@ -59,7 +81,7 @@ public class IndicationMath
         final double sigmoidRangeLow = -1.1;
         final double sigmoidRangeHigh = 1.1;
 
-        log.trace("combineM11({}, {})", () -> Arrays.toString(indications), () -> Arrays.toString(weights));
+        log.trace("combine({}, {})", () -> Arrays.toString(indications), () -> Arrays.toString(weights));
         double[] values = new double[indications.length];
         double[] confidences = new double[indications.length];
         double[] adjustedWeights = new double[indications.length];
@@ -111,6 +133,76 @@ public class IndicationMath
     }
 
     /**
+     * Infers a new indication based on given indications, where indications may be weighted to indicate that some indications should have
+     * more weight in the outcome than others.
+     *
+     * <p>Disagreement among the indications has a no effect on confidence. The more indications are combines, the higher the
+     * resulting confidence.</p>
+     *
+     * <p>Indication values in range (-1,1). Weights have no constraints (will be normalized on the fly).
+     **/
+    public static Indication combineNoDisagreementEffect(Indication... indications)
+    {
+        return combineNoDisagreementEffect(indications, null);
+    }
+
+    /**
+     * Infers a new indication based on given indications, where indications may be weighted to indicate that some indications should have
+     * more weight in the outcome than others.
+     *
+     * <p>Disagreement among the indications has a no effect on confidence. The more indications are combines, the higher the
+     * resulting confidence.</p>
+     *
+     * <p>Indication values in range (-1,1). Weights have no constraints (will be normalized on the fly).
+     **/
+    public static Indication combineNoDisagreementEffect(Indication[] indications, @Nullable double[] weights)
+    {
+        // Taking relatively wide bounds here lessens the effect of individual indications on the end indication confidence, or, in other
+        // words, accumulation of confidences resembles lineair addition a bit more
+        final double sigmoidRangeLow = -1.2;
+        final double sigmoidRangeHigh = 1.2;
+
+        log.trace("combineNoDisagreementEffect({}, {})", () -> Arrays.toString(indications), () -> Arrays.toString(weights));
+        double[] values = new double[indications.length];
+        double[] confidences = new double[indications.length];
+        double[] adjustedWeights = new double[indications.length];
+        // We take the inverse fastSigmoidAlternative() of confidences, then accumulate them, then take the fastSigmoidAlternative(). This results in the
+        // effect of two confidences of .9 adding up to something like .98 for instance (if the values are equal or similar).
+        double[] logitConfidences = new double[indications.length];
+        double maxWeight = weights == null ? NA : max(weights);
+        for (int i = 0; i < indications.length; i++) {
+            values[i] = indications[i].value;
+            // If max weight > 1, adjust all weights such that max weight == 1, otherwise just leave the weights as is
+            adjustedWeights[i] = weights == null ? 1
+                                                 : maxWeight > 1 ? weights[i] * 1 / maxWeight : weights[i];
+            confidences[i] = indications[i].confidence * adjustedWeights[i];
+            logitConfidences[i] = logit(confidences[i], sigmoidRangeLow, sigmoidRangeHigh);
+        }
+
+        if (sum(confidences) == 0)
+            return new Indication(mean(values), 0);
+
+        double weightedMean = weightedMeanIgnoreNAs(values, confidences);
+        log.trace("    wgtdMn:{}", weightedMean);
+
+        double totalConf = 0;
+        for (int i = 0; i < indications.length; i++) {
+            if ( ! isValue(values[i]) || ! isValue(confidences[i]) )
+                continue;
+            totalConf += logitConfidences[i];
+            log.trace("    indication: {}", indications[i]);
+            log.trace("      logtco:{}", logitConfidences[i]);
+        }
+        totalConf = sigmoid(totalConf, sigmoidRangeLow, sigmoidRangeHigh);
+        totalConf = limit(totalConf, 0, 1);
+        Indication result = new Indication(weightedMean, totalConf);
+        log.trace("    lgttc: {}", totalConf);
+        log.trace("    totco: {}", totalConf);
+        log.trace("    rs-11: {}", result);
+        return result;
+    }
+
+    /**
      * A variant of combineM11 with the following feature: Regardless of the weights, if all indications are 1/1, the end result
      * will be 1/1.
      *
@@ -130,7 +222,7 @@ public class IndicationMath
         final double sigmoidRangeLow = -1.2;
         final double sigmoidRangeHigh = 1.2;
 
-        log.trace("combineM11({}, {})", () -> Arrays.toString(indications), () -> Arrays.toString(weights));
+        log.trace("combineTightAndNoDisagreementEffect({}, {})", () -> Arrays.toString(indications), () -> Arrays.toString(weights));
         double[] values = new double[indications.length];
         double[] adjustedConfidences = new double[indications.length];
         double[] logitConfidences = new double[indications.length];
@@ -142,15 +234,25 @@ public class IndicationMath
                 values[i] = indications[i].value;
                 adjustedConfidences[i] = indications[i].confidence;
                 logitConfidences[i] = logit(adjustedConfidences[i], sigmoidRangeLow, sigmoidRangeHigh);
+                maxLogitConfidences[i] = logit(1, sigmoidRangeLow, sigmoidRangeHigh);
+                log.trace("i = {}", i);
+                log.trace("adjustedConfidences[i] = {}", adjustedConfidences[i]);
+                log.trace("logitConfidences[i] = {}", logitConfidences[i]);
+                log.trace("maxLogitConfidences[i] = {}", maxLogitConfidences[i]);
             }
         } else {
             double maxWeight = max(weights);
             double weightAdjustment = maxWeight > 1 ? 1.0 / maxWeight : 1.0;
+            log.trace("maxWeight = {}", maxWeight);
             for (int i = 0; i < indications.length; i++) {
                 values[i] = indications[i].value;
                 adjustedConfidences[i] = indications[i].confidence * weights[i] * weightAdjustment;
                 logitConfidences[i] = logit(adjustedConfidences[i], sigmoidRangeLow, sigmoidRangeHigh);
                 maxLogitConfidences[i] = logit(weights[i] * weightAdjustment, sigmoidRangeLow, sigmoidRangeHigh);
+                log.trace("i = {}", i);
+                log.trace("adjustedConfidences[i] = {}", adjustedConfidences[i]);
+                log.trace("logitConfidences[i] = {}", logitConfidences[i]);
+                log.trace("maxLogitConfidences[i] = {}", maxLogitConfidences[i]);
             }
         }
 
@@ -158,8 +260,11 @@ public class IndicationMath
         // 1/1, the end result is 1/1.
         double sumMaxLogits = sum(maxLogitConfidences);
         double logitAdjustment = logit(1, sigmoidRangeLow, sigmoidRangeHigh) / sumMaxLogits;
-        for (int i = 0; i < logitConfidences.length; i++)
+        log.trace("sumMaxLogits = {}", sumMaxLogits);
+        for (int i = 0; i < logitConfidences.length; i++) {
             adjustedLogitConfidences[i] = logitAdjustment * logitConfidences[i];
+            log.trace("adjustedLogitConfidences[i] = {}", adjustedLogitConfidences[i]);
+        }
 
         if (sum(adjustedConfidences) == 0)
             return new Indication(mean(values), 0);

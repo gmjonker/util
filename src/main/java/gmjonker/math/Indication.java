@@ -83,6 +83,15 @@ public class Indication implements Comparable<Indication>
         return result;
     }
 
+    public Indication combineWithNoDisagreementEffect(Indication indication)
+    {
+        Indication result = IndicationMath.combineNoDisagreementEffect(this, indication);
+        log.trace("this: {}", this);
+        log.trace("indication: {}", indication);
+        log.trace("combined Indication: {}", result);
+        return result;
+    }
+
     /**
      * Simply multiplies respective values and indications.
      */

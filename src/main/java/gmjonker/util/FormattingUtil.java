@@ -267,6 +267,17 @@ public class FormattingUtil
         return result;
     }
 
+    public static <K,V> String mapToString(Map<K,V> map, Function<K,?> keyMapper)
+    {
+        return CollectionsUtil.map(map, keyMapper, v -> v).toString();
+    }
+
+    public static <K,V> String mapToString2(DefaultingMap<K,V> map2, Function<K,?> keyMapper)
+    {
+        DefaultingHashmap<?, V> vDefaultingHashmap = CollectionsUtil.map2(map2, keyMapper, v -> v);
+        return vDefaultingHashmap.toString();
+    }
+
     public static String toWidth(String string, int width)
     {
         width = max(0, width);

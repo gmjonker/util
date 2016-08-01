@@ -9,9 +9,11 @@ import java.util.List;
 import static gmjonker.math.GeneralMath.abs;
 import static gmjonker.math.GeneralMath.round;
 import static gmjonker.math.Indication.toPrimitiveIndicationArray;
+import static gmjonker.math.IndicationMath.*;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.util.CollectionsUtil.toPrimitiveDoubleArray;
 import static gmjonker.util.FormattingUtil.asPercentage;
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -69,7 +71,7 @@ public class IndicationMathTest
             Indication desired = new Indication(row[row.length - 2], row[row.length - 1]);
 
             // When:
-            Indication result = IndicationMath.combine(indications);
+            Indication result = combine(indications);
 
             // Then:
             for (Indication indication : indications)
@@ -80,7 +82,7 @@ public class IndicationMathTest
             // Also check that combine is consistent with combine-weighted.
             double[] weights = new double[indications.length];
             Arrays.fill(weights, 1.0);
-            Indication result2 = IndicationMath.combine(indications, weights);
+            Indication result2 = combine(indications, weights);
             assertThat(result2, equalTo(result));
         }
     }
@@ -125,7 +127,7 @@ public class IndicationMathTest
             Indication desiredCombinedIndication = new Indication(row[6], row[7]);
 
             // When:
-            Indication indication = IndicationMath.combine(new Indication[]{popularityIndication, contentBasedIndication, userBasedIndication}, weights);
+            Indication indication = combine(new Indication[]{popularityIndication, contentBasedIndication, userBasedIndication}, weights);
 
             // Then:
             System.out.printf("%s/1 + %s/2 + %s/3 = %s (des: %s, dif:%d/%d)%n", popularityIndication.toShortString(),
@@ -172,7 +174,7 @@ public class IndicationMathTest
             }
 
             // When:
-            Indication result = IndicationMath.combineTightAndNoDisagreementEffect(toPrimitiveIndicationArray(indications), toPrimitiveDoubleArray(weights));
+            Indication result = combineTightAndNoDisagreementEffect(toPrimitiveIndicationArray(indications), toPrimitiveDoubleArray(weights));
 
             // Then:
             for (int i1 = 0; i1 < indications.size(); i1++) {
@@ -184,5 +186,21 @@ public class IndicationMathTest
                     asPercentage(abs(result.value - desiredIndication.value)),
                     asPercentage(abs(result.confidence - desiredIndication.confidence)));
         }
+    }
+
+    @Test
+    public void threeCombineMethodsCompared()
+    {
+        System.out.println("Vanilla:     " + combine                            (asList(new Indication(-1, .5), new Indication(1, .5))));
+        System.out.println("No dis:      " + combineNoDisagreementEffect        (asList(new Indication(-1, .5), new Indication(1, .5))));
+        System.out.println("Tight nodis: " + combineTightAndNoDisagreementEffect(asList(new Indication(-1, .5), new Indication(1, .5))));
+
+        System.out.println("Vanilla:     " + combine                            (asList(new Indication(.5, .5), new Indication(1, .2))));
+        System.out.println("No dis:      " + combineNoDisagreementEffect        (asList(new Indication(.5, .5), new Indication(1, .2))));
+        System.out.println("Tight nodis: " + combineTightAndNoDisagreementEffect(asList(new Indication(.5, .5), new Indication(1, .2))));
+
+        System.out.println("Vanilla:     " + combine                            (asList(new Indication(0, .5), new Indication(1, .2))));
+        System.out.println("No dis:      " + combineNoDisagreementEffect        (asList(new Indication(0, .5), new Indication(1, .2))));
+        System.out.println("Tight nodis: " + combineTightAndNoDisagreementEffect(asList(new Indication(0, .5), new Indication(1, .2))));
     }
 }

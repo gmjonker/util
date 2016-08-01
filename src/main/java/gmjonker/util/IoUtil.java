@@ -1,6 +1,5 @@
 package gmjonker.util;
 
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -86,7 +85,21 @@ public class IoUtil
     public static <R, C, T> Table<R, C, T> readCsvIntoTable(String fileName, Function<String, R> rowTypeMapper,
             Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper) throws IOException
     {
-        Table<R, C, T> table = HashBasedTable.create();
+        return _readCsvIntoTable(fileName, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(null));
+    }
+
+    /**
+     * Reads from a CSV file that has row and column headers.
+     */
+    public static <R, C, T> DefaultingHashBasedTable<R, C, T> readCsvIntoDefaultingTable(String fileName, Function<String, R> rowTypeMapper,
+            Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper, T defaultValue) throws IOException
+    {
+        return _readCsvIntoTable(fileName, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(defaultValue));
+    }
+
+    private static <R, C, T> DefaultingHashBasedTable<R, C, T> _readCsvIntoTable(String fileName, Function<String, R> rowTypeMapper,
+            Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper, DefaultingHashBasedTable<R, C, T> table) throws IOException
+    {
         CSVParser csvParser = readCsvFileWithHeaders(fileName);
         Set<String> headers = csvParser.getHeaderMap().entrySet().stream()
                 .filter(entry -> entry.getValue() > 0) // skip the first column, it contains row headers
@@ -99,7 +112,9 @@ public class IoUtil
                 C c = columnTypeMapper.apply(header);
                 String cell = record.get(header);
                 T t = cellTypeMapper.apply(cell);
-                table.put(r, c, t);
+                if (t != null) {
+                    table.put(r, c, t);
+                }
             }
         }
         csvParser.close();

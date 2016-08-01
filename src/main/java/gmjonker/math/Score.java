@@ -174,11 +174,16 @@ public class Score
         return result;
     }
 
-    @Override
-    public String toString()
+    public String toString01()
     {
         return asPercentageTwoSpaces(value).trim() + "/" + asPercentageTwoSpaces(confidence).trim()
                 + "(" + asPercentageTwoSpaces(deriveDouble0101()) + ")";
+    }
+
+    public String toStringM11()
+    {
+        return asPercentageTwoSpaces(value).trim() + "/" + asPercentageTwoSpaces(confidence).trim()
+                + "(" + asPercentageTwoSpaces(deriveDoubleM11M11()) + ")";
     }
 
     public String toShortString()

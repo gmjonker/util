@@ -13,6 +13,7 @@ import static gmjonker.math.Score.NEUTRAL_SCORE;
 import static gmjonker.math.Score.toPrimitiveScoreArray;
 import static gmjonker.util.CollectionsUtil.toPrimitiveDoubleArray;
 import static gmjonker.util.FormattingUtil.asPercentage;
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
@@ -193,6 +194,15 @@ public class ScoreMathTest
                     asPercentage(abs(result.value - desiredScore.value)),
                     asPercentage(abs(result.confidence - desiredScore.confidence)));
         }
+    }
+
+    @Test
+    public void twoCombineMethodsCompared()
+    {
+        System.out.println("Vanilla:     " + ScoreMath.combineM11                            (     asList(new Score(.5, .5), new Score(1, .2))).toStringM11());
+        System.out.println("Tight nodis: " + ScoreMath.combineM11TightAndNoDisagreementEffect(new Score[]{new Score(.5, .5), new Score(1, .2)}, null).toStringM11());
+        System.out.println("Vanilla:     " + ScoreMath.combineM11                            (     asList(new Score(0, .5), new Score(1, .2))).toStringM11());
+        System.out.println("Tight nodis: " + ScoreMath.combineM11TightAndNoDisagreementEffect(new Score[]{new Score(0, .5), new Score(1, .2)}, null).toStringM11());
     }
 
     @Test

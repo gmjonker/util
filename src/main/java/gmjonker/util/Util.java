@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.function.Function;
 
 import static gmjonker.math.GeneralMath.round;
 import static gmjonker.math.NaType.NA_I;
@@ -19,6 +20,8 @@ import static gmjonker.math.NaType.NA_I;
 @SuppressWarnings("WeakerAccess")
 public class Util
 {
+    public static final Function<Object, Object> identity = Function.identity();
+
     protected static final LambdaLogger log = new LambdaLogger(Util.class);
 
     public static void simpleSleep(long millis)

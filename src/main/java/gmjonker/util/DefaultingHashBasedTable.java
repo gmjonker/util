@@ -77,7 +77,7 @@ public class DefaultingHashBasedTable<R, C, V> implements Table<R, C, V>
         return hashBasedTable.put(rowKey, columnKey, value);
     }
 
-    public Map<R, V> column(C columnKey)
+    public DefaultingMap<R, V> column(C columnKey)
     {
         return new DefaultingMapWrapper<>(hashBasedTable.column(columnKey), defaultValue);
     }
@@ -127,7 +127,7 @@ public class DefaultingHashBasedTable<R, C, V> implements Table<R, C, V>
         throw new RuntimeException("Not implemented");
     }
 
-    public Map<C, V> row(R rowKey)
+    public DefaultingMap<C, V> row(R rowKey)
     {
         return new DefaultingMapWrapper<>(hashBasedTable.row(rowKey), defaultValue);
     }

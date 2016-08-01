@@ -1,5 +1,6 @@
 package gmjonker.util;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -7,8 +8,9 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+// What is the status of this versus DefaultingHashMap?
 @SuppressWarnings("WeakerAccess")
-public class DefaultingMapWrapper<K,V> implements Map<K,V>
+public class DefaultingMapWrapper<K,V> implements DefaultingMap<K,V>
 {
     private Map<K,V> map;
     private V defaultValue;
@@ -17,6 +19,13 @@ public class DefaultingMapWrapper<K,V> implements Map<K,V>
     {
         this.map = map;
         this.defaultValue = defaultValue;
+    }
+
+    @Nonnull
+    @Override
+    public V getDefaultValue()
+    {
+        return defaultValue;
     }
 
     //
@@ -136,5 +145,22 @@ public class DefaultingMapWrapper<K,V> implements Map<K,V>
     public Collection<V> values()
     {
         return map.values();
+    }
+
+    @Override
+    public String toString()
+    {
+        return "DefaultingMapWrapper{" +
+                "defaultValue=" + defaultValue +
+                ", map=" + map +
+                '}';
+    }
+
+    public String toString(Function<K,?> keyMapper)
+    {
+        return "DefaultingMapWrapper{" +
+                "defaultValue=" + defaultValue +
+                ", map=" + CollectionsUtil.map(this.map, keyMapper, v -> v)  +
+                '}';
     }
 }

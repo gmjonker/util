@@ -80,6 +80,20 @@ public class CollectionsUtil
     }
 
     @Nonnull
+    public static <K1,V1,K2,V2> DefaultingHashmap<K2,V2> map2(DefaultingMap<K1,V1> defaultingMap, Function<K1,K2> keyMapper,
+            Function<V1,V2> valueMapper)
+    {
+        DefaultingHashmap<K2,V2> newMap = new DefaultingHashmap<>(valueMapper.apply(defaultingMap.getDefaultValue()));
+
+        for (Map.Entry<K1, V1> entry : defaultingMap.entrySet()) {
+            K1 key = entry.getKey();
+            V1 value = entry.getValue();
+            newMap.put(keyMapper.apply(key), valueMapper.apply(value));
+        }
+        return newMap;
+    }
+
+    @Nonnull
     public static <K, V1, V2> Map<K, V2> mapValues(Map<K, V1> map, Function<V1, V2> valueMapper)
     {
         return map(map, Function.identity(), valueMapper);

@@ -37,11 +37,13 @@ public class IndicationTest
     public void deriveDoubleWorksCorrectly()
     {
         double neutralValue = .3;
-        assertThat(new Indication(1 , 1 ).deriveDouble01(neutralValue), equalsScoreValue(1));
-        assertThat(new Indication(1 , 0 ).deriveDouble01(neutralValue), equalsScoreValue(neutralValue));
-        assertThat(new Indication(0 , 1 ).deriveDouble01(neutralValue), equalsScoreValue(0));
-        assertThat(new Indication(.8, .3).deriveDouble01(neutralValue), equalsScoreValue(neutralValue + (.8 - neutralValue) * .3));
-        assertThat(new Indication(.2, .3).deriveDouble01(neutralValue), equalsScoreValue(neutralValue + (.2 - neutralValue) * .3));
+        assertThat(new Indication( 1 , 1 ).deriveDouble01(neutralValue), equalsScoreValue(1));
+        assertThat(new Indication( 1 , 0 ).deriveDouble01(neutralValue), equalsScoreValue(neutralValue));
+        assertThat(new Indication( 0 , 1 ).deriveDouble01(neutralValue), equalsScoreValue(neutralValue));
+        assertThat(new Indication(-1 , 1 ).deriveDouble01(neutralValue), equalsScoreValue(0));
+        assertThat(new Indication( .5, 1 ).deriveDouble01(.2), equalsScoreValue(.6));
+        assertThat(new Indication( .1, 1 ).deriveDouble01(.2), equalsScoreValue(.28));
+        assertThat(new Indication(-.5, 1 ).deriveDouble01(.2), equalsScoreValue(.1));
     }
 
     @Test

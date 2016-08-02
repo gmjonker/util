@@ -136,11 +136,41 @@ public class IoUtil
     }
 
     /** CSV file must not have headers. **/
+    public static <K, V> LinkedHashMap<K,V> readTwoColumnCsvIntoMapIgnoreErrors(String fileName, Function<String, K> keyTransform,
+            Function<String, V> valueTransform) throws IOException
+    {
+        LinkedHashMap<K, V> map = new LinkedHashMap<>();
+        CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
+        for (CSVRecord record : csvParser.getRecords()) {
+            try {
+                K key = keyTransform.apply(record.get(0));
+                V value = valueTransform.apply(record.get(1));
+                map.put(key, value);
+            } catch (Exception e) {
+                log.warnOnce("Could not process record, continuing with next record ('{}')", record, e);
+            }
+        }
+        return map;
+    }
+
+    /** CSV file must not have headers. **/
     public static <K, V> LinkedHashMap<K,V> readTwoColumnCsvIntoMapOrEmptyMap(String fileName,
             Function<String, K> keyTransform, Function<String, V> valueTransform)
     {
         try {
             return readTwoColumnCsvIntoMap(fileName, keyTransform, valueTransform);
+        } catch (IOException e) {
+            log.error("Could not read file '{}'", fileName,  e);
+            return new LinkedHashMap<>();
+        }
+    }
+
+    /** CSV file must not have headers. **/
+    public static <K, V> LinkedHashMap<K,V> readTwoColumnCsvIntoMapOrEmptyMapIgnoreErrors(String fileName,
+            Function<String, K> keyTransform, Function<String, V> valueTransform)
+    {
+        try {
+            return readTwoColumnCsvIntoMapIgnoreErrors(fileName, keyTransform, valueTransform);
         } catch (IOException e) {
             log.error("Could not read file '{}'", fileName,  e);
             return new LinkedHashMap<>();

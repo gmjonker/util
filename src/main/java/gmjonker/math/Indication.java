@@ -109,7 +109,11 @@ public class Indication implements Comparable<Indication>
     {
         if ( ! isValue(value) || ! isValue(confidence))
             return NA;
-        return neutralIndication + (value - neutralIndication) * confidence;
+        if (value > 0) {
+            return neutralIndication + (value * (1 - neutralIndication)) * confidence;
+        } else {
+            return neutralIndication * (1 + value) * confidence;
+        }
     }
 
     /**

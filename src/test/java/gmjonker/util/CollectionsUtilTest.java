@@ -67,4 +67,15 @@ public class CollectionsUtilTest
             previous = value;
         }
     }
+
+    @Test
+    public void map()
+    {
+        DefaultingHashmap<Integer, Double> map = new DefaultingHashmap<>(new Double(2));
+        map.put(1, 1.1);
+        map.put(2, 2.2);
+        DefaultingHashmap<Integer, Double> mappedmap = CollectionsUtil.map(map, integer -> integer + 2, dbl -> dbl + .2);
+        System.out.println("mappedmap = " + mappedmap);
+    }
+
 }

@@ -35,4 +35,17 @@ public class FormattingUtilTest
         System.out.println("FormattingUtil.toMicroFormatABC( 1.0 ) = " + FormattingUtil.toMicroFormatABC( 1.0 ));
         System.out.println("FormattingUtil.toMicroFormatABC( 1.1 ) = " + FormattingUtil.toMicroFormatABC( 1.1 ));
     }
+
+    @Test
+    public void mapToString2()
+    {
+        DefaultingHashmap<Integer, Double> map = new DefaultingHashmap<>(new Double(2));
+        map.put(1, 1.1);
+        map.put(2, 2.2);
+        String s = FormattingUtil.mapToString(
+                map,
+                integer -> integer + 2
+        );
+        System.out.println("s = " + s);
+    }
 }

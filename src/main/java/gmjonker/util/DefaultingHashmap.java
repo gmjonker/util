@@ -3,7 +3,6 @@ package gmjonker.util;
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 
-// What is the status of this versus DefaultingMapWrapper?
 /**
  * A hashmap that returns a default value for non-existing keys.
  */

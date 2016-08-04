@@ -8,7 +8,9 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-// What is the status of this versus DefaultingHashMap?
+/**
+ * Wrapper to turn a Map into a DefaultingMap
+ */
 @SuppressWarnings("WeakerAccess")
 public class DefaultingMapWrapper<K,V> implements DefaultingMap<K,V>
 {

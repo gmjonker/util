@@ -79,6 +79,17 @@ public class IoUtil
         return CSVParser.parse(fileContent, CSVFormat.EXCEL.withIgnoreEmptyLines().withIgnoreSurroundingSpaces());
     }
 
+    public static CSVParser readCsvFileWithHeadersOrRTE(String fileName)
+    {
+        try {
+            String fileContent = readFileAsOneStringOrThrowException(fileName);
+            return CSVParser.parse(fileContent, CSVFormat.EXCEL.withHeader().withAllowMissingColumnNames()
+                    .withIgnoreEmptyLines().withIgnoreSurroundingSpaces());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Reads from a CSV file that has row and column headers.
      */

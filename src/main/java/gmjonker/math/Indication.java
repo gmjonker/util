@@ -3,6 +3,7 @@ package gmjonker.math;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Doubles;
 import gmjonker.util.LambdaLogger;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
  * Indication replaces Score, which didn't have a range defined which was inconvenient w.r.t. the neutral score.
  */
 @SuppressWarnings("WeakerAccess")
+@AllArgsConstructor
 public class Indication implements Comparable<Indication>
 {
     public static final Indication NA_INDICATION = new Indication(NA, NA);
@@ -41,7 +43,7 @@ public class Indication implements Comparable<Indication>
     public final double value;
     public final double confidence;
 
-    public String comment = ""; // can be handy for explanations
+    public final String comment; // can be handy for explanations
 
     protected static final LambdaLogger log = new LambdaLogger(Indication.class);
 
@@ -49,6 +51,7 @@ public class Indication implements Comparable<Indication>
     {
         this.value = value;
         this.confidence = confidence;
+        this.comment = "";
     }
 
     public static boolean isValidIndication(Indication indication)
@@ -141,6 +144,11 @@ public class Indication implements Comparable<Indication>
     public Indication multiplyConfidence(double factor)
     {
         return new Indication(value, confidence * factor);
+    }
+
+    public Indication withComment(String comment)
+    {
+        return new Indication(value, confidence, comment);
     }
 
     @Override
@@ -242,5 +250,10 @@ public class Indication implements Comparable<Indication>
         if ( ! indication.isValid())
             return 1;
         return sign(this.deriveDouble() - indication.deriveDouble());
+    }
+
+    public Indication copy()
+    {
+        return new Indication(value, confidence, comment);
     }
 }

@@ -38,9 +38,17 @@ public class IndicationTest
     {
         double neutralValue = .3;
         assertThat(new Indication( 1 , 1 ).deriveDouble01(neutralValue), equalsScoreValue(1));
-        assertThat(new Indication( 1 , 0 ).deriveDouble01(neutralValue), equalsScoreValue(neutralValue));
         assertThat(new Indication( 0 , 1 ).deriveDouble01(neutralValue), equalsScoreValue(neutralValue));
         assertThat(new Indication(-1 , 1 ).deriveDouble01(neutralValue), equalsScoreValue(0));
+
+        assertThat(new Indication( 1 , 0 ).deriveDouble01(neutralValue), equalsScoreValue(neutralValue));
+        assertThat(new Indication( 0 , 0 ).deriveDouble01(neutralValue), equalsScoreValue(neutralValue));
+        assertThat(new Indication(-1 , 0 ).deriveDouble01(neutralValue), equalsScoreValue(neutralValue));
+
+        assertThat(new Indication( 1 ,.5 ).deriveDouble01(.5), equalsScoreValue(.75));
+        assertThat(new Indication( 0 ,.5 ).deriveDouble01(.5), equalsScoreValue(.5));
+        assertThat(new Indication(-1 ,.5 ).deriveDouble01(.5), equalsScoreValue(.25));
+
         assertThat(new Indication( .5, 1 ).deriveDouble01(.2), equalsScoreValue(.6));
         assertThat(new Indication( .1, 1 ).deriveDouble01(.2), equalsScoreValue(.28));
         assertThat(new Indication(-.5, 1 ).deriveDouble01(.2), equalsScoreValue(.1));

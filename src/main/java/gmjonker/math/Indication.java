@@ -113,9 +113,9 @@ public class Indication implements Comparable<Indication>
         if ( ! isValue(value) || ! isValue(confidence))
             return NA;
         if (value > 0) {
-            return neutralIndication + (value * (1 - neutralIndication)) * confidence;
+            return neutralIndication + value * confidence * (1 - neutralIndication);
         } else {
-            return neutralIndication * (1 + value) * confidence;
+            return neutralIndication + value * confidence * neutralIndication;
         }
     }
 
@@ -255,5 +255,10 @@ public class Indication implements Comparable<Indication>
     public Indication copy()
     {
         return new Indication(value, confidence, comment);
+    }
+
+    public Score toScore01()
+    {
+        return new Score(value / 2 + .5, confidence);
     }
 }

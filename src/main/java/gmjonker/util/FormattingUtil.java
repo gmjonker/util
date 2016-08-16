@@ -284,8 +284,12 @@ public class FormattingUtil
         return Strings.padEnd("" + string, width, ' ').substring(0, width);
     }
 
-    public static String take(String string, int width)
+    @Nonnull
+    public static String take(@Nullable String string, int width)
     {
+        if (string == null) {
+            return "";
+        }
         return NativeString.substring(string, 0, width);
     }
 

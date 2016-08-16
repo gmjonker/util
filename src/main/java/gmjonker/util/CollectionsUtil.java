@@ -64,13 +64,14 @@ public class CollectionsUtil
                 .collect(Collectors.toSet());
     }
 
+    /** Retains ordering **/
     @Nonnull
     public static <K1,V1,K2,V2> Map<K2,V2> map(Map<K1,V1> map, Function<K1,K2> keyMapper, Function<V1,V2> valueMapper)
     {
         if (map == null)
             return emptyMap();
 
-        Map<K2,V2> newMap = new HashMap<>();
+        Map<K2,V2> newMap = new LinkedHashMap<>();
         for (Map.Entry<K1, V1> entry : map.entrySet()) {
             K1 key = entry.getKey();
             V1 value = entry.getValue();
@@ -95,6 +96,12 @@ public class CollectionsUtil
             newMap.put(keyMapper.apply(key), valueMapper.apply(value));
         }
         return newMap;
+    }
+
+    @Nonnull
+    public static <K1, K2, V> Map<K2, V> mapKeys(Map<K1, V> map, Function<K1, K2> keyMapper)
+    {
+        return map(map, keyMapper, Function.identity());
     }
 
     @Nonnull
@@ -339,6 +346,21 @@ public class CollectionsUtil
         while (iterator.hasNext() && collection.size() < max)
             collection.add(iterator.next());
         return collection;
+    }
+
+    /**
+     * Take the first X items of collection, or less if there are less.
+     */
+    @Nonnull
+    public static <K,V> Map<K,V> take(Map<K,V> map, int max)
+    {
+        LinkedHashMap<K, V> newMap = new LinkedHashMap<K, V>();
+        Iterator<Map.Entry<K, V>> iterator = map.entrySet().iterator();
+        while (iterator.hasNext() && newMap.size() < max) {
+            Map.Entry<K, V> entry = iterator.next();
+            newMap.put(entry.getKey(), entry.getValue());
+        }
+        return newMap;
     }
 
     /**

@@ -1,5 +1,6 @@
 package gmjonker.util;
 
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -97,6 +98,19 @@ public class IoUtil
             Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper) throws IOException
     {
         return _readCsvIntoTable(fileName, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(null));
+    }
+
+    /**
+     * Reads from a CSV file that has row and column headers.
+     */
+    public static <R, C, T> Table<R, C, T> readCsvIntoTableOrEmptyTable(String fileName, Function<String, R> rowTypeMapper,
+            Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper)
+    {
+        try {
+            return _readCsvIntoTable(fileName, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(null));
+        } catch (IOException e) {
+            return HashBasedTable.create();
+        }
     }
 
     /**

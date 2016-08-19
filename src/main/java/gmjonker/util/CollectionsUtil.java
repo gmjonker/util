@@ -3,6 +3,8 @@ package gmjonker.util;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Table;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -537,5 +539,18 @@ public class CollectionsUtil
     public static <T> List<Multiset.Entry<T>> sortMultisetByCounts(Multiset<T> multiSet)
     {
         return multiSet.entrySet().stream().sorted((e1, e2) -> e2.getCount() - e1.getCount()).collect(Collectors.toList());
+    }
+
+    /**
+     * Wrapper around Apache Commons CollectionUtils.isEqualCollection that accepts nulls and considers null equal to
+     * an empty collection.
+     */
+    public static boolean isEqualCollection(Collection<?> a, Collection<?> b)
+    {
+        if (IterableUtils.isEmpty(a) != IterableUtils.isEmpty(b))
+            return false;
+        if (IterableUtils.isEmpty(a) && IterableUtils.isEmpty(b))
+            return true;
+        return CollectionUtils.isEqualCollection(a, b);
     }
 }

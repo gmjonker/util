@@ -96,6 +96,11 @@ public class Indication implements Comparable<Indication>
         return result;
     }
 
+    public Indication multiply(double valueFactor, double confidenceFactor)
+    {
+        return new Indication(this.value * valueFactor, this.confidence * confidenceFactor);
+    }
+
     /**
      * Simply multiplies respective values and indications.
      */

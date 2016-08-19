@@ -234,6 +234,15 @@ public class GeneralMath
         return temp / values.length;
     }
 
+    public static double meanAbsoluteDifference(Collection<Double> values, double x)
+    {
+        double temp = 0;
+        for (double value : values) {
+            temp += abs(x - value);
+        }
+        return temp / values.size();
+    }
+
     public static double weightedMeanAbsoluteError(double[] values, double[] weights)
     {
         double temp = 0;

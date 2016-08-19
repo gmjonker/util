@@ -40,7 +40,7 @@ public class IoUtil
         return getFileAsStreamOfLines(name).collect(Collectors.toList());
     }
 
-    public static String readFileAsOneStringOrThrowException(String name) throws IOException
+    public static String readFileAsOneStringOrFail(String name) throws IOException
     {
         return getFileAsStreamOfLines(name).collect(Collectors.joining(System.lineSeparator()));
     }
@@ -69,23 +69,21 @@ public class IoUtil
 
     public static CSVParser readCsvFileWithHeaders(String fileName) throws IOException
     {
-        String fileContent = readFileAsOneStringOrThrowException(fileName);
+        String fileContent = readFileAsOneStringOrFail(fileName);
         return CSVParser.parse(fileContent, CSVFormat.EXCEL.withHeader().withAllowMissingColumnNames()
                 .withIgnoreEmptyLines().withIgnoreSurroundingSpaces());
     }
 
     public static CSVParser readCsvFileWithoutHeaders(String fileName) throws IOException
     {
-        String fileContent = readFileAsOneStringOrThrowException(fileName);
+        String fileContent = readFileAsOneStringOrFail(fileName);
         return CSVParser.parse(fileContent, CSVFormat.EXCEL.withIgnoreEmptyLines().withIgnoreSurroundingSpaces());
     }
 
-    public static CSVParser readCsvFileWithHeadersOrRTE(String fileName)
+    public static CSVParser readCsvFileWithHeadersOrFail(String fileName)
     {
         try {
-            String fileContent = readFileAsOneStringOrThrowException(fileName);
-            return CSVParser.parse(fileContent, CSVFormat.EXCEL.withHeader().withAllowMissingColumnNames()
-                    .withIgnoreEmptyLines().withIgnoreSurroundingSpaces());
+            return readCsvFileWithHeaders(fileName);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -199,6 +197,43 @@ public class IoUtil
         } catch (IOException e) {
             log.error("Could not read file '{}'", fileName,  e);
             return new LinkedHashMap<>();
+        }
+    }
+
+    /** CSV file must not have headers. **/
+    public static <K, V> LinkedHashMap<K,V> readTwoColumnCsvIntoMapOrFail(String fileName,
+            Function<String, K> keyTransform, Function<String, V> valueTransform)
+    {
+        try {
+            return readTwoColumnCsvIntoMapIgnoreErrors(fileName, keyTransform, valueTransform);
+        } catch (IOException e) {
+            log.error("Could not read file '{}'", fileName,  e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /** CSV file must have headers. **/
+    public static <K, V> LinkedHashMap<K,V> readTwoColumnsOfCsvIntoMap(String fileName, String keyColumn, String valueColumn,
+            Function<String, K> keyTransform, Function<String, V> valueTransform) throws IOException
+    {
+        LinkedHashMap<K, V> map = new LinkedHashMap<>();
+        CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
+        for (CSVRecord record : csvParser.getRecords()) {
+            K key = keyTransform.apply(record.get(keyColumn));
+            V value = valueTransform.apply(record.get(valueColumn));
+            map.put(key, value);
+        }
+        return map;
+    }
+
+    /** CSV file must have headers. **/
+    public static <K, V> LinkedHashMap<K,V> readTwoColumnsOfCsvIntoMapOrFail(String fileName, String keyColumn, String valueColumn,
+            Function<String, K> keyTransform, Function<String, V> valueTransform)
+    {
+        try {
+            return readTwoColumnsOfCsvIntoMap(fileName, keyColumn, valueColumn, keyTransform, valueTransform);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

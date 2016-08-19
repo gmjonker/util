@@ -217,7 +217,7 @@ public class IoUtil
             Function<String, K> keyTransform, Function<String, V> valueTransform) throws IOException
     {
         LinkedHashMap<K, V> map = new LinkedHashMap<>();
-        CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
+        CSVParser csvParser = readCsvFileWithHeaders(fileName);
         for (CSVRecord record : csvParser.getRecords()) {
             K key = keyTransform.apply(record.get(keyColumn));
             V value = valueTransform.apply(record.get(valueColumn));
@@ -233,6 +233,7 @@ public class IoUtil
         try {
             return readTwoColumnsOfCsvIntoMap(fileName, keyColumn, valueColumn, keyTransform, valueTransform);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

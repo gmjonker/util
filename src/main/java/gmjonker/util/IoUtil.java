@@ -114,6 +114,20 @@ public class IoUtil
     /**
      * Reads from a CSV file that has row and column headers.
      */
+    public static <R, C, T> Table<R, C, T> readCsvIntoTableOrFail(String fileName, Function<String, R> rowTypeMapper,
+            Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper)
+    {
+        try {
+            return _readCsvIntoTable(fileName, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(null));
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Reads from a CSV file that has row and column headers.
+     */
     public static <R, C, T> DefaultingHashBasedTable<R, C, T> readCsvIntoDefaultingTable(String fileName, Function<String, R> rowTypeMapper,
             Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper, T defaultValue) throws IOException
     {
@@ -281,37 +295,21 @@ public class IoUtil
 
     public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName) throws IOException
     {
-        CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
-        csvPrinter.print("");
-        for (C columnKey : table.columnKeySet())
-            csvPrinter.print(columnKey);
-        csvPrinter.println();
-        for (R rowKey : table.rowKeySet()) {
-            csvPrinter.print(rowKey);
-            for (C columnKey : table.columnKeySet())
-                csvPrinter.print(table.get(rowKey, columnKey));
-            csvPrinter.println();
-        }
-        csvPrinter.close();
+        writeTableToCsv(table, fileName, FormattingUtil::toStringer, FormattingUtil::toStringer, FormattingUtil::toStringer);
     }
 
     public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, Function<V, String> valueTransformer) throws IOException
     {
-        CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
-        csvPrinter.print("");
-        for (C columnKey : table.columnKeySet())
-            csvPrinter.print(columnKey);
-        csvPrinter.println();
-        for (R rowKey : table.rowKeySet()) {
-            csvPrinter.print(rowKey);
-            for (C columnKey : table.columnKeySet())
-                csvPrinter.print(valueTransformer.apply(table.get(rowKey, columnKey)));
-            csvPrinter.println();
-        }
-        csvPrinter.close();
+        writeTableToCsv(table, fileName, FormattingUtil::toStringer, FormattingUtil::toStringer, valueTransformer);
     }
 
-    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, Function<C, String> columnHeaderTransformer, Function<V, String> valueTransformer) throws IOException
+    public static <R, C, V> void writeTableToCsv(
+            Table<R, C, V> table,
+            String fileName,
+            Function<R, String> rowHeaderTransformer,
+            Function<C, String> columnHeaderTransformer,
+            Function<V, String> valueTransformer
+    ) throws IOException
     {
         CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
         csvPrinter.print("");
@@ -319,7 +317,7 @@ public class IoUtil
             csvPrinter.print(columnHeaderTransformer.apply(columnKey));
         csvPrinter.println();
         for (R rowKey : table.rowKeySet()) {
-            csvPrinter.print(rowKey);
+            csvPrinter.print(rowHeaderTransformer.apply(rowKey));
             for (C columnKey : table.columnKeySet())
                 csvPrinter.print(valueTransformer.apply(table.get(rowKey, columnKey)));
             csvPrinter.println();

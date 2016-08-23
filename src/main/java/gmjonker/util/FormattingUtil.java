@@ -325,30 +325,25 @@ public class FormattingUtil
     }
 
     // Implementation is a bit slow, beware.
-    public static <R, C, V> String format(Table<R, C, V> table)
-    {
-        return format(table, Object::toString);
-    }
-
-    // Implementation is a bit slow, beware.
     public static <R, C, V> String tableToString(Table<R, C, V> table)
     {
-        return format(table, Object::toString);
+        return tableToString(table, FormattingUtil::toStringer, FormattingUtil::toStringer, FormattingUtil::toStringer);
     }
 
     // Implementation is a bit slow, beware.
-    public static <R, C, V> String format(Table<R, C, V> table, Function<V, String> valueFormatter)
+    public static <R, C, V> String tableToString(Table<R, C, V> table, Function<R, String> rowHeaderFormatter,
+            Function<C, String> columnHeaderFormatter, Function<V, String> valueFormatter)
     {
         String result = "";
         HashMap<C, Integer> maxWidths = new HashMap<>();
         for (C col : table.columnKeySet()) {
-            Integer width = col.toString().length();
+            Integer width = columnHeaderFormatter.apply(col).length();
             maxWidths.compute(col, (k, v) -> (v == null) ? width : max(v, width));
         }
-        int maxRowHeaderWidth = Integer.MAX_VALUE;
+        int maxRowHeaderWidth = Integer.MIN_VALUE;
         for (R rowKey : table.rowKeySet()) {
-            if (rowKey.toString().length() < maxRowHeaderWidth)
-                maxRowHeaderWidth = rowKey.toString().length();
+            if (rowHeaderFormatter.apply(rowKey).length() > maxRowHeaderWidth)
+                maxRowHeaderWidth = rowHeaderFormatter.apply(rowKey).length();
             Map<C, V> row = table.row(rowKey);
             for (C col : row.keySet()) {
                 V value = row.get(col);
@@ -356,17 +351,20 @@ public class FormattingUtil
                 maxWidths.compute(col, (k, v) -> (v == null) ? width : max(v, width));
             }
         }
+        for (C col : table.columnKeySet()) {
+            log.trace("Max width for col '{}': {}", col, maxWidths.get(col));
+        }
         result += toWidth("", maxRowHeaderWidth + 1);
         for (C col : table.columnKeySet()) {
-            String string = toWidth(col.toString(), maxWidths.get(col) + 1);
+            String string = toWidth(columnHeaderFormatter.apply(col), maxWidths.get(col) + 1);
             result += string;
         }
         result += System.lineSeparator();
         int count = 0;
         for (R rowKey : table.rowKeySet()) {
-            result += toWidth(rowKey.toString(), maxRowHeaderWidth) + " ";
+            result += toWidth(rowHeaderFormatter.apply(rowKey), maxRowHeaderWidth) + " ";
             Map<C, V> row = table.row(rowKey);
-            for (C col : row.keySet()) {
+            for (C col : table.columnKeySet()) {
                 V value = row.get(col);
                 String string = toWidth(valueFormatter.apply(value), maxWidths.get(col) + 1);
                 result += string;
@@ -376,5 +374,10 @@ public class FormattingUtil
 //                System.out.print(".");
         }
         return result;
+    }
+
+    public static String toStringer(Object o)
+    {
+        return o == null ? "-" : o.toString();
     }
 }

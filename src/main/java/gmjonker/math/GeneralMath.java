@@ -234,7 +234,17 @@ public class GeneralMath
         return temp / values.length;
     }
 
-    public static double meanAbsoluteDifference(Collection<Double> values, double x)
+    public static double meanDeviation(Collection<Double> values)
+    {
+        double mean = mean(values);
+        double temp = 0;
+        for (double value : values) {
+            temp += abs(mean - value);
+        }
+        return temp / values.size();
+    }
+
+    public static double meanDeviationFrom(Collection<Double> values, double x)
     {
         double temp = 0;
         for (double value : values) {

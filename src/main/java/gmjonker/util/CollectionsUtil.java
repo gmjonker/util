@@ -341,9 +341,9 @@ public class CollectionsUtil
      * Take the first X items of collection, or less if there are less.
      */
     @Nonnull
-    public static <T> Collection<T> take(Iterable<T> iterable, int max)
+    public static <T> List<T> take(Iterable<T> iterable, int max)
     {
-        Collection<T> collection = new ArrayList<>();
+        List<T> collection = new ArrayList<>();
         Iterator<T> iterator = iterable.iterator();
         while (iterator.hasNext() && collection.size() < max)
             collection.add(iterator.next());
@@ -406,6 +406,28 @@ public class CollectionsUtil
     //
     // ###################################################### SORTING ##################################################
     //
+
+    /**
+     * Sorts a map by value. Adapted from http://stackoverflow.com/a/2581754/1901037
+     *
+     * @return A map that, when iterated over, returns keys, values or entries sorted by value
+     */
+    @Nonnull
+    public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortMapByValueAscending(Map<K, V> map)
+    {
+        return sortMapByValue(map, true);
+    }
+
+    /**
+     * Sorts a map by value. Adapted from http://stackoverflow.com/a/2581754/1901037
+     *
+     * @return A map that, when iterated over, returns keys, values or entries sorted by value
+     */
+    @Nonnull
+    public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortMapByValueDescending(Map<K, V> map)
+    {
+        return sortMapByValue(map, false);
+    }
 
     /**
      * Sorts a map by value. Adapted from http://stackoverflow.com/a/2581754/1901037

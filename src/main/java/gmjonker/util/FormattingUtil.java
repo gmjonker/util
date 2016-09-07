@@ -152,7 +152,7 @@ public class FormattingUtil
     }
 
     /**
-     * Formats a positive score value as a single character, where 0=F, ... , 1=A, -0=z, ..., -1=v
+     * Formats a positive score value as a single character, where 0=A, ... , 1=F, -0=z, ..., -1=v
      **/
     public static String toMicroFormatABC(double d)
     {
@@ -169,7 +169,7 @@ public class FormattingUtil
         if (d < 0)
             return "" + (char)('z' + step + 1);
         else if (d >= 0)
-            return "" + (char)('F' - step);
+            return "" + (char)('A' + step);
         return "?";
     }
 

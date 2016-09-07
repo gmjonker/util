@@ -99,7 +99,7 @@ public class Indication implements Comparable<Indication>
 
     public Indication multiply(double valueFactor, double confidenceFactor)
     {
-        return new Indication(this.value * valueFactor, this.confidence * confidenceFactor);
+        return new Indication(this.value * valueFactor, this.confidence * confidenceFactor, this.comment);
     }
 
     /**
@@ -107,7 +107,7 @@ public class Indication implements Comparable<Indication>
      */
     public Indication multiplyWith(Indication indication)
     {
-        return new Indication(this.value * indication.value, this.confidence * indication.confidence);
+        return new Indication(this.value * indication.value, this.confidence * indication.confidence, this.comment);
     }
 
     /**
@@ -144,12 +144,12 @@ public class Indication implements Comparable<Indication>
 
     public Indication withConfidence(double confidence)
     {
-        return new Indication(this.value, confidence);
+        return new Indication(this.value, confidence, this.comment);
     }
 
     public Indication multiplyConfidence(double factor)
     {
-        return new Indication(value, confidence * factor);
+        return new Indication(value, confidence * factor, this.comment);
     }
 
     public Indication withComment(String comment)

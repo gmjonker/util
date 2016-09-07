@@ -1,12 +1,16 @@
 package gmjonker.util;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
+import lombok.Cleanup;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,27 +24,42 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * - 'vanilla' methods throw an exception if something goes wrong
+ * - tryX methods log an error if something goes wrong and return an empty object.
+ * - XorRTE methods throw a runtime exception if something goes wrong. Handy for use in field declarations.
+ */
 @SuppressWarnings("WeakerAccess")
 public class IoUtil
 {
     protected static final LambdaLogger log = new LambdaLogger(IoUtil.class);
 
-    public static List<String> readFileOrLogError(String name)
+    public static List<String> readFile(String name) throws IOException
+    {
+        return getFileAsStreamOfLines(name).collect(Collectors.toList());
+    }
+
+    public static List<String> tryReadFile(String name)
     {
         try {
-            return readFileOrThrowException(name);
+            return readFile(name);
         } catch (Exception e) {
             log.error("Error while reading file {}", name, e);
         }
         return Collections.emptyList();
     }
 
-    public static List<String> readFileOrThrowException(String name) throws IOException
+    public static List<String> readFileOrRTE(String name)
     {
-        return getFileAsStreamOfLines(name).collect(Collectors.toList());
+        try {
+            return readFile(name);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
-    public static String readFileAsOneStringOrFail(String name) throws IOException
+    public static String readFileAsOneString(String name) throws IOException
     {
         return getFileAsStreamOfLines(name).collect(Collectors.joining(System.lineSeparator()));
     }
@@ -69,18 +88,18 @@ public class IoUtil
 
     public static CSVParser readCsvFileWithHeaders(String fileName) throws IOException
     {
-        String fileContent = readFileAsOneStringOrFail(fileName);
+        String fileContent = readFileAsOneString(fileName);
         return CSVParser.parse(fileContent, CSVFormat.EXCEL.withHeader().withAllowMissingColumnNames()
                 .withIgnoreEmptyLines().withIgnoreSurroundingSpaces());
     }
 
     public static CSVParser readCsvFileWithoutHeaders(String fileName) throws IOException
     {
-        String fileContent = readFileAsOneStringOrFail(fileName);
+        String fileContent = readFileAsOneString(fileName);
         return CSVParser.parse(fileContent, CSVFormat.EXCEL.withIgnoreEmptyLines().withIgnoreSurroundingSpaces());
     }
 
-    public static CSVParser readCsvFileWithHeadersOrFail(String fileName)
+    public static CSVParser readCsvFileWithHeadersOrRTE(String fileName)
     {
         try {
             return readCsvFileWithHeaders(fileName);
@@ -101,7 +120,7 @@ public class IoUtil
     /**
      * Reads from a CSV file that has row and column headers.
      */
-    public static <R, C, T> Table<R, C, T> readCsvIntoTableOrEmptyTable(String fileName, Function<String, R> rowTypeMapper,
+    public static <R, C, T> Table<R, C, T> tryReadCsvIntoTable(String fileName, Function<String, R> rowTypeMapper,
             Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper)
     {
         try {
@@ -114,7 +133,7 @@ public class IoUtil
     /**
      * Reads from a CSV file that has row and column headers.
      */
-    public static <R, C, T> Table<R, C, T> readCsvIntoTableOrFail(String fileName, Function<String, R> rowTypeMapper,
+    public static <R, C, T> Table<R, C, T> readCsvIntoTableOrRTE(String fileName, Function<String, R> rowTypeMapper,
             Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper)
     {
         try {
@@ -156,6 +175,36 @@ public class IoUtil
         }
         csvParser.close();
         return table;
+    }
+
+    /** CSV file must not have headers. **/
+    public static LinkedHashMap<String, String> readTwoColumnCsvIntoMap(String fileName) throws IOException
+    {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
+        for (CSVRecord record : csvParser.getRecords()) {
+            String key   = record.get(0);
+            String value = record.get(1);
+            map.put(key, value);
+        }
+        return map;
+    }
+
+    /** CSV file must not have headers. **/
+    public static LinkedHashMap<String, String> readTwoColumnCsvIntoMapOrRTE(String fileName)
+    {
+        try {
+            LinkedHashMap<String, String> map = new LinkedHashMap<>();
+            CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
+            for (CSVRecord record : csvParser.getRecords()) {
+                String key = record.get(0);
+                String value = record.get(1);
+                map.put(key, value);
+            }
+            return map;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /** CSV file must not have headers. **/
@@ -203,7 +252,7 @@ public class IoUtil
     }
 
     /** CSV file must not have headers. **/
-    public static <K, V> LinkedHashMap<K,V> readTwoColumnCsvIntoMapOrEmptyMapIgnoreErrors(String fileName,
+    public static <K, V> LinkedHashMap<K,V> readTwoColumnCsvIntoMapOrEmptyMapIgnoreErrorsOrEmptyMap(String fileName,
             Function<String, K> keyTransform, Function<String, V> valueTransform)
     {
         try {
@@ -215,11 +264,11 @@ public class IoUtil
     }
 
     /** CSV file must not have headers. **/
-    public static <K, V> LinkedHashMap<K,V> readTwoColumnCsvIntoMapOrFail(String fileName,
+    public static <K, V> LinkedHashMap<K,V> readTwoColumnCsvIntoMapOrRTE(String fileName,
             Function<String, K> keyTransform, Function<String, V> valueTransform)
     {
         try {
-            return readTwoColumnCsvIntoMapIgnoreErrors(fileName, keyTransform, valueTransform);
+            return readTwoColumnCsvIntoMap(fileName, keyTransform, valueTransform);
         } catch (IOException e) {
             log.error("Could not read file '{}'", fileName,  e);
             throw new RuntimeException(e);
@@ -241,7 +290,7 @@ public class IoUtil
     }
 
     /** CSV file must have headers. **/
-    public static <K, V> LinkedHashMap<K,V> readTwoColumnsOfCsvIntoMapOrFail(String fileName, String keyColumn, String valueColumn,
+    public static <K, V> LinkedHashMap<K,V> readTwoColumnsOfCsvIntoMapOrRTE(String fileName, String keyColumn, String valueColumn,
             Function<String, K> keyTransform, Function<String, V> valueTransform)
     {
         try {
@@ -251,6 +300,29 @@ public class IoUtil
             throw new RuntimeException(e);
         }
     }
+
+
+
+    /** CSV is assumed to have no headers. **/
+    public static Multimap<String, String> readCsvIntoMultimapOrRTE(String fileName)
+    {
+        try {
+            Multimap<String, String> map = ArrayListMultimap.create();
+            CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
+            for (CSVRecord record : csvParser.getRecords()) {
+                String key = record.get(0);
+                for (int i = 1; i < record.size(); i++) {
+                    map.put(key, record.get(i));
+                }
+            }
+            return map;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
 
     /** Returns relative filenames, e.g. "restaurantTaggings/Amersfoort.csv". **/
     public static List<String> getFilenamesInDirectory(String directoryName) throws IOException
@@ -295,7 +367,7 @@ public class IoUtil
 
     public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName) throws IOException
     {
-        writeTableToCsv(table, fileName, FormattingUtil::toStringer, FormattingUtil::toStringer, FormattingUtil::toStringer);
+        writeTableToCsv(table, fileName, FormattingUtil::toStringer);
     }
 
     public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, Function<V, String> valueTransformer) throws IOException
@@ -303,22 +375,42 @@ public class IoUtil
         writeTableToCsv(table, fileName, FormattingUtil::toStringer, FormattingUtil::toStringer, valueTransformer);
     }
 
+    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, Function<R, String> rowHeaderTransformer,
+            Function<C, String> columnHeaderTransformer, Function<V, String> valueTransformer) throws IOException
+    {
+        writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, valueTransformer, null, null);
+    }
+
     public static <R, C, V> void writeTableToCsv(
             Table<R, C, V> table,
             String fileName,
             Function<R, String> rowHeaderTransformer,
             Function<C, String> columnHeaderTransformer,
-            Function<V, String> valueTransformer
+            Function<V, String> valueTransformer,
+            @Nullable Comparator<R> rowComparator,
+            @Nullable Comparator<C> columnComparator
     ) throws IOException
     {
-        CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
+        @Cleanup CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
         csvPrinter.print("");
-        for (C columnKey : table.columnKeySet())
+        Set<C> columnKeys = table.columnKeySet();
+        Set<R> rowKeys = table.rowKeySet();
+        if (columnComparator != null) {
+            TreeSet<C> sortedColumnKeys = new TreeSet<>(columnComparator);
+            sortedColumnKeys.addAll(columnKeys);
+            columnKeys = sortedColumnKeys;
+        }
+        if (rowComparator != null) {
+            TreeSet<R> sortedRowKeys = new TreeSet<>(rowComparator);
+            sortedRowKeys.addAll(rowKeys);
+            rowKeys = sortedRowKeys;
+        }
+        for (C columnKey : columnKeys)
             csvPrinter.print(columnHeaderTransformer.apply(columnKey));
         csvPrinter.println();
-        for (R rowKey : table.rowKeySet()) {
+        for (R rowKey : rowKeys) {
             csvPrinter.print(rowHeaderTransformer.apply(rowKey));
-            for (C columnKey : table.columnKeySet())
+            for (C columnKey : columnKeys)
                 csvPrinter.print(valueTransformer.apply(table.get(rowKey, columnKey)));
             csvPrinter.println();
         }

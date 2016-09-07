@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.common.primitives.Doubles;
 import gmjonker.util.LambdaLogger;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class Indication implements Comparable<Indication>
     public final double value;
     public final double confidence;
 
-    public final String comment; // can be handy for explanations
+    @Getter public final String comment; // can be handy for explanations
 
     protected static final LambdaLogger log = new LambdaLogger(Indication.class);
 
@@ -181,12 +182,12 @@ public class Indication implements Comparable<Indication>
     @Override
     public String toString()
     {
-        return asPercentage(value).trim() + "/" + asPercentage(confidence).trim();
+        return asPercentage(value).trim() + "/" + asPercentage(confidence).trim() + "(" + comment + ")";
     }
 
     public String toLongString()
     {
-        return String.format("%.5f/%.5f->%.5f", value, confidence, deriveDouble());
+        return String.format("%.5f/%.5f->%.5f (%s)", value, confidence, deriveDouble(), comment);
     }
 
     public String toShortString()
@@ -194,14 +195,37 @@ public class Indication implements Comparable<Indication>
         return asPercentage(value) + "/" + asPercentage(confidence);
     }
 
+    public String toShortStringWithComment()
+    {
+        return toShortString() + "(" + comment + ")";
+    }
+
+    /** 4/8, 0/T. Not used much... **/
     public String toMicroString()
     {
         return toMicroFormatM11(value) + "/" + toMicroFormatM01(confidence);
     }
 
+    public String toMicroStringWithComment()
+    {
+        return toMicroString() + "(" + comment + ")";
+    }
+
+    /** 4A, 9F **/
     public String toPicoString()
     {
         return toMicroFormatM11(value) + toMicroFormatABC(confidence);
+    }
+
+    public String toPicoStringWithComment()
+    {
+        return toMicroFormatM11(value) + toMicroFormatABC(confidence) + "(" + comment + ")";
+    }
+
+    /** 1, 6 **/
+    public String toNanoString()
+    {
+        return toMicroFormatM01(deriveDouble01(.5));
     }
 
     public String toAlignedString()
@@ -264,6 +288,6 @@ public class Indication implements Comparable<Indication>
 
     public Score toScore01()
     {
-        return new Score(value / 2 + .5, confidence);
+        return Score.fromMinusOneOneRange(value, confidence);
     }
 }

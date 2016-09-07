@@ -8,11 +8,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import jdk.nashorn.internal.objects.NativeString;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static gmjonker.math.GeneralMath.*;
@@ -51,8 +53,10 @@ public class FormattingUtil
     /**
      * Formats a positive score value as a percentage. Result is not fixed-width.
      **/
-    public static String asPercentage(double d)
+    public static String asPercentage(Double d)
     {
+        if (d == null)
+            return "nul";
         if ( ! isValue(d))
             return "-";
         return String.valueOf(round(d * 100));
@@ -278,6 +282,11 @@ public class FormattingUtil
         return CollectionsUtil.map(map, keyMapper, v -> v).toString();
     }
 
+    public static <K,V> String formatMap(Map<K,V> map, BiFunction<K,V,String> formatter)
+    {
+        return CollectionsUtil.map(IterableUtils.toList(map.entrySet()), entry -> formatter.apply(entry.getKey(), entry.getValue())).toString();
+    }
+
     public static String toWidth(String string, int width)
     {
         width = max(0, width);
@@ -327,21 +336,47 @@ public class FormattingUtil
     // Implementation is a bit slow, beware.
     public static <R, C, V> String tableToString(Table<R, C, V> table)
     {
-        return tableToString(table, FormattingUtil::toStringer, FormattingUtil::toStringer, FormattingUtil::toStringer);
+        return tableToString(table, FormattingUtil::toStringer, FormattingUtil::toStringer, FormattingUtil::toStringer, null, null);
+    }
+
+    // Implementation is a bit slow, beware.
+    public static <R, C, V> String tableToString(Table<R, C, V> table, Function<V, String> valueFormatter)
+    {
+        return tableToString(table, FormattingUtil::toStringer, FormattingUtil::toStringer, valueFormatter, null, null);
     }
 
     // Implementation is a bit slow, beware.
     public static <R, C, V> String tableToString(Table<R, C, V> table, Function<R, String> rowHeaderFormatter,
             Function<C, String> columnHeaderFormatter, Function<V, String> valueFormatter)
     {
+        return tableToString(table, rowHeaderFormatter, columnHeaderFormatter, valueFormatter, null, null);
+    }
+
+    // Implementation is a bit slow, beware.
+    public static <R, C, V> String tableToString(Table<R, C, V> table, Function<R, String> rowHeaderFormatter,
+            Function<C, String> columnHeaderFormatter, Function<V, String> valueFormatter,
+            @Nullable Comparator<R> rowComparator, @Nullable Comparator<C> columnComparator)
+    {
         String result = "";
         HashMap<C, Integer> maxWidths = new HashMap<>();
-        for (C col : table.columnKeySet()) {
+        Set<C> columnKeys = table.columnKeySet();
+        Set<R> rowKeys = table.rowKeySet();
+        if (columnComparator != null) {
+            TreeSet<C> sortedColumnKeys = new TreeSet<>(columnComparator);
+            sortedColumnKeys.addAll(columnKeys);
+            columnKeys = sortedColumnKeys;
+        }
+        if (rowComparator != null) {
+            TreeSet<R> sortedRowKeys = new TreeSet<>(rowComparator);
+            sortedRowKeys.addAll(rowKeys);
+            rowKeys = sortedRowKeys;
+        }
+        for (C col : columnKeys) {
             Integer width = columnHeaderFormatter.apply(col).length();
             maxWidths.compute(col, (k, v) -> (v == null) ? width : max(v, width));
         }
         int maxRowHeaderWidth = Integer.MIN_VALUE;
-        for (R rowKey : table.rowKeySet()) {
+        for (R rowKey : rowKeys) {
             if (rowHeaderFormatter.apply(rowKey).length() > maxRowHeaderWidth)
                 maxRowHeaderWidth = rowHeaderFormatter.apply(rowKey).length();
             Map<C, V> row = table.row(rowKey);
@@ -351,20 +386,20 @@ public class FormattingUtil
                 maxWidths.compute(col, (k, v) -> (v == null) ? width : max(v, width));
             }
         }
-        for (C col : table.columnKeySet()) {
+        for (C col : columnKeys) {
             log.trace("Max width for col '{}': {}", col, maxWidths.get(col));
         }
         result += toWidth("", maxRowHeaderWidth + 1);
-        for (C col : table.columnKeySet()) {
+        for (C col : columnKeys) {
             String string = toWidth(columnHeaderFormatter.apply(col), maxWidths.get(col) + 1);
             result += string;
         }
         result += System.lineSeparator();
         int count = 0;
-        for (R rowKey : table.rowKeySet()) {
+        for (R rowKey : rowKeys) {
             result += toWidth(rowHeaderFormatter.apply(rowKey), maxRowHeaderWidth) + " ";
             Map<C, V> row = table.row(rowKey);
-            for (C col : table.columnKeySet()) {
+            for (C col : columnKeys) {
                 V value = row.get(col);
                 String string = toWidth(valueFormatter.apply(value), maxWidths.get(col) + 1);
                 result += string;

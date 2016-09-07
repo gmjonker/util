@@ -202,5 +202,9 @@ public class IndicationMathTest
         System.out.println("Vanilla:     " + combine                            (asList(new Indication(0, .5), new Indication(1, .2))));
         System.out.println("No dis:      " + combineNoDisagreementEffect        (asList(new Indication(0, .5), new Indication(1, .2))));
         System.out.println("Tight nodis: " + combineTightAndNoDisagreementEffect(asList(new Indication(0, .5), new Indication(1, .2))));
+
+        System.out.println("Vanilla:     " + combine                            (asList(new Indication(1, 1), new Indication(-1, .1))));
+        System.out.println("No dis:      " + combineNoDisagreementEffect        (asList(new Indication(1, 1), new Indication(-1, .1))));
+        System.out.println("Tight nodis: " + combineTightAndNoDisagreementEffect(asList(new Indication(1, 1), new Indication(-1, .1))));
     }
 }

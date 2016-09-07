@@ -71,6 +71,9 @@ public class GeneralMath
      */
     public static double round(double value, int decimals)
     {
+        if ( ! isValue(value))
+            return NA;
+
         return Math.round(value * pow(10, decimals)) / pow(10, decimals);
     }
 
@@ -123,6 +126,17 @@ public class GeneralMath
     public static double sum(double... values)
     {
         return StatUtils.sum(values);
+    }
+
+    public static double sum(Collection<Double> values)
+    {
+        double sum = NA;
+        if ( ! CollectionUtils.isEmpty(values) ) {
+            sum = 0.0;
+            for (Double value : values)
+                sum += value;
+        }
+        return sum;
     }
 
     public static double mean(double... values)

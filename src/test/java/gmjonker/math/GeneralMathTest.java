@@ -7,9 +7,7 @@ import org.apache.commons.math3.stat.descriptive.moment.Variance;
 import org.junit.*;
 
 import static com.google.common.primitives.Doubles.asList;
-import static gmjonker.math.GeneralMath.abs;
-import static gmjonker.math.GeneralMath.max;
-import static gmjonker.math.GeneralMath.mean;
+import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
 import static junit.framework.Assert.assertEquals;
@@ -19,6 +17,14 @@ import static org.junit.Assert.*;
 
 public class GeneralMathTest
 {
+    @Test
+    public void roundd()
+    {
+        System.out.println("round(1.23, 1) = " + round(1.23, 1));
+        System.out.println("round(1.25, 1) = " + round(1.25, 1));
+        System.out.println("round(NaN, 1) = " + round(Double.NaN, 1));
+    }
+
     @Test
     public void fastSigmoidAlternativeLooksAlright()
     {

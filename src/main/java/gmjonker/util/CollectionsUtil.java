@@ -5,6 +5,7 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Table;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,6 +15,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static gmjonker.math.GeneralMath.max;
 import static gmjonker.math.NaType.getValueOr;
@@ -31,10 +33,22 @@ public class CollectionsUtil
     protected static final LambdaLogger log = new LambdaLogger(CollectionsUtil.class);
 
     @Nonnull
-    public static <T, R> Collection<R> map(Collection<T> collection, Function<T, R> function)
+    public static <T, R> List<R> map(Iterable<T> collection, Function<T, R> function)
     {
         if (collection == null)
-            return emptySet();
+            return emptyList();
+
+        return StreamSupport.stream(collection.spliterator(), false)
+                .filter(o -> o != null)
+                .map(function)
+                .collect(Collectors.toList());
+    }
+
+    @Nonnull
+    public static <T, R> List<R> map(Collection<T> collection, Function<T, R> function)
+    {
+        if (collection == null)
+            return emptyList();
 
         return collection.stream()
                 .filter(o -> o != null)
@@ -246,6 +260,14 @@ public class CollectionsUtil
         return map;
     }
 
+    @Nonnull
+    public static <K, V> Map<V, K> invertMap(Map<K, V> map)
+    {
+        return map.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+    }
+
     /**
      * Null-safe variant of {@code new ArrayList<T>(Collection<T> collection)}
      */
@@ -351,11 +373,14 @@ public class CollectionsUtil
     }
 
     /**
-     * Take the first X items of collection, or less if there are less.
+     * Take the first X items of map, or less if there are less.
      */
     @Nonnull
     public static <K,V> Map<K,V> take(Map<K,V> map, int max)
     {
+        if (MapUtils.isEmpty(map))
+            return emptyMap();
+
         LinkedHashMap<K, V> newMap = new LinkedHashMap<K, V>();
         Iterator<Map.Entry<K, V>> iterator = map.entrySet().iterator();
         while (iterator.hasNext() && newMap.size() < max) {

@@ -176,24 +176,24 @@ public class Score
 
     public String toString()
     {
-        return asPercentageTwoSpaces(value).trim() + "/" + asPercentageTwoSpaces(confidence).trim()
+        return asPercentageTwoSpaces(value).trim() + "\\" + asPercentageTwoSpaces(confidence).trim()
                 + "(" + asPercentageTwoSpaces(deriveDouble0101()) + ")";
     }
 
     public String toStringM11()
     {
-        return asPercentageTwoSpaces(value).trim() + "/" + asPercentageTwoSpaces(confidence).trim()
+        return asPercentageTwoSpaces(value).trim() + "\\" + asPercentageTwoSpaces(confidence).trim()
                 + "(" + asPercentageTwoSpaces(deriveDoubleM11M11()) + ")";
     }
 
     public String toShortString()
     {
-        return FormattingUtil.asPercentage(value) + "/" + FormattingUtil.asPercentage(confidence);
+        return FormattingUtil.asPercentage(value) + "\\" + FormattingUtil.asPercentage(confidence);
     }
 
     public String toAlignedString()
     {
-        return asPercentageTwoSpaces(value) + "/" + asPercentageTwoSpaces(confidence);
+        return asPercentageTwoSpaces(value) + "\\" + asPercentageTwoSpaces(confidence);
     }
 
     public String toPicoString()

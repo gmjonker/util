@@ -133,8 +133,10 @@ public class FormattingUtil
 
     /**
      * Formats a value in (-1,1) as a single digit, where -1->0, -.8->2, ..., 0->5, .2->6, ... .8->9, 1->T, >1 -> '>', <-1 -> '<'
+     * Warning: a bit confusing, with -1->0...
      * @param d value in (-1,1)
      **/
+    @Deprecated
     public static String toMicroFormatM11(double d)
     {
         if ( ! isValue(d))

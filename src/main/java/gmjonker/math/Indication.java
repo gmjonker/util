@@ -111,7 +111,7 @@ public class Indication implements Comparable<Indication>
     }
 
     /**
-     * Derives a double in range (0,1).
+     * Derives a double in range (0,1), or NA if indication doesn't have a value or confidence.
      * @param neutralIndication Value in (0,1) that corresponds with the neutral point (0 in range (-1,1)). For instance: .5
      */
     public double deriveDouble01(double neutralIndication)
@@ -198,17 +198,6 @@ public class Indication implements Comparable<Indication>
     public String toShortStringWithComment()
     {
         return toShortString() + "(" + comment + ")";
-    }
-
-    /** 4/8, 0/T. Not used much... **/
-    public String toMicroString()
-    {
-        return toMicroFormatM11(value) + "/" + toMicroFormatM01(confidence);
-    }
-
-    public String toMicroStringWithComment()
-    {
-        return toMicroString() + "(" + comment + ")";
     }
 
     /** 4A, 9F **/

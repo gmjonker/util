@@ -201,12 +201,12 @@ public class Indication implements Comparable<Indication>
     }
 
     /** 4A, 9F **/
-    public String toPicoString()
+    public String toMicroString()
     {
         return toMicroFormatM11(value) + toMicroFormatABC(confidence);
     }
 
-    public String toPicoStringWithComment()
+    public String toMicroStringWithComment()
     {
         return toMicroFormatM11(value) + toMicroFormatABC(confidence) + "(" + comment + ")";
     }

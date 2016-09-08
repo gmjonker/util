@@ -196,7 +196,7 @@ public class Score
         return asPercentageTwoSpaces(value) + "\\" + asPercentageTwoSpaces(confidence);
     }
 
-    public String toPicoString()
+    public String toMicroString()
     {
         return toMicroFormatM01(value) + toMicroFormatABC(confidence);
     }

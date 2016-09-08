@@ -13,6 +13,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -599,5 +600,15 @@ public class CollectionsUtil
         if (IterableUtils.isEmpty(a) && IterableUtils.isEmpty(b))
             return true;
         return CollectionUtils.isEqualCollection(a, b);
+    }
+
+    public static <R, C, V> V getOrInitializeIfAbsent(Table<R, C, V> table, R row, C column, Supplier<V> initializer)
+    {
+        V v = table.get(row, column);
+        if (v == null) {
+            v = initializer.get();
+            table.put(row, column, v);
+        }
+        return v;
     }
 }

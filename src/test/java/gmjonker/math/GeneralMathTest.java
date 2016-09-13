@@ -6,13 +6,19 @@ import com.google.common.math.DoubleMath;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 import org.junit.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import static com.google.common.primitives.Doubles.asList;
+import static gmjonker.matchers.IsValueMatcher.isValueMatch;
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 public class GeneralMathTest
@@ -23,6 +29,14 @@ public class GeneralMathTest
         System.out.println("round(1.23, 1) = " + round(1.23, 1));
         System.out.println("round(1.25, 1) = " + round(1.25, 1));
         System.out.println("round(NaN, 1) = " + round(Double.NaN, 1));
+    }
+
+    @Test
+    public void maxBy()
+    {
+        assertThat(maxx(Arrays.asList("geert", "jonker"), String::length), is(6));
+        assertThat(max(Arrays.asList("geert", "jonker"), s -> s.length() * 2.0), closeTo(12, .0001));
+        assertThat(max(new ArrayList<String>(), s -> s.length() * 2.0), not(isValueMatch()));
     }
 
     @Test
@@ -81,6 +95,30 @@ public class GeneralMathTest
         // Verify that x = logit(sigmoid(x))
         assertThat(maxDiff1, closeTo(0, .0000000001));
         assertThat(maxDiff2, closeTo(0, .0000000001));
+    }
+
+    @Test
+    public void getConfidencez()
+    {
+        System.out.println("getConfidence(0, 1) = " + getConfidence(0d, 1d));
+        System.out.println("getConfidence(1, 1) = " + getConfidence(1d, 1d));
+        System.out.println("getConfidence(2, 1) = " + getConfidence(2d, 1d));
+        System.out.println("getConfidence(4, 1) = " + getConfidence(4d, 1d));
+        System.out.println("getConfidence(8, 1) = " + getConfidence(8d, 1d));
+
+        System.out.println("getConfidence(0, .2) = " + getConfidence(0d, .2d));
+        System.out.println("getConfidence(1, .2) = " + getConfidence(1d, .2d));
+        System.out.println("getConfidence(2, .2) = " + getConfidence(2d, .2d));
+        System.out.println("getConfidence(4, .2) = " + getConfidence(4d, .2d));
+        System.out.println("getConfidence(8, .2) = " + getConfidence(8d, .2d));
+        System.out.println("getConfidence(16, .2) = " + getConfidence(16d, .2d));
+        System.out.println("getConfidence(32, .2) = " + getConfidence(32d, .2d));
+
+        System.out.println("getConfidence(0, 5) = " + getConfidence(0d, 5d));
+        System.out.println("getConfidence(1, 5) = " + getConfidence(1d, 5d));
+        System.out.println("getConfidence(2, 5) = " + getConfidence(2d, 5d));
+        System.out.println("getConfidence(4, 5) = " + getConfidence(4d, 5d));
+        System.out.println("getConfidence(8, 5) = " + getConfidence(8d, 5d));
     }
 
     @Test

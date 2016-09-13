@@ -10,9 +10,12 @@ import org.apache.commons.math3.stat.descriptive.moment.Variance;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import static gmjonker.math.NaType.NA;
+import static gmjonker.math.NaType.NA_I;
 import static gmjonker.math.NaType.isValue;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 
@@ -95,6 +98,37 @@ public class GeneralMath
     public static int max(int... values)
     {
         return Ints.max(values);
+    }
+
+    public static <T extends Object & Comparable<? super T>> T max(Collection<? extends T> coll)
+    {
+        return Collections.max(coll);
+    }
+
+    public static <V> double max(Iterable<V> iterable, Function<V, Double> valueExtractor)
+    {
+        double max = Double.MIN_VALUE;
+        for (V v : iterable) {
+            double value = valueExtractor.apply(v);
+            if (value > max)
+                max = value;
+        }
+        if (max == Double.MIN_VALUE)
+            max = NA;
+        return max;
+    }
+
+    public static <V> int maxx(Iterable<V> iterable, Function<V, Integer> valueExtractor)
+    {
+        Integer max = Integer.MIN_VALUE;
+        for (V v : iterable) {
+            int value = valueExtractor.apply(v);
+            if (value > max)
+                max = value;
+        }
+        if (max == Integer.MIN_VALUE)
+            max = NA_I;
+        return max;
     }
 
     public static double min(double x1, double x2)
@@ -445,6 +479,20 @@ public class GeneralMath
     public static double fastSigmoidAlternative(double x, double rangeLow, double rangeHigh)
     {
         return rangeLow + (rangeHigh - rangeLow) * fastSigmoidAlternative(x);
+    }
+
+    /**
+     * http://rechneronline.de/function-graphs/
+     * a0=2&a1=-1/(x+1) + 1&a2=&a3=&a4=1&a5=4&a6=8&a7=1&a8=1&a9=1&b0=500&b1=500&b2=-5&b3=5&b4=-5&b5=5&b6=10&b7=10&b8=5&b9=5&c0=3&c1=0&c2=1&c3=1&c4=1&c5=1&c6=1&c7=0&c8=0&c9=0&d0=1&d1=20&d2=20&d3=0&d4=&d5=&d6=&d7=&d8=&d9=&e0=&e1=&e2=&e3=&e4=14&e5=14&e6=13&e7=12&e8=0&e9=0&f0=0&f1=1&f2=1&f3=0&f4=0&f5=&f6=&f7=&f8=&f9=&g0=&g1=1&g2=1&g3=0&g4=0&g5=0&g6=Y&g7=ffffff&g8=a0b0c0&g9=6080a0&h0=1&z
+     * @param sampleSize The number of samples you have used to get a result. Must be > 0.
+     * @param growthParameter The higher this value, the faster this function will approach 1 for increasing sample size
+     * @return A value in [0,1)
+     */
+    public static double getConfidence(double sampleSize, double growthParameter)
+    {
+        if (sampleSize < 0)
+            throw new RuntimeException("getConfidence not defined for sampleSize < 0");
+        return -1.0 / (growthParameter * sampleSize + 1) + 1;
     }
 
     /** The inverse logistic function, input in range (0,1) **/

@@ -245,9 +245,18 @@ public class CollectionsUtil
     }
 
     @Nonnull
+    public static <T> Set<T> asSet(List<T> list)
+    {
+        Set<T> set = new HashSet<>();
+        if (list != null)
+            set.addAll(list);
+        return set;
+    }
+
+    @Nonnull
     public static <K,V> LinkedHashMap<K,V> asMap(K key, V value)
     {
-        LinkedHashMap<K,V> map = new LinkedHashMap<K, V>();
+        LinkedHashMap<K,V> map = new LinkedHashMap<>();
         map.put(key, value);
         return map;
     }
@@ -255,9 +264,21 @@ public class CollectionsUtil
     @Nonnull
     public static <K,V> LinkedHashMap<K,V> asMap(K k1, V v1, K k2, V v2)
     {
-        LinkedHashMap<K,V> map = new LinkedHashMap<K, V>();
+        LinkedHashMap<K,V> map = new LinkedHashMap<>();
         map.put(k1, v1);
         map.put(k2, v2);
+        return map;
+    }
+
+    @Nonnull
+    public static <K,V> LinkedHashMap<K,V> asMap(K k1, V v1, K k2, V v2, Object... objects)
+    {
+        LinkedHashMap<K,V> map = new LinkedHashMap<>();
+        map.put(k1, v1);
+        map.put(k2, v2);
+        for (int i = 0; i < objects.length; i += 2) {
+            map.put((K)objects[i], (V)objects[i+1]);
+        }
         return map;
     }
 

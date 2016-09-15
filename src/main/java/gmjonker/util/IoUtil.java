@@ -2,7 +2,7 @@ package gmjonker.util;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Multiset;
 import com.google.common.collect.Table;
 import lombok.Cleanup;
 import org.apache.commons.csv.CSVFormat;
@@ -73,11 +73,11 @@ public class IoUtil
         if (resourceAsStream != null) {
             reader = new BufferedReader(new InputStreamReader(resourceAsStream));
         } else {
-            log.info("Could not find resource '{}', will now try to attempt to read in working directory '{}'...", name,
+            log.trace("Could not find resource '{}', will now attempt to read in working directory '{}'...", name,
                     System.getProperty("user.dir"));
             File file = new File(name);
             if ( ! file.exists()) {
-                log.info("Couldn't find find resource '{}' in the working directory either", name);
+                log.warn("Couldn't find find resource '{}' in the resource folder(s) or the working directory", name);
                 throw new IOException("Could not find resource '" + name + "'");
             } else {
                 reader = new BufferedReader(new FileReader(file));
@@ -304,15 +304,21 @@ public class IoUtil
 
 
     /** CSV is assumed to have no headers. **/
-    public static Multimap<String, String> readCsvIntoMultimapOrRTE(String fileName)
+    public static ArrayListMultimap<String, String> readCsvIntoMultimapOrRTE(String fileName)
+    {
+        return readCsvIntoMultimapOrRTE(fileName, k -> k, v -> v);
+    }
+
+    public static <K, V> ArrayListMultimap<K, V> readCsvIntoMultimapOrRTE(String fileName, Function<String, K> keyMapper,
+            Function<String, V> valueMapper)
     {
         try {
-            Multimap<String, String> map = ArrayListMultimap.create();
+            ArrayListMultimap<K, V> map = ArrayListMultimap.create();
             CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
             for (CSVRecord record : csvParser.getRecords()) {
                 String key = record.get(0);
                 for (int i = 1; i < record.size(); i++) {
-                    map.put(key, record.get(i));
+                    map.put(keyMapper.apply(key), valueMapper.apply(record.get(i)));
                 }
             }
             return map;
@@ -416,4 +422,18 @@ public class IoUtil
         }
         csvPrinter.close();
     }
+    public static <V> void writeMultisetToCsv(Multiset<V> multiset, String fileName) throws IOException
+    {
+        writeMultisetToCsv(multiset, el -> el, fileName);
+    }
+
+    public static <V> void writeMultisetToCsv(Multiset<V> multiset, Function<V, ?> elementMapper, String fileName) throws IOException
+    {
+        @Cleanup CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
+        for (Multiset.Entry<V> entry : multiset.entrySet()) {
+            csvPrinter.printRecord(elementMapper.apply(entry.getElement()), entry.getCount());
+        }
+        csvPrinter.close();
+    }
+
 }

@@ -112,16 +112,16 @@ public class Indication implements Comparable<Indication>
 
     /**
      * Derives a double in range (0,1), or NA if indication doesn't have a value or confidence.
-     * @param neutralIndication Value in (0,1) that corresponds with the neutral point (0 in range (-1,1)). For instance: .5
+     * @param neutralPoint Value in (0,1) that corresponds with the neutral point (0 in range (-1,1)). For instance: .5
      */
-    public double deriveDouble01(double neutralIndication)
+    public double deriveDouble01(double neutralPoint)
     {
         if ( ! isValue(value) || ! isValue(confidence))
             return NA;
         if (value > 0) {
-            return neutralIndication + value * confidence * (1 - neutralIndication);
+            return neutralPoint + value * confidence * (1 - neutralPoint);
         } else {
-            return neutralIndication + value * confidence * neutralIndication;
+            return neutralPoint + value * confidence * neutralPoint;
         }
     }
 

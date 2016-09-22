@@ -16,9 +16,7 @@ import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.closeTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 public class GeneralMathTest
@@ -37,6 +35,18 @@ public class GeneralMathTest
         assertThat(maxx(Arrays.asList("geert", "jonker"), String::length), is(6));
         assertThat(max(Arrays.asList("geert", "jonker"), s -> s.length() * 2.0), closeTo(12, .0001));
         assertThat(max(new ArrayList<String>(), s -> s.length() * 2.0), not(isValueMatch()));
+    }
+
+    @Test
+    public void fastSigmoidAlternatif()
+    {
+        System.out.println(Double.POSITIVE_INFINITY * pow(0,2));
+        double eps = .000001;
+        assertThat(fastSigmoidAlternative(0), closeTo(0.5, eps));
+        assertThat(fastSigmoidAlternative(100000), closeTo(1, .0001));
+        assertThat(fastSigmoidAlternative(-100000), closeTo(0, .0001));
+        assertThat(fastSigmoidAlternative(Double.POSITIVE_INFINITY), closeTo(1, eps));
+        assertThat(fastSigmoidAlternative(Double.NEGATIVE_INFINITY), closeTo(0, eps));
     }
 
     @Test
@@ -132,6 +142,17 @@ public class GeneralMathTest
     {
         double eps = 0.00001;
         assertEquals(4.2/6, GeneralMath.weightedMean(new double[]{0.2, 0.5, 1.0}, new double[]{1d, 2d, 3d}), eps);
+        assertEquals(   .5, GeneralMath.weightedMean(new double[]{0.2, 0.5, 1.0}, new double[]{1d, Double.POSITIVE_INFINITY, 3d}), eps);
+        assertEquals(  .35, GeneralMath.weightedMean(new double[]{0.2, 0.5, 1.0}, new double[]{Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 3d}), eps);
+    }
+
+    @Test
+    public void weightedMeanIgnoreNAss()
+    {
+        double eps = 0.00001;
+        assertEquals(4.2/6, GeneralMath.weightedMeanIgnoreNAs(new double[]{0.2, 0.5, 1.0}, new double[]{1d, 2d, 3d}), eps);
+        assertEquals(   .4, GeneralMath.weightedMeanIgnoreNAs(new double[]{0.2, 0.5,  NA}, new double[]{1d, 2d, 3d}), eps);
+        assertEquals(   .4, GeneralMath.weightedMeanIgnoreNAs(new double[]{0.2, 0.5, 1.0}, new double[]{1d, 2d, NA}), eps);
     }
 
     @Test

@@ -190,6 +190,11 @@ public class GeneralMath
         return sum / values.size();
     }
 
+    /**
+     * @param values values
+     * @param weights Positive (or negative) infinity is allowed (replaced for a very large (or small) number)
+     * @return weighted mean
+     */
     public static double weightedMean(double[] values, double[] weights)
     {
         double sum = 0;
@@ -197,6 +202,10 @@ public class GeneralMath
         for (int i = 0; i < values.length; i++) {
             double value = values[i];
             double weight = weights[i];
+            if (weight == Double.POSITIVE_INFINITY)
+                weight = Double.MAX_VALUE / 1000;
+            else if (weight == Double.NEGATIVE_INFINITY)
+                weight = Double.MIN_VALUE * 1000;
             sum += weight * value;
             totalWeight += weight;
         }
@@ -207,15 +216,25 @@ public class GeneralMath
         return sum / totalWeight;
     }
 
+    /**
+     * NA values or values with NA weights are ignored.
+     * @param values values
+     * @param weights Positive (or negative) infinity is allowed (replaced for a very large (or small) number)
+     * @return weighted mean
+     */
     public static double weightedMeanIgnoreNAs(double[] values, double[] weights)
     {
         double sum = 0;
         double totalWeight = 0;
         for (int i = 0; i < values.length; i++) {
             double value = values[i];
-            if ( ! isValue(value))
-                continue;
             double weight = weights[i];
+            if ( ! isValue(value) || ! isValue(weight))
+                continue;
+            if (weight == Double.POSITIVE_INFINITY)
+                weight = Double.MAX_VALUE / 1000;
+            else if (weight == Double.NEGATIVE_INFINITY)
+                weight = Double.MIN_VALUE * 1000;
             sum += weight * value;
             totalWeight += weight;
         }
@@ -230,6 +249,8 @@ public class GeneralMath
      * Calculates a weighted mean of values. This is a weighted sum divided by sum(weights).
      * If any value is Constants.NA, then the default value is used instead.
      * The weights must be non-negative, and sum(weights) must be positive.
+     * @param values values
+     * @param weights Positive (or negative) infinity is allowed (replaced for a very large (or small) number)
      * @param include use this to exclude values completely, i.e. don't use any popularity values
      * @param defaultValues these values will be used if individual values are missing (NA)
      */
@@ -243,6 +264,10 @@ public class GeneralMath
                 continue;
             double value = values[i];
             double weight = weights[i];
+            if (weight == Double.POSITIVE_INFINITY)
+                weight = Double.MAX_VALUE / 1000;
+            else if (weight == Double.NEGATIVE_INFINITY)
+                weight = Double.MIN_VALUE * 1000;
             if (isValue(value))
                 sum += weight * value;
             else
@@ -469,6 +494,8 @@ public class GeneralMath
      **/
     public static double fastSigmoidAlternative(double x)
     {
+        if (x == Double.POSITIVE_INFINITY) return 1;
+        if (x == Double.NEGATIVE_INFINITY) return 0;
         return .5 * (1 + x / (1 + abs(x)));
     }
 
@@ -526,6 +553,7 @@ public class GeneralMath
      * a0=2&a1=-log(1/x-1)&a2=(x - .5)/(x +.3)&a3=(.5-x)/(x-1.3)&a4=1&a5=4&a6=8&a7=1&a8=1&a9=1&b0=500&b1=500&b2=-1&b3=2&b4=-5&b5=5&b6=12&b7=10&b8=5&b9=5&c0=3&c1=0&c2=1&c3=1&c4=1&c5=1&c6=1&c7=0&c8=0&c9=0&d0=1&d1=12&d2=10&d3=0&d4=&d5=&d6=-1&d7=.5&d8=.5&d9=2&e0=&e1=&e2=&e3=&e4=14&e5=14&e6=13&e7=12&e8=0&e9=0&f0=0&f1=1&f2=1&f3=0&f4=0&f5=&f6=&f7=&f8=&f9=&g0=&g1=1&g2=1&g3=0&g4=0&g5=0&g6=Y&g7=ffffff&g8=a0b0c0&g9=6080a0&h0=1&z
      * If rangeLow == rangeHigh, the result will be NaN. If rangeLow is extremely close to rangeHigh, the result may be +/-infinity.
      **/
+    // TODO: look at the difference with sigmoid again, see if we can get the initial richtingscoefficient equal
     public static double fastLogitAlternative(double x, double rangeLow, double rangeHigh)
     {
         double middle = (rangeLow + rangeHigh) / 2;

@@ -1,9 +1,6 @@
 package gmjonker.util;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Table;
+import com.google.common.collect.*;
 import lombok.Cleanup;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -106,6 +103,14 @@ public class IoUtil
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Reads from a CSV file that has row and column headers.
+     */
+    public static Table<String, String, String> readCsvIntoTable(String fileName) throws IOException
+    {
+        return _readCsvIntoTable(fileName, o -> o, o -> o, o -> o, DefaultingHashBasedTable.create(null));
     }
 
     /**
@@ -326,6 +331,20 @@ public class IoUtil
             throw new RuntimeException(e);
         }
     }
+
+    public static <K, V> void writeMultimapToCsv(Multimap<K, V> multimap, String fileName) throws IOException
+    {
+        @Cleanup CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
+        for (K key : multimap.keySet()) {
+            csvPrinter.print(key);
+            for (V value : multimap.get(key)) {
+                csvPrinter.print(value);
+            }
+            csvPrinter.println();
+        }
+        csvPrinter.close();
+    }
+
 
 
 

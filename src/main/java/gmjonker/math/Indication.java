@@ -182,7 +182,8 @@ public class Indication implements Comparable<Indication>
     @Override
     public String toString()
     {
-        return asPercentage(value).trim() + "/" + asPercentage(confidence).trim() + "(" + comment + ")";
+        return toShortStringWithComment();
+//        return asPercentage(value).trim() + "/" + asPercentage(confidence).trim() + "(" + comment + ")";
     }
 
     public String toLongString()

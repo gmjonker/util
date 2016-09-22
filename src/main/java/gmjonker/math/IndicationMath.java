@@ -5,6 +5,7 @@ import gmjonker.util.LambdaLogger;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.StringJoiner;
 
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.NA;
@@ -32,7 +33,7 @@ public class IndicationMath
      **/
     public static Indication combine(Indication... indications)
     {
-        return combine(indications, null);
+        return combine(indications, null, false);
     }
 
     /**
@@ -43,7 +44,18 @@ public class IndicationMath
     public static Indication combine(Collection<Indication> indications)
     {
         Indication[] indicationArray = new Indication[indications.size()];
-        return combine(indications.toArray(indicationArray), null);
+        return combine(indications.toArray(indicationArray), null, false);
+    }
+
+    /**
+     * Infers a new indication based on given indications.
+     *
+     * <p>Indication values in range (-1,1)
+     **/
+    public static Indication combineWithComments(Collection<Indication> indications)
+    {
+        Indication[] indicationArray = new Indication[indications.size()];
+        return combine(indications.toArray(indicationArray), null, true);
     }
 
     /**
@@ -78,6 +90,19 @@ public class IndicationMath
      **/
     public static Indication combine(Indication[] indications, @Nullable double[] weights)
     {
+        return combine(indications, weights, false);
+    }
+
+    /**
+     * Infers a new indication based on given indications, where indications may be weighted to indicate that some indications should have
+     * more weight in the outcome than others.
+     *
+     * <p>Disagreement among the indications has a negative effect on confidence.</p>
+     *
+     * <p>Indication values in range (-1,1). Weights have no constraints (will be normalized on the fly).
+     **/
+    public static Indication combine(Indication[] indications, @Nullable double[] weights, boolean combineComments)
+    {
         final double sigmoidRangeLow = -1.1;
         final double sigmoidRangeHigh = 1.1;
 
@@ -85,7 +110,7 @@ public class IndicationMath
         double[] values = new double[indications.length];
         double[] confidences = new double[indications.length];
         double[] adjustedWeights = new double[indications.length];
-        // We take the inverse fastSigmoidAlternative() of confidences, then accumulate them, then take the fastSigmoidAlternative(). This results in the
+        // We take the inverse sigmoid of confidences, then accumulate them, then take the sigmoid. This results in the
         // effect of two confidences of .9 adding up to something like .98 for instance (if the values are equal or similar).
         double[] logitConfidences = new double[indications.length];
         double maxWeight = weights == null ? NA : max(weights);
@@ -98,8 +123,18 @@ public class IndicationMath
             logitConfidences[i] = logit(confidences[i], sigmoidRangeLow, sigmoidRangeHigh);
         }
 
-        if (sum(confidences) == 0)
-            return new Indication(mean(values), 0);
+        String comment = "";
+        if (combineComments) {
+            StringJoiner stringJoiner = new StringJoiner(",");
+            for (Indication indication : indications) {
+                stringJoiner.add(indication.comment);
+            }
+            comment = stringJoiner.toString();
+        }
+
+        if (sum(confidences) == 0) {
+            return new Indication(mean(values), 0, comment);
+        }
 
         double weightedMean = weightedMeanIgnoreNAs(values, confidences);
         log.trace("    wgtdMn:{}", weightedMean);
@@ -114,6 +149,7 @@ public class IndicationMath
             //   diff=1 , agreement=0  -> 0 totalConfAddition to total conf
             //   diff=.5, agreement=.5 -> .25 totalConfAddition to total conf
             //   diff=0 , agreement=1  -> conf totalConfAddition to total conf
+            // TODO: check if agreement shouldn't be trimmed to be at least 0
             double agreement = 1 - diff;
             double totalConfAddition = logitConfidences[i] * pow(agreement, 2); // powering agreement gives less addition to total confidence
             totalConf += totalConfAddition;
@@ -123,12 +159,14 @@ public class IndicationMath
             log.trace("      logtco:{}", logitConfidences[i]);
             log.trace("      addtn: {}", totalConfAddition);
         }
+        log.trace("    lgttc: {}", totalConf);
         totalConf = sigmoid(totalConf, sigmoidRangeLow, sigmoidRangeHigh);
         totalConf = limit(totalConf, 0, 1);
-        Indication result = new Indication(weightedMean, totalConf);
-        log.trace("    lgttc: {}", totalConf);
+
+        Indication result = new Indication(weightedMean, totalConf, comment);
         log.trace("    totco: {}", totalConf);
         log.trace("    rs-11: {}", result);
+
         return result;
     }
 
@@ -166,7 +204,7 @@ public class IndicationMath
         double[] values = new double[indications.length];
         double[] confidences = new double[indications.length];
         double[] adjustedWeights = new double[indications.length];
-        // We take the inverse fastSigmoidAlternative() of confidences, then accumulate them, then take the fastSigmoidAlternative(). This results in the
+        // We take the inverse sigmoid of confidences, then accumulate them, then take the sigmoid. This results in the
         // effect of two confidences of .9 adding up to something like .98 for instance (if the values are equal or similar).
         double[] logitConfidences = new double[indications.length];
         double maxWeight = weights == null ? NA : max(weights);
@@ -193,10 +231,10 @@ public class IndicationMath
             log.trace("    indication: {}", indications[i]);
             log.trace("      logtco:{}", logitConfidences[i]);
         }
+        log.trace("    lgttc: {}", totalConf);
         totalConf = sigmoid(totalConf, sigmoidRangeLow, sigmoidRangeHigh);
         totalConf = limit(totalConf, 0, 1);
         Indication result = new Indication(weightedMean, totalConf);
-        log.trace("    lgttc: {}", totalConf);
         log.trace("    totco: {}", totalConf);
         log.trace("    rs-11: {}", result);
         return result;
@@ -306,4 +344,110 @@ public class IndicationMath
         else
             return new Indication(neutralValue + indication.value * (1 - neutralValue), indication.confidence);
     }
+
+
+
+
+
+    /**
+     * See {@link #combineStrict(Indication[], double[], boolean)}
+     **/
+    public static Indication combineStrict(Indication[] indications, boolean combineComments)
+    {
+        return combineStrict(indications, null, combineComments);
+    }
+
+    /**
+     * See {@link #combineStrict(Indication[], double[], boolean)}
+     **/
+    public static Indication combineStrict(Collection<Indication> indications, boolean combineComments)
+    {
+        Indication[] indicationArray = new Indication[indications.size()];
+        return combineStrict(indications.toArray(indicationArray), null, combineComments);
+    }
+
+    /**
+     * Infers a new indication based on given indications, where indications may be weighted to indicate that some indications should have
+     * more weight in the outcome than others.
+     *
+     * <p>Strict: if any of the indications has confidence 1.0, that indication will be the end result.
+     * If there are more than one indications with confidence 1.0, some averaging will happen for the value, the confidence
+     * will almost always be 1.0.
+     * </p>
+     *
+     * <p>Indication values in range (-1,1). Weights have no constraints (will be normalized on the fly).
+     **/
+    public static Indication combineStrict(Indication[] indications, @Nullable double[] weights, boolean combineComments)
+    {
+        final double sigmoidRangeLow = -1;
+        final double sigmoidRangeHigh = 1;
+
+        log.trace("combine({}, {})", () -> Arrays.toString(indications), () -> Arrays.toString(weights));
+        double[] values = new double[indications.length];
+        double[] confidences = new double[indications.length];
+        double[] adjustedWeights = new double[indications.length];
+        // We take the inverse sigmoid of confidences, then accumulate them, then take the sigmoid. This results in the
+        // effect of two confidences of .9 adding up to something like .98 for instance (if the values are equal or similar).
+        double[] logitConfidences = new double[indications.length];
+        double maxWeight = weights == null ? NA : max(weights);
+        for (int i = 0; i < indications.length; i++) {
+            values[i] = indications[i].value;
+            // If max weight > 1, adjust all weights such that max weight == 1, otherwise just leave the weights as is
+            adjustedWeights[i] = weights == null ? 1
+                    : maxWeight > 1 ? weights[i] * 1 / maxWeight : weights[i];
+            confidences[i] = indications[i].confidence * adjustedWeights[i];
+            logitConfidences[i] = fastLogitAlternative(confidences[i], sigmoidRangeLow, sigmoidRangeHigh);
+        }
+        log.trace("    logitConfidences = {}", logitConfidences);
+
+        String comment = "";
+        if (combineComments) {
+            StringJoiner stringJoiner = new StringJoiner(",");
+            for (Indication indication : indications) {
+                stringJoiner.add(indication.comment);
+            }
+            comment = stringJoiner.toString();
+        }
+
+        if (sum(confidences) == 0) {
+            return new Indication(mean(values), 0, comment);
+        }
+
+        double weightedMean = weightedMeanIgnoreNAs(values, logitConfidences);
+        log.trace("    wgtdMn:{}", weightedMean);
+
+        double totalLogitConf = 0;
+        for (int i = 0; i < indications.length; i++) {
+            if ( ! isValue(values[i]) || ! isValue(confidences[i]) )
+                continue;
+            // Diff is how much this indication is disagreeing with the average indication
+            double diff = abs(values[i] - weightedMean);
+            // Addition is how much this indication adds to total confidence
+            //   diff=1 , agreement=0  -> 0 totalConfAddition to total conf
+            //   diff=.5, agreement=.5 -> .25 totalConfAddition to total conf
+            //   diff=0 , agreement=1  -> conf totalConfAddition to total conf
+            double agreement = max(0, 1 - diff);
+            double totalConfAddition =
+                    agreement == 0
+                            ? 0 // needed to deal with the case that logitConfidences[i] is infinite
+                            : logitConfidences[i] * pow(agreement, 2); // powering agreement gives less addition to total confidence
+            totalLogitConf += totalConfAddition;
+            log.trace("    indication: {}", indications[i]);
+            log.trace("      diff : {}", diff);
+            log.trace("      agrmnt:{}", agreement);
+            log.trace("      logtco:{}", logitConfidences[i]);
+            log.trace("      addtn: {}", totalConfAddition);
+        }
+        double totalConf = fastSigmoidAlternative(totalLogitConf, sigmoidRangeLow, sigmoidRangeHigh);
+        totalConf = limit(totalConf, 0, 1);
+
+        Indication result = new Indication(weightedMean, totalConf, comment);
+        log.trace("    lgttc: {}", totalLogitConf);
+        log.trace("    totco: {}", totalConf);
+        log.trace("    rs-11: {}", result);
+
+        return result;
+    }
+
+
 }

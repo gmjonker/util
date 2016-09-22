@@ -207,4 +207,63 @@ public class IndicationMathTest
         System.out.println("No dis:      " + combineNoDisagreementEffect        (asList(new Indication(1, 1), new Indication(-1, .1))));
         System.out.println("Tight nodis: " + combineTightAndNoDisagreementEffect(asList(new Indication(1, 1), new Indication(-1, .1))));
     }
+
+    @Test
+    public void combineXYZz()
+    {
+        // This test is mostly visual. The viewer must judge whether the combined indications are good enough compared to the
+        // desired outcomes.
+
+        double[][] data = new double[][] {
+                // Each row is a sequence of indications, of value/confidence pairs, so v1, c1, v2, c2, etc. The last
+                // value/confidence indication should be the result of combining the indications before it.
+//                {  0.3, 0.6, 1.0,  0.3, 0.6 },
+//                {  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0 },
+                {  1.0, 1.0, 1.0,  -1.0,  .9, 1.0,   1.0, 1.0 },
+                {  1.0, 1.0, 1.0,   0.8, 1.0, 1.0,   0.9, 0.0 },
+                {  1.0, 1.0, 1.0,   0.0, 1.0, 1.0,   0.5, 0.0 },
+                {  1.0, 1.0, 1.0,  -0.9, 1.0, 1.0,   0.5, 0.0 },
+                {  1.0, 1.0, 1.0,  -1.0, 1.0, 1.0,   0.0, 0.0 },
+                {  1.0, 1.0, 1.0,   1.0, 1.0, 1.0,  -1.0, 0.9, 1.0,    1.0, 1.0 },
+                {  1.0, 1.0, 1.0,   1.0, 1.0, 1.0,  -1.0, 1.0, 1.0,    1.0/3, 1.0 },
+//                {  0.3, 0.6, 1.0,  0.3, 0.6, 1.0,  0.3, 0.6 },
+//                {  0.3, 0.6, 1.0,  0.3, 0.6, 0.0,  0.3, 0.3 },
+//                {  0.1, 0.1, 0.1,  0.5, 0.5, 0.5,  1.0, 1.0, 1.0,  0.9, 0.9 },
+//                {  1.0, 1.0, 1.0,  1.0, 1.0, 2.0,  1.0, 1.0, 2.0,  1.0, 1.0, 3.0,  1.0, 1.0 },
+//                {  1.0, 1.0, 1.0,  1.0, 0.0, 2.0,  1.0, 0.0, 2.0,  1.0, 0.0, 3.0,  1.0, 0.2 },
+//                {  1.0, 0.0, 1.0,  1.0, 0.0, 2.0,  1.0, 0.0, 2.0,  1.0, 1.0, 3.0,  1.0, 0.5 },
+        };
+        for (double[] row : data)
+        {
+            // Given:
+            List<Indication> indications = new ArrayList<>();
+            List<Double> weights = new ArrayList<>();
+            Indication desiredIndication = null;
+            int i = 0;
+            while (i < row.length) {
+                if (i + 3 < row.length) {
+                    indications.add(new Indication(row[i], row[i + 1]));
+                    weights.add(row[i + 2]);
+                    i += 3;
+                } else {
+                    desiredIndication = new Indication(row[i], row[i + 1]);
+                    i += 2;
+                }
+            }
+
+            // When:
+            Indication result = combineStrict(toPrimitiveIndicationArray(indications), toPrimitiveDoubleArray(weights), false);
+
+            // Then:
+            for (int i1 = 0; i1 < indications.size(); i1++) {
+                Indication indication = indications.get(i1);
+                double weight = weights.get(i1);
+                System.out.printf("%s/%s ", indication.toShortString(), weight);
+            }
+            System.out.printf("= %s (des: %s, dif:%s/%s)%n", result.toShortString(), desiredIndication.toShortString(),
+                    asPercentage(abs(result.value - desiredIndication.value)),
+                    asPercentage(abs(result.confidence - desiredIndication.confidence)));
+        }
+    }
+
 }

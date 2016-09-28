@@ -215,6 +215,15 @@ public class CollectionsUtil
         return newMap;
     }
 
+    public static <T> boolean hasItemSatisfying(Collection<T> collection, Function<T, Boolean> condition)
+    {
+        for (T element : collection) {
+            if (condition.apply(element))
+                return true;
+        }
+        return false;
+    }
+
     /**
      * Returns the results of pairwise applying {@code function} on the elements of {@code list1} and {@code list2}.
      */
@@ -603,6 +612,18 @@ public class CollectionsUtil
                 .sorted(comparator.reversed())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
+    }
+
+    @Nonnull
+    public static <K, V> Map<K, V> shuffleMap(Map<K, V> map)
+    {
+        List<K> keys = newListFrom(map.keySet());
+        shuffle(keys);
+        LinkedHashMap<K,V> result = new LinkedHashMap<>();
+        for (K key : keys) {
+            result.put(key, map.get(key));
+        }
+        return result;
     }
 
     public static <T> List<Multiset.Entry<T>> sortMultisetByCounts(Multiset<T> multiSet)

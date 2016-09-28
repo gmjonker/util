@@ -1,6 +1,10 @@
 package gmjonker.util;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -40,6 +44,17 @@ public class DefaultingHashmap<K, V> extends HashMap<K, V> implements Defaulting
     public V getDefaultValue()
     {
         return defaultValue;
+    }
+
+    // What should the implementation of values() be when the hashmap is empty? Empty set is maybe most logical,
+    // but a singleton set with the default value makes this map more monady.
+    @Override
+    public Collection<V> values()
+    {
+        Collection<V> values = super.values();
+        if (CollectionUtils.isEmpty(values))
+            return Collections.singletonList(defaultValue);
+        return values;
     }
 
     @Override

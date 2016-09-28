@@ -10,6 +10,7 @@ import java.util.StringJoiner;
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
+import static gmjonker.math.SigmoidMath.*;
 
 /**
  * Approximate statistical inference on point estimate/confidence measure pairs.

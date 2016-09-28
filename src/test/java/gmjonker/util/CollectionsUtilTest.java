@@ -3,6 +3,7 @@ package gmjonker.util;
 import org.junit.*;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -76,6 +77,18 @@ public class CollectionsUtilTest
         map.put(2, 2.2);
         DefaultingHashmap<Integer, Double> mappedmap = CollectionsUtil.map(map, integer -> integer + 2, dbl -> dbl + .2);
         System.out.println("mappedmap = " + mappedmap);
+    }
+
+    @Test
+    public void shuffleDeeMap()
+    {
+        LinkedHashMap<Integer, Integer> map = new LinkedHashMap<>();
+        for (int i = 0; i < 100; i++) {
+            map.put(i, i);
+        }
+        System.out.println("map = " + map);
+        Map<Integer, Integer> shuffledMap = CollectionsUtil.shuffleMap(map);
+        System.out.println("map = " + shuffledMap);
     }
 
 }

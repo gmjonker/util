@@ -10,6 +10,8 @@ import java.util.List;
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.Score.NEUTRAL_SCORE;
+import static gmjonker.math.SigmoidMath.fastLogitAlternative;
+import static gmjonker.math.SigmoidMath.fastSigmoidAlternative;
 
 /**
  * Alternative to ScoreMath using faster math. The results are a bit different, so take care when switching from

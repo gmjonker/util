@@ -137,6 +137,11 @@ public class Indication implements Comparable<Indication>
         return value * confidence;
     }
 
+    public boolean isMaximal()
+    {
+        return value >= 1 && confidence >= 1;
+    }
+
     public boolean isWeakOrNeutral()
     {
         return abs(deriveDouble()) < .25;

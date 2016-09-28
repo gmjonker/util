@@ -12,6 +12,8 @@ import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
 import static gmjonker.math.Range.from01toM11;
 import static gmjonker.math.Score.NEUTRAL_SCORE;
+import static gmjonker.math.SigmoidMath.logit;
+import static gmjonker.math.SigmoidMath.sigmoid;
 
 /**
  * Approximate statistical inference on point estimate/confidence measure pairs.

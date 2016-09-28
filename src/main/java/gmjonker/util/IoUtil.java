@@ -116,6 +116,19 @@ public class IoUtil
     /**
      * Reads from a CSV file that has row and column headers.
      */
+    public static Table<String, String, String> readCsvIntoTableOrRTE(String fileName)
+    {
+        try {
+            return _readCsvIntoTable(fileName, o -> o, o -> o, o -> o, DefaultingHashBasedTable.create(null));
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Reads from a CSV file that has row and column headers.
+     */
     public static <R, C, T> Table<R, C, T> readCsvIntoTable(String fileName, Function<String, R> rowTypeMapper,
             Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper) throws IOException
     {
@@ -152,14 +165,16 @@ public class IoUtil
     /**
      * Reads from a CSV file that has row and column headers.
      */
-    public static <R, C, T> DefaultingHashBasedTable<R, C, T> readCsvIntoDefaultingTable(String fileName, Function<String, R> rowTypeMapper,
-            Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper, T defaultValue) throws IOException
+    public static <R, C, T> DefaultingHashBasedTable<R, C, T> readCsvIntoDefaultingTable(String fileName,
+            Function<String, R> rowTypeMapper, Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper,
+            T defaultValue) throws IOException
     {
         return _readCsvIntoTable(fileName, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(defaultValue));
     }
 
-    private static <R, C, T> DefaultingHashBasedTable<R, C, T> _readCsvIntoTable(String fileName, Function<String, R> rowTypeMapper,
-            Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper, DefaultingHashBasedTable<R, C, T> table) throws IOException
+    private static <R, C, T> DefaultingHashBasedTable<R, C, T> _readCsvIntoTable(String fileName,
+            Function<String, R> rowTypeMapper, Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper,
+            DefaultingHashBasedTable<R, C, T> table) throws IOException
     {
         CSVParser csvParser = readCsvFileWithHeaders(fileName);
         Set<String> headers = csvParser.getHeaderMap().entrySet().stream()
@@ -287,9 +302,14 @@ public class IoUtil
         LinkedHashMap<K, V> map = new LinkedHashMap<>();
         CSVParser csvParser = readCsvFileWithHeaders(fileName);
         for (CSVRecord record : csvParser.getRecords()) {
-            K key = keyTransform.apply(record.get(keyColumn));
-            V value = valueTransform.apply(record.get(valueColumn));
-            map.put(key, value);
+            try {
+                K key = keyTransform.apply(record.get(keyColumn));
+                V value = valueTransform.apply(record.get(valueColumn));
+                map.put(key, value);
+            } catch (Exception e) {
+                log.warn("Error in record '{}'", record);
+                throw e;
+            }
         }
         return map;
     }
@@ -418,7 +438,9 @@ public class IoUtil
     {
         @Cleanup CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
         csvPrinter.print("");
-        Set<C> columnKeys = table.columnKeySet();
+        // Traversing all column keys is very slow; we do it here once, and reuse the result in an inner loop later
+        Set<C> columnKeys = new LinkedHashSet<>();
+        columnKeys.addAll(table.columnKeySet());
         Set<R> rowKeys = table.rowKeySet();
         if (columnComparator != null) {
             TreeSet<C> sortedColumnKeys = new TreeSet<>(columnComparator);
@@ -441,6 +463,7 @@ public class IoUtil
         }
         csvPrinter.close();
     }
+
     public static <V> void writeMultisetToCsv(Multiset<V> multiset, String fileName) throws IOException
     {
         writeMultisetToCsv(multiset, el -> el, fileName);

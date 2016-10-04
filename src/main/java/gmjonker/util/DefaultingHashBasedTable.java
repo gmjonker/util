@@ -30,6 +30,7 @@ public class DefaultingHashBasedTable<R, C, V> implements Table<R, C, V>
 
 
     private HashBasedTable<R, C, V> hashBasedTable;
+
     private V defaultValue;
 
     @SuppressWarnings("WeakerAccess")
@@ -38,6 +39,13 @@ public class DefaultingHashBasedTable<R, C, V> implements Table<R, C, V>
         this.hashBasedTable = hashBasedTable;
         this.defaultValue = defaultValue;
     }
+
+    public V getDefaultValue()
+    {
+        return defaultValue;
+    }
+
+
 
 
 

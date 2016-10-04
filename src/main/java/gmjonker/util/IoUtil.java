@@ -116,7 +116,7 @@ public class IoUtil
     /**
      * Reads from a CSV file that has row and column headers.
      */
-    public static Table<String, String, String> readCsvIntoTableOrRTE(String fileName)
+    public static DefaultingHashBasedTable<String, String, String> readCsvIntoTableOrRTE(String fileName)
     {
         try {
             return _readCsvIntoTable(fileName, o -> o, o -> o, o -> o, DefaultingHashBasedTable.create(null));

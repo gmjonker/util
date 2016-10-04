@@ -459,6 +459,17 @@ public class CollectionsUtil
         return values;
     }
 
+    @Nullable
+    public static <K,V> K findValue(Map<K,V> map, V value)
+    {
+        for (K key : map.keySet()) {
+            V mapValue = map.get(key);
+            if (Objects.equals(mapValue, value))
+                return key;
+        }
+        return null;
+    }
+
     //
     // ###################################################### SORTING ##################################################
     //

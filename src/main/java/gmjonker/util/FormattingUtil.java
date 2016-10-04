@@ -20,6 +20,7 @@ import java.util.function.Function;
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.isValue;
 import static java.util.concurrent.TimeUnit.*;
+import static org.apache.commons.lang3.StringUtils.strip;
 
 public class FormattingUtil
 {
@@ -325,6 +326,16 @@ public class FormattingUtil
         if (fromIndex >= toIndex)
             return "";
         return NativeString.substring(string, fromIndex, toIndex);
+    }
+
+    @Nonnull
+    public static List<String> splitAndStrip(String string, String regex)
+    {
+        List<String> lines = new ArrayList<>();
+        for (String line : string.split(regex)) {
+            lines.add(strip(line));
+        }
+        return lines;
     }
 
     public static String prettyJson(String json)

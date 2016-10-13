@@ -83,6 +83,17 @@ public class IoUtil
         return reader.lines();
     }
 
+    public static void writeToFile(Set<String> strings, String filename) throws IOException
+    {
+        @Cleanup FileWriter writer = new FileWriter(filename);
+        for (String str: strings)
+            writer.write(str + "\n");
+    }
+
+    //
+    // CSV
+    ///
+
     public static CSVParser readCsvFileWithHeaders(String fileName) throws IOException
     {
         String fileContent = readFileAsOneString(fileName);
@@ -369,47 +380,6 @@ public class IoUtil
 
 
 
-    /** Returns relative filenames, e.g. "restaurantTaggings/Amersfoort.csv". **/
-    public static List<String> getFilenamesInDirectory(String directoryName) throws IOException
-    {
-        // Getting filenames within a directory become non-trivial when files are zipped into a jar. Hence this
-        // somewhat unelegant code.
-        URL resource = IoUtil.class.getClassLoader().getResource(directoryName);
-        if (resource == null)
-            throw new IOException("Can't find directory '" + directoryName + "'");
-
-        URI uri;
-        try {
-            uri = resource.toURI();
-        } catch (URISyntaxException e) {
-            throw new IOException("Cannot translate URL " + resource + " to URI", e);
-        }
-
-        Path myPath;
-        FileSystem fileSystem = null;
-        if (uri.getScheme().equals("jar")) {
-            fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
-            myPath = fileSystem.getPath("/" + directoryName);
-        } else {
-            myPath = Paths.get(uri);
-        }
-
-        Stream<Path> walk = java.nio.file.Files.walk(myPath, 1);
-        Iterator<Path> it = walk.iterator();
-        List<String> results = new ArrayList<>();
-        it.next(); // skip first element, as this is always the root itself
-        while (it.hasNext()) {
-            Path path = it.next();
-            if (uri.getScheme().equals("jar"))
-                results.add(path.toString().substring(1)); // peel off first slash
-            else
-                results.add(directoryName + "/" + path.getFileName());
-        }
-        if (fileSystem != null)
-            fileSystem.close();
-        return results;
-    }
-
     public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName) throws IOException
     {
         writeTableToCsv(table, fileName, FormattingUtil::toStringer);
@@ -476,6 +446,47 @@ public class IoUtil
             csvPrinter.printRecord(elementMapper.apply(entry.getElement()), entry.getCount());
         }
         csvPrinter.close();
+    }
+
+    /** Returns relative filenames, e.g. "restaurantTaggings/Amersfoort.csv". **/
+    public static List<String> getFilenamesInDirectory(String directoryName) throws IOException
+    {
+        // Getting filenames within a directory become non-trivial when files are zipped into a jar. Hence this
+        // somewhat unelegant code.
+        URL resource = IoUtil.class.getClassLoader().getResource(directoryName);
+        if (resource == null)
+            throw new IOException("Can't find directory '" + directoryName + "'");
+
+        URI uri;
+        try {
+            uri = resource.toURI();
+        } catch (URISyntaxException e) {
+            throw new IOException("Cannot translate URL " + resource + " to URI", e);
+        }
+
+        Path myPath;
+        FileSystem fileSystem = null;
+        if (uri.getScheme().equals("jar")) {
+            fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
+            myPath = fileSystem.getPath("/" + directoryName);
+        } else {
+            myPath = Paths.get(uri);
+        }
+
+        Stream<Path> walk = java.nio.file.Files.walk(myPath, 1);
+        Iterator<Path> it = walk.iterator();
+        List<String> results = new ArrayList<>();
+        it.next(); // skip first element, as this is always the root itself
+        while (it.hasNext()) {
+            Path path = it.next();
+            if (uri.getScheme().equals("jar"))
+                results.add(path.toString().substring(1)); // peel off first slash
+            else
+                results.add(directoryName + "/" + path.getFileName());
+        }
+        if (fileSystem != null)
+            fileSystem.close();
+        return results;
     }
 
 }

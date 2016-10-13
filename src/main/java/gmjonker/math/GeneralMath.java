@@ -360,6 +360,11 @@ public class GeneralMath
         return powerMean(values, 2);
     }
 
+    public static double rootMeanSquare(Collection<Double> values)
+    {
+        return powerMean(values, 2);
+    }
+
     public static double rootMeanSquareError(double[] values)
     {
         double temp = 0;

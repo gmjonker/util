@@ -12,6 +12,7 @@ import org.apache.commons.collections4.IterableUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
@@ -256,11 +257,17 @@ public class FormattingUtil
         }
     }
 
+    public static String durationToString(Duration duration)
+    {
+        long s = duration.getSeconds();
+        return String.format("%d:%02d:%02d", s / 3600, (s % 3600) / 60, (s % 60));
+    }
+
     public static <T> String listToStringLineByLine(List<T> list)
     {
         String result = "[\n";
         for (T t : list)
-            result += "  " + t.toString() + "\n";
+            result += t.toString() + "\n";
         result += "]";
         return result;
     }

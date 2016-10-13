@@ -1,8 +1,6 @@
 package gmjonker.util;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Table;
+import com.google.common.collect.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -141,6 +139,24 @@ public class CollectionsUtil
         }
         return newMap;
     }
+
+    @Nonnull
+    public static <K1,V1,K2,V2> Multimap<K2,V2> map(Multimap<K1,V1> map, Function<K1,K2> keyMapper, Function<V1,V2> valueMapper)
+    {
+        HashMultimap<K2, V2> newMap = HashMultimap.create();
+
+        if (map == null) {
+            return newMap;
+        }
+
+        for (Map.Entry<K1, V1> entry : map.entries()) {
+            K1 key = entry.getKey();
+            V1 value = entry.getValue();
+            newMap.put(keyMapper.apply(key), valueMapper.apply(value));
+        }
+        return newMap;
+    }
+
 
     @SuppressWarnings("unchecked")
     @Nonnull

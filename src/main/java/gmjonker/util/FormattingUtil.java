@@ -1,5 +1,6 @@
 package gmjonker.util;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Table;
 import com.google.gson.Gson;
@@ -214,6 +215,15 @@ public class FormattingUtil
                         (int) d * 10 / 10 : d + "" // (int) d * 10 / 10 drops the decimal
                 ) + "" + c[iteration])
                 : toHumanReadableNumber(d, iteration + 1));
+    }
+
+    public static String stopwatchToString(Stopwatch stopwatch)
+    {
+        long nanos = stopwatch.elapsed(TimeUnit.NANOSECONDS);
+        TimeUnit unit = chooseUnit(nanos);
+        double value = (double) nanos / NANOSECONDS.convert(1, unit);
+        // Too bad this functionality is not exposed as a regular method call
+        return String.format(Locale.ROOT, "%.3g %s", value, abbreviate(unit));
     }
 
     /**

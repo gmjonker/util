@@ -219,11 +219,7 @@ public class FormattingUtil
 
     public static String stopwatchToString(Stopwatch stopwatch)
     {
-        long nanos = stopwatch.elapsed(TimeUnit.NANOSECONDS);
-        TimeUnit unit = chooseUnit(nanos);
-        double value = (double) nanos / NANOSECONDS.convert(1, unit);
-        // Too bad this functionality is not exposed as a regular method call
-        return String.format(Locale.ROOT, "%.3g %s", value, abbreviate(unit));
+        return nanosToString(stopwatch.elapsed(TimeUnit.NANOSECONDS));
     }
 
     /**
@@ -237,7 +233,7 @@ public class FormattingUtil
     {
         TimeUnit unit = chooseUnit(nanos);
         double value = (double) nanos / NANOSECONDS.convert(1, unit);
-        return String.format("%.4g %s", value, abbreviate(unit));
+        return String.format("%.3g %s", value, abbreviate(unit));
     }
 
     /** Needed for nanosToString. Copied from Guava's Stopwatch class. */

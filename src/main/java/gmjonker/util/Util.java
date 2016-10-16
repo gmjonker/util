@@ -48,6 +48,15 @@ public class Util
         return String.format("Mem used: %s, free: %s (alloc: %s, max: %s)", used, max - used, allocated, max);
     }
 
+    public static String getVeryConciseMemoryInfo()
+    {
+        Runtime runtime = Runtime.getRuntime();
+        long allocated = round(1.0 * runtime.totalMemory() / 1024 / 1024);
+        long free      = round(1.0 * runtime.freeMemory()  / 1024 / 1024);
+        long used = allocated - free;
+        return String.format("Mem used: %s", used);
+    }
+
     public static String getEnvOrFail(String name)
     {
         String value = System.getenv(name);

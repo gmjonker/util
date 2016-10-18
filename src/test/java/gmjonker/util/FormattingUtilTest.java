@@ -2,6 +2,8 @@ package gmjonker.util;
 
 import org.junit.*;
 
+import java.util.Date;
+
 public class FormattingUtilTest
 {
     @Test
@@ -47,5 +49,11 @@ public class FormattingUtilTest
                 integer -> integer + 2
         );
         System.out.println("s = " + s);
+    }
+
+    @Test
+    public void dateToString()
+    {
+        System.out.println("FormattingUtil.toString(new Date()) = " + FormattingUtil.dateToString(new Date()));
     }
 }

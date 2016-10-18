@@ -13,6 +13,7 @@ import org.apache.commons.collections4.IterableUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -440,5 +441,13 @@ public class FormattingUtil
     public static String toStringer(Object o)
     {
         return o == null ? "-" : o.toString();
+    }
+
+    public static String dateToString(Date date)
+    {
+        if (date == null)
+            return "null";
+
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm").format(date);
     }
 }

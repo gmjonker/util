@@ -1,5 +1,6 @@
 package gmjonker.util;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 
 import java.io.BufferedReader;
@@ -9,10 +10,12 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static gmjonker.math.GeneralMath.round;
 import static gmjonker.math.NaType.NA_I;
+import static gmjonker.util.FormattingUtil.nanosToString;
 
 /**
  * Utility methods that do not fall in any of the other categories.
@@ -170,5 +173,16 @@ public class Util
         } catch (IOException e) {
             return "Error: Could not get current git branch";
         }
+    }
+
+    public static String getRemainingTime(Stopwatch stopwatch, int counter, int total)
+    {
+        if (counter > 0) {
+            long elapsed = stopwatch.elapsed(TimeUnit.NANOSECONDS);
+            long averageNanosPerUploadSoFar = elapsed / counter;
+            long expectedTimeRemaining = averageNanosPerUploadSoFar * (total - counter);
+            return nanosToString(expectedTimeRemaining);
+        }
+        return "?";
     }
 }

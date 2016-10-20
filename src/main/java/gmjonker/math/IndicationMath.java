@@ -8,9 +8,12 @@ import java.util.Collection;
 import java.util.StringJoiner;
 
 import static gmjonker.math.GeneralMath.*;
+import static gmjonker.math.Indication.NA_INDICATION;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
 import static gmjonker.math.SigmoidMath.*;
+import static gmjonker.util.CollectionsUtil.allElementsSatisfy;
+import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 
 /**
  * Approximate statistical inference on point estimate/confidence measure pairs.
@@ -104,6 +107,9 @@ public class IndicationMath
      **/
     public static Indication combine(Indication[] indications, @Nullable double[] weights, boolean combineComments)
     {
+        if (isEmpty(indications) || allElementsSatisfy(indications, Indication::isNa))
+            return NA_INDICATION;
+
         final double sigmoidRangeLow = -1.1;
         final double sigmoidRangeHigh = 1.1;
 
@@ -196,6 +202,9 @@ public class IndicationMath
      **/
     public static Indication combineNoDisagreementEffect(Indication[] indications, @Nullable double[] weights)
     {
+        if (isEmpty(indications) || allElementsSatisfy(indications, Indication::isNa))
+            return NA_INDICATION;
+
         // Taking relatively wide bounds here lessens the effect of individual indications on the end indication confidence, or, in other
         // words, accumulation of confidences resembles lineair addition a bit more
         final double sigmoidRangeLow = -1.2;
@@ -256,6 +265,9 @@ public class IndicationMath
      **/
     public static Indication combineTightAndNoDisagreementEffect(Indication[] indications, @Nullable double[] weights)
     {
+        if (isEmpty(indications) || allElementsSatisfy(indications, Indication::isNa))
+            return NA_INDICATION;
+
         // Taking relatively wide bounds here lessens the effect of individual indications on the end indication confidence, or, in other
         // words, accumulation of confidences resembles lineair addition a bit more
         final double sigmoidRangeLow = -1.2;
@@ -380,6 +392,9 @@ public class IndicationMath
      **/
     public static Indication combineStrict(Indication[] indications, @Nullable double[] weights, boolean combineComments)
     {
+        if (isEmpty(indications) || allElementsSatisfy(indications, Indication::isNa))
+            return NA_INDICATION;
+
         final double sigmoidRangeLow = -1;
         final double sigmoidRangeHigh = 1;
 
@@ -449,6 +464,4 @@ public class IndicationMath
 
         return result;
     }
-
-
 }

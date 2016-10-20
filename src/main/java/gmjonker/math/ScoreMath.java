@@ -11,9 +11,12 @@ import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
 import static gmjonker.math.Range.from01toM11;
+import static gmjonker.math.Score.NA_SCORE;
 import static gmjonker.math.Score.NEUTRAL_SCORE;
 import static gmjonker.math.SigmoidMath.logit;
 import static gmjonker.math.SigmoidMath.sigmoid;
+import static gmjonker.util.CollectionsUtil.allElementsSatisfy;
+import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 
 /**
  * Approximate statistical inference on point estimate/confidence measure pairs.
@@ -140,6 +143,9 @@ public class ScoreMath
      **/
     public static Score combineM11(Score[] scores, @Nullable double[] weights)
     {
+        if (isEmpty(scores) || allElementsSatisfy(scores, Score::isNa))
+            return NA_SCORE;
+
         log.trace("combineM11({}, {})", () -> Arrays.toString(scores), () -> Arrays.toString(weights));
         double[] values = new double[scores.length];
         double[] confidences = new double[scores.length];
@@ -221,6 +227,9 @@ public class ScoreMath
      **/
     public static Score combineM11TightAndNoDisagreementEffect(Score[] scores, @Nullable double[] weights)
     {
+        if (isEmpty(scores) || allElementsSatisfy(scores, Score::isNa))
+            return NA_SCORE;
+
         // Taking relatively wide bounds here lessens the effect of individual scores on the end score confidence, or, in other
         // words, accumulation of confidences resembles lineair addition a bit more
         final double sigmoidRangeLow = -1.2;

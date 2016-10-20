@@ -283,6 +283,9 @@ public class Indication implements Comparable<Indication>
 
     public Score toScore01()
     {
+        if (isNa())
+            return Score.NA_SCORE;
+
         return Score.fromMinusOneOneRange(value, confidence);
     }
 }

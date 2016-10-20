@@ -8,9 +8,12 @@ import org.hamcrest.TypeSafeMatcher;
 
 import java.util.StringJoiner;
 
+import static gmjonker.math.NaType.NA;
+import static gmjonker.math.NaType.isValue;
 import static gmjonker.math.Score.NEUTRAL_SCORE;
 import static gmjonker.util.ScoreValueUtil.scoreValueEqualToOrGreaterThan;
 import static gmjonker.util.ScoreValueUtil.scoreValueEqualToOrLessThan;
+import static java.lang.Double.isNaN;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.AnyOf.anyOf;
 
@@ -52,10 +55,12 @@ public class ScoreMatcher extends TypeSafeMatcher<Score>
     @Override
     public boolean matchesSafely(Score score)
     {
-        if (valueMin != null && ! scoreValueEqualToOrGreaterThan(score.value, valueMin)) return false;
-        if (valueMax != null && ! scoreValueEqualToOrLessThan(score.value, valueMax)) return false;
-        if (confidenceMin != null && ! scoreValueEqualToOrGreaterThan(score.confidence, confidenceMin)) return false;
-        if (confidenceMax != null && ! scoreValueEqualToOrLessThan(score.confidence, confidenceMax)) return false;
+        if (valueMin != null && valueMax != null && isNaN(valueMin) && isNaN(valueMax) && ! isNaN(score.value)) return false;
+        if (confidenceMin != null && confidenceMax != null && isNaN(confidenceMin) && isNaN(confidenceMax) && ! isNaN(score.confidence)) return false;
+        if (valueMin != null && isValue(valueMin) && ! scoreValueEqualToOrGreaterThan(score.value, valueMin)) return false;
+        if (valueMax != null && isValue(valueMax) && ! scoreValueEqualToOrLessThan(score.value, valueMax)) return false;
+        if (confidenceMin != null && isValue(confidenceMin) && ! scoreValueEqualToOrGreaterThan(score.confidence, confidenceMin)) return false;
+        if (confidenceMax != null && isValue(confidenceMax) && ! scoreValueEqualToOrLessThan(score.confidence, confidenceMax)) return false;
         return true;
     }
 
@@ -210,6 +215,6 @@ public class ScoreMatcher extends TypeSafeMatcher<Score>
     @Factory
     public static <T> Matcher<Score> isUnknown()
     {
-        return new ScoreMatcher(null, null, 0.0, 0.0);
+        return new ScoreMatcher(NA, NA, NA, NA);
     }
 }

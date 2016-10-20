@@ -486,6 +486,14 @@ public class CollectionsUtil
         return null;
     }
 
+    public static <T> boolean allElementsSatisfy(@Nonnull T[] array, Function<T, Boolean> predicate)
+    {
+        for (T t : array)
+            if (! predicate.apply(t))
+                return false;
+        return true;
+    }
+
     //
     // ###################################################### SORTING ##################################################
     //

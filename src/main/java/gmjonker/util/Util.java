@@ -51,12 +51,6 @@ public class Util
         return String.format("Mem used: %s, free: %s (alloc: %s, max: %s)", used, max - used, allocated, max);
     }
 
-    public static String gcAndGetConciseMemoryInfo()
-    {
-        System.gc();
-        return getConciseMemoryInfo();
-    }
-
     public static String getVeryConciseMemoryInfo()
     {
         Runtime runtime = Runtime.getRuntime();

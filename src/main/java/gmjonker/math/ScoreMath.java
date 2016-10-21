@@ -201,11 +201,12 @@ public class ScoreMath
             double agreement = 1 - diff;
             double totalConfAddition = logitConfidences[i] * pow(agreement, 2); // powering agreement gives less addition to total confidence
             totalConf += totalConfAddition;
-            log.trace("    score: {}", new Score(values[i], confidences[i]));
-            log.trace("      diff : {}", diff);
-            log.trace("      agrmnt:{}", agreement);
-            log.trace("      logtco:{}", logitConfidences[i]);
-            log.trace("      addtn: {}", totalConfAddition);
+            int finalI = i;
+            log.trace(  "    score: {}", () -> new Score(values[finalI], confidences[finalI]));
+            log.trace("      diff : {}", () -> diff);
+            log.trace("      agrmnt:{}", () -> agreement);
+            log.trace("      logtco:{}", () -> logitConfidences[finalI]);
+            log.trace("      addtn: {}", () -> totalConfAddition);
         }
         totalConf = sigmoid(totalConf, sigmoidRangeLow, sigmoidRangeHigh);
         totalConf = limit(totalConf, 0, 1);

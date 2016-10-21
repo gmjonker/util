@@ -11,6 +11,7 @@ public class NaType
 {
     // NA = Not Available
     public static final double NA = Double.NaN;
+    public static final Double NAA = Double.NaN;
     public static final int NA_I = Integer.MIN_VALUE + 936; // Because who ever uses THAT number!
 
     private static final LambdaLogger log = new LambdaLogger(NaType.class);

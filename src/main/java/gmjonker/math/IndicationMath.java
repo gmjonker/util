@@ -160,11 +160,12 @@ public class IndicationMath
             double agreement = 1 - diff;
             double totalConfAddition = logitConfidences[i] * pow(agreement, 2); // powering agreement gives less addition to total confidence
             totalConf += totalConfAddition;
-            log.trace("    indication: {}", indications[i]);
-            log.trace("      diff : {}", diff);
-            log.trace("      agrmnt:{}", agreement);
-            log.trace("      logtco:{}", logitConfidences[i]);
-            log.trace("      addtn: {}", totalConfAddition);
+            int finalI = i;
+            log.trace("    indication: {}", () -> indications[finalI]);
+            log.trace("      diff : {}", () -> diff);
+            log.trace("      agrmnt:{}", () -> agreement);
+            log.trace("      logtco:{}", () -> logitConfidences[finalI]);
+            log.trace("      addtn: {}", () -> totalConfAddition);
         }
         log.trace("    lgttc: {}", totalConf);
         totalConf = sigmoid(totalConf, sigmoidRangeLow, sigmoidRangeHigh);

@@ -1,7 +1,6 @@
 package gmjonker.util;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.base.Strings;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +12,7 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static gmjonker.math.GeneralMath.round;
 import static gmjonker.math.NaType.NA_I;
 import static gmjonker.util.FormattingUtil.nanosToString;
@@ -65,26 +65,26 @@ public class Util
         String value = System.getenv(name);
         // If docker is told to copy an env var from host to container, and the var is not set on the host, it will
         // set the var on the container to ''
-        if (Strings.isNullOrEmpty(value)) {
+        if (isNullOrEmpty(value)) {
             log.error("Environment variable {} not set, exiting...", name);
             System.exit(-1);
         }
-        log.debug("{}={} (env)", name, value);
+        log.infoOnce("{}='{}' (from env)", name, value);
         return value;
     }
 
     public static String getEnvOrDefault(String name, String defaultValue)
     {
-        String value = System.getenv(name);
+        String result = System.getenv(name);
         // If docker is told to copy an env var from host to container, and the var is not set on the host, it will
         // set the var on the container to ''
-        if (Strings.isNullOrEmpty(value)) {
-            value = defaultValue;
-            log.debug("{}={} (default)", name, value);
+        if (isNullOrEmpty(result)) {
+            result = defaultValue;
+            log.infoOnce("{} not set, using to default value: '{}'", name, result);
         } else {
-            log.debug("{}={} (env)", name, value);
+            log.infoOnce("{}='{}' (from env)", name, result);
         }
-        return value;
+        return result;
     }
 
     public static int getEnvOrDefault(String name, int defaultValue)
@@ -93,16 +93,16 @@ public class Util
         Integer result;
         // If docker is told to copy an env var from host to container, and the var is not set on the host, it will
         // set the var on the container to ''
-        if (Strings.isNullOrEmpty(env)) {
+        if (isNullOrEmpty(env)) {
             result = defaultValue;
-            log.debug("{}={} (default)", name, result);
+            log.infoOnce("{} not set, using to default value: '{}'", name, result);
         } else {
             result = tryParseInt(env);
             if (result == null) {
                 log.error("Could not parse '{}' for env variable '{}', exiting", env, name);
                 System.exit(-1);
             }
-            log.debug("{}={} (env)", name, result);
+            log.infoOnce("{}={} (from env)", name, result);
         }
         return result;
     }

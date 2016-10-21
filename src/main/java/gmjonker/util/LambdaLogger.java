@@ -9,7 +9,10 @@ import org.slf4j.helpers.MessageFormatter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
+
+import static gmjonker.util.CollectionsUtil.map;
 
 /**
  * An extension of org.slf4j.Logger that also supports lambda functions as arguments.
@@ -176,8 +179,11 @@ public class LambdaLogger implements Logger
     @SafeVarargs
     public final void debug(String format, Supplier<Object>... arguments)
     {
-        if (logger.isDebugEnabled())
-            debug(format, Arrays.stream(arguments).map(Supplier::get).toArray());
+        if (logger.isDebugEnabled()) {
+            Function<Supplier<Object>, Object> get = Supplier::get;
+//            debug(format, Arrays.stream(arguments).map(get).toArray());
+            debug(format, map(arguments, get, Object.class));
+        }
     }
 
     public final void debugOnce(String message)
@@ -198,6 +204,16 @@ public class LambdaLogger implements Logger
                 return;
             debug(formattedMessage + " (Won't show this message again)");
             rememberedDebugs.add(formattedMessage);
+        }
+    }
+
+    @SafeVarargs
+    public final void debug(Marker marker, String format, Supplier<Object>... arguments)
+    {
+        if (logger.isDebugEnabled()) {
+            Function<Supplier<Object>, Object> get = Supplier::get;
+//            debug(format, Arrays.stream(arguments).map(get).toArray());
+            debug(marker, format, map(arguments, get, Object.class));
         }
     }
 

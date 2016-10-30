@@ -397,6 +397,16 @@ public class CollectionsUtil
         return list.subList(fromIndex, toIndex);
     }
 
+    @Nonnull
+    public static <T> T getOr(T[] array, int index, T or)
+    {
+        if (array == null)
+            return or;
+        if (index < array.length)
+            return array[index];
+        return or;
+    }
+
     /**
      * Take the first X items of list, or less if there are less.
      */

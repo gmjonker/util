@@ -4,6 +4,10 @@ import org.junit.*;
 
 import java.util.Date;
 
+import static gmjonker.util.FormattingUtil.getIndentation;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 public class FormattingUtilTest
 {
     @Test
@@ -55,5 +59,15 @@ public class FormattingUtilTest
     public void dateToString()
     {
         System.out.println("FormattingUtil.toString(new Date()) = " + FormattingUtil.dateToString(new Date()));
+    }
+
+    @Test
+    public void testGetIndentation()
+    {
+        assertThat(getIndentation("asdf"), equalTo(0));
+        assertThat(getIndentation("  asdf"), equalTo(2));
+        assertThat(getIndentation("    asdf"), equalTo(4));
+        assertThat(getIndentation(""), equalTo(0));
+        assertThat(getIndentation("  "), equalTo(2));
     }
 }

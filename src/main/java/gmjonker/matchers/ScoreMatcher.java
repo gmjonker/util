@@ -75,6 +75,18 @@ public class ScoreMatcher extends TypeSafeMatcher<Score>
     }
 
     @Factory
+    public static <T> Matcher<Score> equalsScore(Score score)
+    {
+        return new ScoreMatcher(score.value, score.value, score.confidence, score.confidence);
+    }
+
+    @Factory
+    public static <T> Matcher<Score> equalsScore(double value, double confidence)
+    {
+        return new ScoreMatcher(value, value, confidence, confidence);
+    }
+
+    @Factory
     public static <T> Matcher<Score> isValidScore()
     {
         return new ScoreMatcher(VALUE_MIN, VALUE_MAX, CONFIDENCE_MIN, CONFIDENCE_MAX);

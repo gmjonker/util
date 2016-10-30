@@ -270,12 +270,13 @@ public class FormattingUtil
         return String.format("%d:%02d:%02d", s / 3600, (s % 3600) / 60, (s % 60));
     }
 
-    public static <T> String listToStringLineByLine(List<T> list)
+    public static <T> String toStringLineByLine(Collection<T> collection)
     {
-        String result = "[\n";
-        for (T t : list)
-            result += t.toString() + "\n";
-        result += "]";
+        char[] outer = collection instanceof List ? new char[]{'[', ']'} : new char[]{'{', '}'};
+        String result = outer[0] + "\n";
+        for (T t : collection)
+            result += "    " + t.toString() + "\n";
+        result += outer[1];
         return result;
     }
 
@@ -350,6 +351,16 @@ public class FormattingUtil
             lines.add(strip(line));
         }
         return lines;
+    }
+
+    public static int getIndentation(String string)
+    {
+        int i = 0;
+        for (; i < string.length(); i++) {
+            if (string.charAt(i) != ' ')
+                return i;
+        }
+        return i;
     }
 
     public static String prettyJson(String json)

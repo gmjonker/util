@@ -3,6 +3,7 @@ package gmjonker.math;
 import com.google.common.primitives.Ints;
 import gmjonker.util.LambdaLogger;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 
@@ -54,6 +55,11 @@ public class GeneralMath
     public static double sqrt(double x)
     {
         return Math.sqrt(x);
+    }
+
+    public static double cbrt(double x)
+    {
+        return Math.cbrt(x);
     }
 
     public static long round(double x)
@@ -363,6 +369,30 @@ public class GeneralMath
     public static double rootMeanSquare(Collection<Double> values)
     {
         return powerMean(values, 2);
+    }
+
+    public static double rootWeightedMeanSquare(List<Double> values, List<Double> weights)
+    {
+        double temp = 0;
+        double weightsSum = 0;
+        for (int i = 0; i < values.size(); i++) {
+            temp += weights.get(i) * Math.pow(values.get(i), 2);
+            weightsSum += weights.get(i);
+        }
+        return Math.sqrt(temp / weightsSum);
+    }
+
+    public static double rootWeightedMeanSquare(Collection<Pair<Double, Double>> valueWeightPairs)
+    {
+        double temp = 0;
+        double weightsSum = 0;
+        for (Pair<Double, Double> valueWeightPair : valueWeightPairs) {
+            Double value = valueWeightPair.getLeft();
+            Double weight = valueWeightPair.getRight();
+            temp += weight * Math.pow(value, 2);
+            weightsSum += weight;
+        }
+        return Math.sqrt(temp / weightsSum);
     }
 
     public static double rootMeanSquareError(double[] values)

@@ -1,7 +1,9 @@
 package gmjonker.util;
 
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.slf4j.Marker;
 import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MessageFormatter;
@@ -12,7 +14,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static gmjonker.util.CollectionsUtil.getOr;
 import static gmjonker.util.CollectionsUtil.map;
+import static gmjonker.util.FormattingUtil.getIndentation;
+import static gmjonker.util.FormattingUtil.take;
 
 /**
  * An extension of org.slf4j.Logger that also supports lambda functions as arguments.
@@ -170,6 +175,26 @@ public class LambdaLogger implements Logger
 
     // --------------------------------------------------------------------------------------------
 
+    public void debug2(String format, Object argument)
+    {
+        if (logger.isDebugEnabled()) {
+            String[] formatParts = format.split("\\{\\}");
+            int indentation = getIndentation(format);
+            String begin = getOr(formatParts, 0, "");
+            String end = getOr(formatParts, 1, "");
+            if (begin.trim().length() > 0)
+                logger.debug(begin);
+            String s = argument.toString();
+            String[] lines = s.split("\n");
+            for (String line : lines) {
+                logger.debug(Strings.repeat(" ", indentation) + "    {}", line);
+            }
+            if (end.trim().length() > 0)
+                logger.debug(end);
+        }
+    }
+
+
     public final void debug(Supplier<String> argument)
     {
         if (logger.isDebugEnabled())
@@ -252,6 +277,25 @@ public class LambdaLogger implements Logger
             rememberedTraces.add(formattedMessage);
         }
     }
+
+
+
+
+    // --------------------------------------------------------------------------------------------
+
+    public void indent()
+    {
+        String indent = MDC.get("indent");
+        if (indent == null) indent = "";
+        MDC.put("indent", indent + "  ");
+    }
+
+    public void unindent()
+    {
+        String indent = MDC.get("indent");
+        MDC.put("indent", take(indent, -2));
+    }
+
 
     //
     // Delegate all standard methods ------------------------------------------------------------------

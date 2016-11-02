@@ -42,6 +42,12 @@ public class FormattingUtil
         return isValue(i) ? String.format("%s", i) : " -";
     }
 
+    /** Returns "x" for true and " " for false **/
+    public static String shortForm(boolean b)
+    {
+        return b ? "x" : " ";
+    }
+
     /** Trims items to first three letters. **/
     @Nonnull
     public static String shortForm(Collection<String> strings)

@@ -2,6 +2,7 @@ package gmjonker.util;
 
 import com.google.common.collect.*;
 import lombok.Cleanup;
+import lombok.SneakyThrows;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -114,6 +115,14 @@ public class IoUtil
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @SneakyThrows
+    public static CSVParser readCsvFileWithoutHeadersSneaky(String fileName)
+    {
+        System.out.println("sneaky");
+        String fileContent = readFileAsOneString(fileName);
+        return CSVParser.parse(fileContent, CSVFormat.EXCEL.withIgnoreEmptyLines().withIgnoreSurroundingSpaces());
     }
 
     /**
@@ -406,7 +415,9 @@ public class IoUtil
             @Nullable Comparator<C> columnComparator
     ) throws IOException
     {
-        @Cleanup CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
+        FileWriter fileWriter = new FileWriter(fileName);
+        System.out.println("fileWriter.getEncoding() = " + fileWriter.getEncoding());
+        @Cleanup CSVPrinter csvPrinter = new CSVPrinter(fileWriter, CSVFormat.EXCEL);
         csvPrinter.print("");
         // Traversing all column keys is very slow; we do it here once, and reuse the result in an inner loop later
         Set<C> columnKeys = new LinkedHashSet<>();

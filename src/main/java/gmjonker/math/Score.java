@@ -77,7 +77,7 @@ public class Score
     }
 
     /**
-     * Values are assumed to be in (-1,1)
+     * Values are assumed to be in (0,1)
      */
     public Score combineWith01(Score score)
     {
@@ -88,7 +88,6 @@ public class Score
 
     /**
      * Derives a double in range (0,1) from a score with value in range (0, 1).
-     * Note: will be removed when we go to (-1,1) range
      */
     public double deriveDouble0101()
     {
@@ -99,7 +98,6 @@ public class Score
 
     /**
      * Derives a double in range (-1,1) from a score with value in range (0, 1).
-     * Note: will be removed when we go to (-1,1) range
      */
     public double deriveDouble01M11()
     {
@@ -110,6 +108,7 @@ public class Score
 
     /**
      * Derives a double in range (0,1) from a score with value in range (-1, 1).
+     * Not used anywhere in PRE at the moment.
      */
     public double deriveDoubleM1101()
     {
@@ -120,6 +119,7 @@ public class Score
 
     /**
      * Derives a double in range (-1,1) from a score with value in range (-1, 1).
+     * Not used anywhere in PRE at the moment.
      */
     public double deriveDoubleM11M11()
     {

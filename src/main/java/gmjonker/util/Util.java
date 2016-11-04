@@ -1,11 +1,13 @@
 package gmjonker.util;
 
 import com.google.common.base.Stopwatch;
+import lombok.SneakyThrows;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
@@ -60,14 +62,36 @@ public class Util
         return String.format("Mem used: %s", used);
     }
 
-    public static String getEnvOrFail(String name)
+    /**
+     * Checks whether the environment variable is set or not.
+     */
+    public static boolean isEnvSet(String name)
+    {
+        String result = System.getenv(name);
+        // If docker is told to copy an env var from host to container, and the var is not set on the host, it will
+        // set the var on the container to ''
+        if (isNullOrEmpty(result)) {
+            log.infoOnce("{} not set", name);
+            return false;
+        } else {
+            log.infoOnce("{} is set", name);
+            return true;
+        }
+    }
+
+    public static String getEnv(String name)
+    {
+        return System.getenv(name);
+    }
+
+    public static String getEnvOrRTE(String name)
     {
         String value = System.getenv(name);
         // If docker is told to copy an env var from host to container, and the var is not set on the host, it will
         // set the var on the container to ''
         if (isNullOrEmpty(value)) {
             log.error("Environment variable {} not set, exiting...", name);
-            System.exit(-1);
+            throw new RuntimeException("Environment variable " + name + "='" + value + "' not set");
         }
         log.infoOnce("{}='{}' (from env)", name, value);
         return value;
@@ -178,5 +202,11 @@ public class Util
             return nanosToString(expectedTimeRemaining);
         }
         return "?";
+    }
+
+    @SneakyThrows
+    public static URL toUrlSneaky(String urlString)
+    {
+        return new URL(urlString);
     }
 }

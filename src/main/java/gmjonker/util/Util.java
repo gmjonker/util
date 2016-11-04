@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
@@ -71,10 +72,10 @@ public class Util
         // If docker is told to copy an env var from host to container, and the var is not set on the host, it will
         // set the var on the container to ''
         if (isNullOrEmpty(result)) {
-            log.infoOnce("{} not set", name);
+            log.info("{} not set", name);
             return false;
         } else {
-            log.infoOnce("{} is set", name);
+            log.info("{} is set", name);
             return true;
         }
     }
@@ -93,7 +94,7 @@ public class Util
             log.error("Environment variable {} not set, exiting...", name);
             throw new RuntimeException("Environment variable " + name + "='" + value + "' not set");
         }
-        log.infoOnce("{}='{}' (from env)", name, value);
+        log.info("{}='{}' (from env)", name, value);
         return value;
     }
 
@@ -104,9 +105,9 @@ public class Util
         // set the var on the container to ''
         if (isNullOrEmpty(result)) {
             result = defaultValue;
-            log.infoOnce("{} not set, using to default value: '{}'", name, result);
+            log.info("{} not set, using to default value: '{}'", name, result);
         } else {
-            log.infoOnce("{}='{}' (from env)", name, result);
+            log.info("{}='{}' (from env)", name, result);
         }
         return result;
     }
@@ -119,14 +120,39 @@ public class Util
         // set the var on the container to ''
         if (isNullOrEmpty(env)) {
             result = defaultValue;
-            log.infoOnce("{} not set, using to default value: '{}'", name, result);
+            log.info("{} not set, using default value: '{}'", name, result);
         } else {
             result = tryParseInt(env);
             if (result == null) {
                 log.error("Could not parse '{}' for env variable '{}', exiting", env, name);
-                System.exit(-1);
+                throw new RuntimeException("Could not parse '" + env + "' for env variable '" + name + "', exiting");
             }
-            log.infoOnce("{}={} (from env)", name, result);
+            log.info("{}={} (from env)", name, result);
+        }
+        return result;
+    }
+
+    public static URL getEnvOrDefault(String name, URL defaultValue)
+    {
+        String envValue = System.getenv(name);
+        URL result;
+        // If docker is told to copy an env var from host to container, and the var is not set on the host, it will
+        // set the var on the container to ''
+        if (isNullOrEmpty(envValue)) {
+            result = defaultValue;
+            log.info("{} not set, using default value: '{}'", name, result);
+        } else {
+            try {
+                result = new URL(envValue);
+            } catch (MalformedURLException e) {
+                log.error("Could not construct an URL out of '{}' for env variable '{}', exiting", envValue, name);
+                throw new RuntimeException("Could not construct URL out of " + envValue);
+            }
+            if (result == null) {
+                log.error("Could not construct an URL out of '{}' for env variable '{}', exiting", envValue, name);
+                throw new RuntimeException("Could not construct URL out of " + envValue);
+            }
+            log.info("{}={} (from env)", name, result);
         }
         return result;
     }

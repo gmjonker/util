@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class DaemonThreadFactory implements ThreadFactory
 {
-    private static final int DAEMON_PRIORITY = 3;
+    public static final int DAEMON_PRIORITY = 3;
 
     private static final AtomicInteger poolNumber = new AtomicInteger(1);
 

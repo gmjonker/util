@@ -187,7 +187,7 @@ public class LambdaLogger implements Logger
             String s = argument.toString();
             String[] lines = s.split("\n");
             for (String line : lines) {
-                logger.debug(Strings.repeat(" ", indentation) + "    {}", line);
+                logger.debug(Strings.repeat(" ", indentation) + "{}", line);
             }
             if (end.trim().length() > 0)
                 logger.debug(end);

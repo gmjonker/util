@@ -416,7 +416,6 @@ public class IoUtil
     ) throws IOException
     {
         FileWriter fileWriter = new FileWriter(fileName);
-        System.out.println("fileWriter.getEncoding() = " + fileWriter.getEncoding());
         @Cleanup CSVPrinter csvPrinter = new CSVPrinter(fileWriter, CSVFormat.EXCEL);
         csvPrinter.print("");
         // Traversing all column keys is very slow; we do it here once, and reuse the result in an inner loop later

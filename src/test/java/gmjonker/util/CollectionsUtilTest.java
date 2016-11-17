@@ -17,6 +17,20 @@ import static org.junit.Assert.*;
 public class CollectionsUtilTest
 {
     @Test
+    public void asMapp()
+    {
+        LinkedHashMap<Integer, Integer> map = CollectionsUtil.asMap(1, 2, 3, 4);
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            System.out.println("entry = " + entry);
+        }
+        System.out.println();
+        LinkedHashMap<Integer, Integer> map2 = CollectionsUtil.asMap(1, 2, 3, 4, 5, 6, 7, 8);
+        for (Map.Entry<Integer, Integer> entry : map2.entrySet()) {
+            System.out.println("entry = " + entry);
+        }
+    }
+
+    @Test
     public void sublist()
     {
         assertThat(CollectionsUtil.sublist(asList(1, 2, 3, 4, 5), 2, 4), contains(3, 4));

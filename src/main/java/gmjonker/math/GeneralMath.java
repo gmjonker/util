@@ -389,6 +389,8 @@ public class GeneralMath
         for (Pair<Double, Double> valueWeightPair : valueWeightPairs) {
             Double value = valueWeightPair.getLeft();
             Double weight = valueWeightPair.getRight();
+            if (weight == 0) // for case value = inf, weight = 0
+                continue;
             temp += weight * Math.pow(value, 2);
             weightsSum += weight;
         }

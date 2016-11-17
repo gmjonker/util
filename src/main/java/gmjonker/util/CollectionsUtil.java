@@ -671,6 +671,9 @@ public class CollectionsUtil
         return result;
     }
 
+    /**
+     * Returns a list of multiset entries, sorted by counts.
+     */
     public static <T> List<Multiset.Entry<T>> sortMultisetByCounts(Multiset<T> multiSet)
     {
         return multiSet.entrySet().stream().sorted((e1, e2) -> e2.getCount() - e1.getCount()).collect(Collectors.toList());

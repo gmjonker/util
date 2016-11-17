@@ -323,7 +323,10 @@ public class FormattingUtil
         if (string == null) {
             return "";
         }
-        return NativeString.substring(string, 0, width);
+        if (string.length() > width)
+            return NativeString.substring(string, 0, width - 3) + "...";
+        else
+            return string;
     }
 
     /**

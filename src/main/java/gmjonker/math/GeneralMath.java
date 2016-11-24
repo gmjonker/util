@@ -42,9 +42,9 @@ public class GeneralMath
         return Math.pow(x, exponent);
     }
 
-    public static double log(double base)
+    public static double log(double x)
     {
-        return Math.log(base);
+        return Math.log(x);
     }
 
     public static double log(double base, double x)

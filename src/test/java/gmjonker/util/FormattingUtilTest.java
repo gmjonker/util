@@ -1,10 +1,13 @@
 package gmjonker.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.*;
 
+import java.text.Normalizer;
 import java.util.Date;
 
 import static gmjonker.util.FormattingUtil.getIndentation;
+import static gmjonker.util.FormattingUtil.isToLowerCased;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -69,5 +72,45 @@ public class FormattingUtilTest
         assertThat(getIndentation("    asdf"), equalTo(4));
         assertThat(getIndentation(""), equalTo(0));
         assertThat(getIndentation("  "), equalTo(2));
+    }
+    
+    @Test
+    public void stringFormatting()
+    {
+        System.out.printf("%.3f%n"  , 1.23456);
+        System.out.printf("%.3f%n"  , 1.0    );
+        System.out.printf("%3.3f%n" , 1.23456);
+        System.out.printf("%3.3f%n" , 1.0    );
+        System.out.printf("%-3.3f%n", 1.23456);
+        System.out.printf("%-3.3f%n", 1.0    );
+        System.out.printf("%#.3f%n",  1.23456);
+        System.out.printf("%#.3f%n",  1.0    );
+        System.out.printf("%+.3f%n",  1.23456);
+        System.out.printf("%+.3f%n",  1.0    );
+        System.out.printf("% .3f%n",  1.23456);
+        System.out.printf("% .3f%n",  1.0    );
+        System.out.printf("%03.3f%n", 1.23456);
+        System.out.printf("%03.3f%n", 1.0    );
+        System.out.printf("%,.3f%n",  1.23456);
+        System.out.printf("%,.3f%n",  1.0    );
+        System.out.printf("%(.3f%n",  1.23456);
+        System.out.printf("%(.3f%n",  1.0    );
+        System.out.printf("%f%n",     1.23456);
+        System.out.printf("%f%n",     1.0    );
+    }
+    
+    @Test
+    public void isLower()
+    {
+        System.out.println("isToLowerCased(\"asdf\") = " + isToLowerCased("asdf"));
+        System.out.println("isToLowerCased(\"Asdf\") = " + isToLowerCased("Asdf"));
+        System.out.println("isToLowerCased(\"asdF\") = " + isToLowerCased("asdF"));
+        System.out.println("isToLowerCased(\"as-df\") = " + isToLowerCased("as-df"));
+        System.out.println("isToLowerCased(\"as df\") = " + isToLowerCased("as df"));
+        System.out.println("isToLowerCased(\"\") = " + isToLowerCased(""));
+        System.out.println("isToLowerCased(null) = " + isToLowerCased(null));
+
+        System.out.println(Normalizer.normalize("é café geért1 orčpžsíáýd -_!@#$", Normalizer.Form.NFD));
+        System.out.println(StringUtils.stripAccents("é café geért1 orčpžsíáýd -_!@#$"));
     }
 }

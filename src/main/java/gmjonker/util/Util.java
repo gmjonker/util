@@ -2,6 +2,7 @@ package gmjonker.util;
 
 import com.google.common.base.Stopwatch;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,10 +27,20 @@ import static gmjonker.util.FormattingUtil.nanosToString;
 @SuppressWarnings("WeakerAccess")
 public class Util
 {
-    public static final Function<Object, Object> identity = Function.identity();
-
     protected static final LambdaLogger log = new LambdaLogger(Util.class);
 
+    public static final Function<Object, Object> identity = Function.identity();
+
+    public static boolean eq(Object a, Object b)
+    {
+        return Objects.equals(a, b);
+    }
+
+    public static boolean neq(Object a, Object b)
+    {
+        return ! Objects.equals(a, b);
+    }
+    
     public static void simpleSleep(long millis)
     {
         try {

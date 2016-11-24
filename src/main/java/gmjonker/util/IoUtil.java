@@ -18,7 +18,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -357,13 +359,23 @@ public class IoUtil
     public static <K, V> ArrayListMultimap<K, V> readCsvIntoMultimapOrRTE(String fileName, Function<String, K> keyMapper,
             Function<String, V> valueMapper)
     {
+        return readCsvIntoMultimapOrRTE(fileName, keyMapper, valueMapper, s -> true);
+    }
+    
+    public static <K, V> ArrayListMultimap<K, V> readCsvIntoMultimapOrRTE(String fileName, Function<String, K> keyMapper,
+            Function<String, V> valueMapper, Predicate<String> valueFilter)
+    {
         try {
             ArrayListMultimap<K, V> map = ArrayListMultimap.create();
             CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
             for (CSVRecord record : csvParser.getRecords()) {
                 String key = record.get(0);
                 for (int i = 1; i < record.size(); i++) {
-                    map.put(keyMapper.apply(key), valueMapper.apply(record.get(i)));
+                    String value = record.get(i);
+                    if ( ! valueFilter.test(value))
+                        continue;
+                    log.trace("readCsvIntoMultimapOrRTE: key: '{}', value: '{}'", key, value);
+                    map.put(keyMapper.apply(key), valueMapper.apply(value));
                 }
             }
             return map;
@@ -399,10 +411,29 @@ public class IoUtil
         writeTableToCsv(table, fileName, FormattingUtil::toStringer, FormattingUtil::toStringer, valueTransformer);
     }
 
+    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, 
+            BiFunction<R, C, Function<V, String>> valueTransformer) throws IOException
+    {
+        writeTableToCsv(table, fileName, FormattingUtil::toStringer, FormattingUtil::toStringer, valueTransformer);
+    }
+
     public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, Function<R, String> rowHeaderTransformer,
             Function<C, String> columnHeaderTransformer, Function<V, String> valueTransformer) throws IOException
     {
         writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, valueTransformer, null, null);
+    }
+
+    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, Function<R, String> rowHeaderTransformer,
+            Function<C, String> columnHeaderTransformer, BiFunction<R, C, Function<V, String>> valueTransformer) throws IOException
+    {
+        writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, valueTransformer, null, null);
+    }
+
+    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, Function<R, String> rowHeaderTransformer, 
+            Function<C, String> columnHeaderTransformer, Function<V, String> valueTransformer, @Nullable Comparator<R> rowComparator, 
+            @Nullable Comparator<C> columnComparator) throws IOException
+    {
+        writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, (R row, C column) -> valueTransformer, null, null);
     }
 
     public static <R, C, V> void writeTableToCsv(
@@ -410,7 +441,7 @@ public class IoUtil
             String fileName,
             Function<R, String> rowHeaderTransformer,
             Function<C, String> columnHeaderTransformer,
-            Function<V, String> valueTransformer,
+            BiFunction<R, C, Function<V, String>> valueTransformer,
             @Nullable Comparator<R> rowComparator,
             @Nullable Comparator<C> columnComparator
     ) throws IOException
@@ -438,7 +469,7 @@ public class IoUtil
         for (R rowKey : rowKeys) {
             csvPrinter.print(rowHeaderTransformer.apply(rowKey));
             for (C columnKey : columnKeys)
-                csvPrinter.print(valueTransformer.apply(table.get(rowKey, columnKey)));
+                csvPrinter.print(valueTransformer.apply(rowKey, columnKey).apply(table.get(rowKey, columnKey)));
             csvPrinter.println();
         }
         csvPrinter.close();

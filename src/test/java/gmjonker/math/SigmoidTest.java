@@ -6,9 +6,7 @@ import org.junit.*;
 import static gmjonker.math.GeneralMath.abs;
 import static gmjonker.math.GeneralMath.max;
 import static gmjonker.math.GeneralMath.pow;
-import static gmjonker.math.SigmoidMath.fastLogitAlternative;
-import static gmjonker.math.SigmoidMath.fastSigmoidAlternative;
-import static gmjonker.math.SigmoidMath.getConfidence;
+import static gmjonker.math.SigmoidMath.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
 
@@ -106,5 +104,33 @@ public class SigmoidTest
         System.out.println("getConfidence(2, 5) = " + getConfidence(2d, 5d));
         System.out.println("getConfidence(4, 5) = " + getConfidence(4d, 5d));
         System.out.println("getConfidence(8, 5) = " + getConfidence(8d, 5d));
+    }
+
+    @Test
+    public void toMinusOneOneIntervall()
+    {
+        System.out.println("toMinusOneOneInterval(-2, 1 ) = " + toMinusOneOneInterval( -2d , 1d ));
+        System.out.println("toMinusOneOneInterval(-1, 1 ) = " + toMinusOneOneInterval( -1d , 1d ));
+        System.out.println("toMinusOneOneInterval( 0, 1 ) = " + toMinusOneOneInterval(  0d , 1d ));
+        System.out.println("toMinusOneOneInterval( 1, 1 ) = " + toMinusOneOneInterval(  1d , 1d ));
+        System.out.println("toMinusOneOneInterval( 2, 1 ) = " + toMinusOneOneInterval(  2d , 1d ));
+        System.out.println("toMinusOneOneInterval( 4, 1 ) = " + toMinusOneOneInterval(  4d , 1d ));
+        System.out.println("toMinusOneOneInterval( 8, 1 ) = " + toMinusOneOneInterval(  8d , 1d ));
+        System.out.println("toMinusOneOneInterval(-2, .2) = " + toMinusOneOneInterval( -2d , .2d));
+        System.out.println("toMinusOneOneInterval(-1, .2) = " + toMinusOneOneInterval( -1d , .2d));
+        System.out.println("toMinusOneOneInterval( 0, .2) = " + toMinusOneOneInterval(  0d , .2d));
+        System.out.println("toMinusOneOneInterval( 1, .2) = " + toMinusOneOneInterval(  1d , .2d));
+        System.out.println("toMinusOneOneInterval( 2, .2) = " + toMinusOneOneInterval(  2d , .2d));
+        System.out.println("toMinusOneOneInterval( 4, .2) = " + toMinusOneOneInterval(  4d , .2d));
+        System.out.println("toMinusOneOneInterval( 8, .2) = " + toMinusOneOneInterval(  8d , .2d));
+        System.out.println("toMinusOneOneInterval(16, .2) = " + toMinusOneOneInterval( 16d, .2d ));
+        System.out.println("toMinusOneOneInterval(32, .2) = " + toMinusOneOneInterval( 32d, .2d ));
+        System.out.println("toMinusOneOneInterval(-2, 5 ) = " + toMinusOneOneInterval( -2d , 5d ));
+        System.out.println("toMinusOneOneInterval(-1, 5 ) = " + toMinusOneOneInterval( -1d , 5d ));
+        System.out.println("toMinusOneOneInterval( 0, 5 ) = " + toMinusOneOneInterval(  0d , 5d ));
+        System.out.println("toMinusOneOneInterval( 1, 5 ) = " + toMinusOneOneInterval(  1d , 5d ));
+        System.out.println("toMinusOneOneInterval( 2, 5 ) = " + toMinusOneOneInterval(  2d , 5d ));
+        System.out.println("toMinusOneOneInterval( 4, 5 ) = " + toMinusOneOneInterval(  4d , 5d ));
+        System.out.println("toMinusOneOneInterval( 8, 5 ) = " + toMinusOneOneInterval(  8d , 5d ));
     }
 }

@@ -62,7 +62,15 @@ public class SigmoidMath
     {
         if (sampleSize < 0)
             throw new RuntimeException("getConfidence not defined for sampleSize < 0");
-        return -1.0 / (growthParameter * sampleSize + 1) + 1;
+        return toMinusOneOneInterval(sampleSize, growthParameter);
+    }
+
+    public static double toMinusOneOneInterval(double number, double growthParameter)
+    {
+        if (number >= 0)
+            return -1.0 / (growthParameter *  number + 1) + 1;
+        else
+            return  1.0 / (growthParameter * -number + 1) - 1;
     }
 
     /** The inverse logistic function, input in range (0,1) **/

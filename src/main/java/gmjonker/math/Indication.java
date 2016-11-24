@@ -55,6 +55,9 @@ public class Indication implements Comparable<Indication>
         this.comment = "";
     }
 
+    /**
+     * Has valid value and valid confidence.
+     */
     public static boolean isValidIndication(Indication indication)
     {
         return indication != null && indication.isValid();
@@ -191,6 +194,11 @@ public class Indication implements Comparable<Indication>
 //        return asPercentage(value).trim() + "/" + asPercentage(confidence).trim() + "(" + comment + ")";
     }
 
+    public String toFullString()
+    {
+        return String.format("%f/%f->%f (%s)", value, confidence, deriveDouble(), comment);
+    }
+
     public String toLongString()
     {
         return String.format("%.5f/%.5f->%.5f (%s)", value, confidence, deriveDouble(), comment);
@@ -238,7 +246,11 @@ public class Indication implements Comparable<Indication>
 
     public String serialize()
     {
-        return String.format("%.5f/%.5f", value, confidence);
+        String v = String.format("%.5f", value);
+        String c = String.format("%.5f", confidence);
+        v = v.replaceAll("0*$", "").replaceAll("\\.$", "");
+        c = c.replaceAll("0*$", "").replaceAll("\\.$", "");
+        return v + "/" + c;
     }
 
     public static Indication deserialize(String s)

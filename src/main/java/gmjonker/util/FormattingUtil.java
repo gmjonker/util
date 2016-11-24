@@ -23,12 +23,18 @@ import java.util.function.Function;
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.isValue;
 import static java.util.concurrent.TimeUnit.*;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.strip;
 
 public class FormattingUtil
 {
     protected static final LambdaLogger log = new LambdaLogger(FormattingUtil.class);
 
+    public static String rounded(double d, int decimals)
+    {
+        return String.format("%." + decimals + "f", d);
+    }
+    
     /** Formats score value with two digits, or " -" for NA. **/
     public static String shortForm(double d)
     {
@@ -470,4 +476,23 @@ public class FormattingUtil
 
         return new SimpleDateFormat("yyyy-MM-dd HH:mm").format(date);
     }
+
+    /**
+     * Checks that text is equal to text.toLowerCase().
+     */
+    public static boolean isToLowerCased(final CharSequence cs) 
+    {
+        if (cs == null || isEmpty(cs)) {
+            return true;
+        }
+        final int sz = cs.length();
+        for (int i = 0; i < sz; i++) {
+            char ch = cs.charAt(i);
+            if (ch != Character.toLowerCase(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

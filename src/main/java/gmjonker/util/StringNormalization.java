@@ -6,6 +6,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+import static gmjonker.util.Util.eq;
+
 public class StringNormalization
 {
     /** Return string lower cased and trimmed. **/
@@ -13,7 +15,7 @@ public class StringNormalization
     {
         if (string == null)
             return null;
-        return string.trim().toLowerCase();
+        return StringUtils.stripAccents(string.trim().toLowerCase());
     }
 
     /** Return strings lower cased and trimmed. **/
@@ -32,14 +34,14 @@ public class StringNormalization
                 strings.set(i, normalize(strings.get(i)));
     }
 
-    public static boolean isNormalized(String string)
+    public static boolean isNormalized(String text)
     {
-        return Objects.equals(string, normalize(string));
+        return eq(text, normalize(text));
     }
 
     public static boolean equalsNormalized(String string1, String string2)
     {
-        return (Objects.equals(normalize(string1), normalize(string2)));
+        return eq(normalize(string1), normalize(string2));
     }
 
     public static boolean containsNormalized(String string1, String string2)

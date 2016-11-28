@@ -48,7 +48,7 @@ public class IndicationCovariance
         return total / n;
     }
     
-    public double getPearsonDistance()
+    public double getPearsonSimilarity()
     {
         double cov = getCovariance();
         double sd1 = IndicationStatistics.standardDeviation(series1);

@@ -71,13 +71,13 @@ public class IndicationCovarianceTest
             IndicationCovariance indicationCovariance = new IndicationCovariance();
             indicationCovariance.addDataPoint(new Indication( 1, 1), new Indication(1, 1));
             indicationCovariance.addDataPoint(new Indication(-1, 1), new Indication(-1, 1));
-            System.out.println("indicationCovariance.getPearsonDistance() = " + indicationCovariance.getPearsonDistance());
+            System.out.println("indicationCovariance.getPearsonSimilarity() = " + indicationCovariance.getPearsonSimilarity());
         }
         {
             IndicationCovariance indicationCovariance = new IndicationCovariance();
             indicationCovariance.addDataPoint(new Indication( 1, 1), new Indication(1, 1));
             indicationCovariance.addDataPoint(new Indication(-1, 1), new Indication(1, 1));
-            System.out.println("indicationCovariance.getPearsonDistance() = " + indicationCovariance.getPearsonDistance());
+            System.out.println("indicationCovariance.getPearsonSimilarity() = " + indicationCovariance.getPearsonSimilarity());
         }
     }
 }

@@ -293,7 +293,7 @@ public class LambdaLogger implements Logger
     public void unindent()
     {
         String indent = MDC.get("indent");
-        MDC.put("indent", take(indent, -2));
+        MDC.put("indent", take(indent, -2, false));
     }
 
 

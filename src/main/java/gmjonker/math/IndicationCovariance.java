@@ -8,8 +8,8 @@ import java.util.List;
 
 public class IndicationCovariance
 {
-    List<Indication> series1 = new ArrayList<Indication>();
-    List<Indication> series2 = new ArrayList<Indication>();
+    List<Indication> series1 = new ArrayList<>();
+    List<Indication> series2 = new ArrayList<>();
 
     private static final LambdaLogger log = new LambdaLogger(IndicationCovariance.class);
     
@@ -26,7 +26,7 @@ public class IndicationCovariance
         for (int i = 0; i < series1.size(); i++) {
             val indication1 = series1.get(i);
             val indication2 = series2.get(i);
-            // TODO: use average instead of 0 as reference point?
+            // TODO: use average instead of 0 as reference point? Then handle the case of series.size() == 1
             total += indication1.deriveDouble() * indication2.deriveDouble();
         }
         return total / series1.size();
@@ -41,7 +41,7 @@ public class IndicationCovariance
             val indication1 = series1.get(i);
             val indication2 = series2.get(i);
             double jointConfidence = IndicationMath.combine(indication2, indication2).confidence;
-            // TODO: use average instead of 0 as reference point?
+            // TODO: use average instead of 0 as reference point? Then handle the case of series.size() == 1
             total += indication1.value * indication2.value * jointConfidence;
             n += jointConfidence;
         }

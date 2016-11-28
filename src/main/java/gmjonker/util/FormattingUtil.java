@@ -326,11 +326,17 @@ public class FormattingUtil
     @Nonnull
     public static String take(@Nullable String string, int width)
     {
+        return take(string, width, true);
+    }
+
+    @Nonnull
+    public static String take(@Nullable String string, int width, boolean dots)
+    {
         if (string == null) {
             return "";
         }
         if (string.length() > width)
-            return NativeString.substring(string, 0, width - 3) + "...";
+            return NativeString.substring(string, 0, width - 3) + (dots ? "..." : "");
         else
             return string;
     }
@@ -370,12 +376,13 @@ public class FormattingUtil
 
     public static int getIndentation(String string)
     {
-        int i = 0;
-        for (; i < string.length(); i++) {
-            if (string.charAt(i) != ' ')
-                return i;
+        int indentation = 0;
+        for (; indentation < string.length(); indentation++) {
+            if (string.charAt(indentation) != ' ')
+                return indentation;
         }
-        return i;
+        System.out.println("indentation = " + indentation);
+        return indentation;
     }
 
     public static String prettyJson(String json)

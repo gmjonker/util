@@ -5,6 +5,8 @@ import com.google.common.primitives.Doubles;
 import gmjonker.util.LambdaLogger;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -34,6 +36,7 @@ import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
  */
 @SuppressWarnings("WeakerAccess")
 @AllArgsConstructor
+@NoArgsConstructor
 public class Indication implements Comparable<Indication>
 {
     public static final Indication NA_INDICATION = new Indication(NA, NA);
@@ -41,10 +44,17 @@ public class Indication implements Comparable<Indication>
     public static final Indication NONE = new Indication(0, 0);
     public static final Indication CERTAINTY = new Indication(1, 1);
 
-    public final double value;
-    public final double confidence;
+    @Getter
+    @Setter
+    public double value;
 
-    @Getter public final String comment; // can be handy for explanations
+    @Getter
+    @Setter
+    public double confidence;
+
+    @Getter
+    @Setter
+    public String comment; // can be handy for explanations
 
     protected static final LambdaLogger log = new LambdaLogger(Indication.class);
 

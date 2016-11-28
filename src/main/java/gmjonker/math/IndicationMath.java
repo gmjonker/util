@@ -1,11 +1,10 @@
 package gmjonker.math;
 
 import gmjonker.util.LambdaLogger;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.StringJoiner;
+import java.util.*;
 
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.Indication.NA_INDICATION;
@@ -48,7 +47,8 @@ public class IndicationMath
     public static Indication combine(Collection<Indication> indications)
     {
         Indication[] indicationArray = new Indication[indications.size()];
-        return combine(indications.toArray(indicationArray), null, false);
+        Indication combinedValue = combine(indications.toArray(indicationArray), null, false);
+        return combinedValue;
     }
 
     /**
@@ -342,22 +342,6 @@ public class IndicationMath
         return result;
     }
 
-    /**
-     * Converts a indication with (-1,1) value into a indication with (0,1) value, where
-     * <ul>
-     * <li>-1 -> 0</li>
-     * <li>0 -> neutralValue</li>
-     * <li>1 -> 1</li>
-     * </ul>
-     * and the other values are linearly interpolated.
-     */
-    public static Indication minusOneOneRangeToZeroOneRange(Indication indication, double neutralValue)
-    {
-        if (indication.value < 0)
-            return new Indication((indication.value + 1) * neutralValue, indication.confidence);
-        else
-            return new Indication(neutralValue + indication.value * (1 - neutralValue), indication.confidence);
-    }
 
 
 
@@ -465,4 +449,23 @@ public class IndicationMath
 
         return result;
     }
+
+
+    /**
+     * Converts a indication with (-1,1) value into a indication with (0,1) value, where
+     * <ul>
+     * <li>-1 -> 0</li>
+     * <li>0 -> neutralValue</li>
+     * <li>1 -> 1</li>
+     * </ul>
+     * and the other values are linearly interpolated.
+     */
+    public static Indication minusOneOneRangeToZeroOneRange(Indication indication, double neutralValue)
+    {
+        if (indication.value < 0)
+            return new Indication((indication.value + 1) * neutralValue, indication.confidence);
+        else
+            return new Indication(neutralValue + indication.value * (1 - neutralValue), indication.confidence);
+    }
+
 }

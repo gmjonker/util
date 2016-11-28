@@ -230,6 +230,19 @@ public class CollectionsUtil
 
         return newMap;
     }
+    
+    public static <T> List<T> removeDuplicates(List<T> list)
+    {
+        List<T> newList = new ArrayList<T>();
+        Set<T> set = new HashSet<T>();
+        for (T t : list) {
+            if ( ! set.contains(t)) {
+                set.add(t);
+                newList.add(t);
+            }
+        }
+        return newList;
+    }
 
     public static <T> boolean hasItemSatisfying(Collection<T> collection, Function<T, Boolean> condition)
     {
@@ -313,6 +326,16 @@ public class CollectionsUtil
         return map.entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+    }
+
+    @Nonnull
+    public static <K, V> Multimap<V, K> invertMultimap(Multimap<K, V> map)
+    {
+        Multimap<V, K> newMultimap = ArrayListMultimap.create();
+        for (Map.Entry<K, V> entry : map.entries()) {
+            newMultimap.put(entry.getValue(), entry.getKey());
+        }
+        return newMultimap;
     }
 
     /**

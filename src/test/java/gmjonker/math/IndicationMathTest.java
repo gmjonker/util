@@ -1,13 +1,15 @@
 package gmjonker.math;
 
+import lombok.val;
+import org.apache.commons.math3.util.MathArrays;
 import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static gmjonker.math.GeneralMath.abs;
-import static gmjonker.math.GeneralMath.round;
+import static gmjonker.TestUtil.ind;
+import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.Indication.toPrimitiveIndicationArray;
 import static gmjonker.math.IndicationMath.*;
 import static gmjonker.math.NaType.NA;
@@ -15,10 +17,13 @@ import static gmjonker.util.CollectionsUtil.toPrimitiveDoubleArray;
 import static gmjonker.util.FormattingUtil.asPercentage;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static spock.util.matcher.HamcrestMatchers.closeTo;
 
 public class IndicationMathTest
 {
+   
     @Test
     public void indicationsShouldBeCombinedCorrectly() throws Exception
     {
@@ -265,5 +270,27 @@ public class IndicationMathTest
                     asPercentage(abs(result.confidence - desiredIndication.confidence)));
         }
     }
+    
+    @Test
+    public void combineTransitivity()
+    {
+        val ind1 = ind(  1, 1);
+        val ind2 = ind( .8, .5);
+        val ind3 = ind( .5, 1);
+        val ind4 = ind( -1, .6);
+        val ind5 = ind(-.7, 1);
+        
+        val comb1 = combine(ind1, ind2, ind3);
+        val comb2 = combine(ind4, ind5);
+        val final1 = combine(comb1, comb2);
+        
+        val final2 = combine(ind1, ind2, ind3, ind4, ind5);
 
+        System.out.println("comb1 = " + comb1);
+        System.out.println("comb2 = " + comb2);
+        System.out.println("final1 = " + final1 + " -> " + final1.deriveDouble());
+        System.out.println("final2 = " + final2 + " -> " + final2.deriveDouble());
+        
+    }
+    
 }

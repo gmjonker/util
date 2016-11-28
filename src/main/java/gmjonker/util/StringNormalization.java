@@ -10,7 +10,11 @@ import static gmjonker.util.Util.eq;
 
 public class StringNormalization
 {
-    /** Return string lower cased and trimmed. **/
+    /** 
+     * - Removes accents
+     * - Trims
+     * - Lowercases
+     **/
     public static String normalize(String string)
     {
         if (string == null)
@@ -18,7 +22,11 @@ public class StringNormalization
         return StringUtils.stripAccents(string.trim().toLowerCase());
     }
 
-    /** Return strings lower cased and trimmed. **/
+    /**
+     * - Removes accents
+     * - Trims
+     * - Lowercases
+     **/
     public static void normalize(@Nullable String[] strings)
     {
         if (strings != null)
@@ -26,7 +34,11 @@ public class StringNormalization
                 strings[i] = normalize(strings[i]);
     }
 
-    /** Return strings lower cased and trimmed. **/
+    /**
+     * - Removes accents
+     * - Trims
+     * - Lowercases
+     **/
     public static void normalize(@Nullable List<String> strings)
     {
         if (strings != null)

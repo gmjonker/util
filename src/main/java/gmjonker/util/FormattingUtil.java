@@ -67,7 +67,7 @@ public class FormattingUtil
     }
 
     /**
-     * Formats a positive score value as a percentage. Result is not fixed-width.
+     * Formats a score value as a percentage. Result is not fixed-width.
      **/
     public static String asPercentage(Double d)
     {

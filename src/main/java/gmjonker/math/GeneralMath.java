@@ -1,6 +1,7 @@
 package gmjonker.math;
 
 import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
 import gmjonker.util.LambdaLogger;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -8,6 +9,7 @@ import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 
 import javax.annotation.Nullable;
+import java.lang.management.RuntimeMXBean;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -103,6 +105,16 @@ public class GeneralMath
         return Ints.max(values);
     }
 
+    public static long max(long x1, long x2)
+    {
+        return Math.max(x1, x2);
+    }
+
+    public static long max(long... values)
+    {
+        return Longs.max(values);
+    }
+
     @Nullable
     public static <T extends Object & Comparable<? super T>> T max(Collection<? extends T> coll)
     {
@@ -161,6 +173,14 @@ public class GeneralMath
     public static double limit(double x, double min, double max)
     {
         return max(min(x, max), min);
+    }
+
+    public static <T> int sum(Collection<T> coll, Function<T,Integer> mapper)
+    {
+        int sum = 0;
+        for (T t : coll)
+            sum += mapper.apply(t);
+        return sum;
     }
 
     public static double sum(double... values)
@@ -384,17 +404,17 @@ public class GeneralMath
 
     public static double rootWeightedMeanSquare(Collection<Pair<Double, Double>> valueWeightPairs)
     {
-        double temp = 0;
+        double total = 0;
         double weightsSum = 0;
         for (Pair<Double, Double> valueWeightPair : valueWeightPairs) {
             Double value = valueWeightPair.getLeft();
             Double weight = valueWeightPair.getRight();
             if (weight == 0) // for case value = inf, weight = 0
                 continue;
-            temp += weight * Math.pow(value, 2);
+            total += weight * Math.pow(value, 2);
             weightsSum += weight;
         }
-        return Math.sqrt(temp / weightsSum);
+        return Math.sqrt(total / weightsSum);
     }
 
     public static double rootMeanSquareError(double[] values)
@@ -503,6 +523,13 @@ public class GeneralMath
     {
         boolean isBiasCorrected = false;
         return new Variance(isBiasCorrected).evaluate(values, weights);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static double standardDeviation(double[] values)
+    {
+        boolean isBiasCorrected = false;
+        return sqrt(new Variance(isBiasCorrected).evaluate(values));
     }
 
     @SuppressWarnings("ConstantConditions")

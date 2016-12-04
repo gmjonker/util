@@ -175,6 +175,7 @@ public class LambdaLogger implements Logger
 
     // --------------------------------------------------------------------------------------------
 
+    /** Log separate lines separately, indents all between first and last line of argument **/
     public void debug2(String format, Object argument)
     {
         if (logger.isDebugEnabled()) {

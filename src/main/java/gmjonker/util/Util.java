@@ -71,7 +71,7 @@ public class Util
         long allocated = round(1.0 * runtime.totalMemory() / 1024 / 1024);
         long free      = round(1.0 * runtime.freeMemory()  / 1024 / 1024);
         long used = allocated - free;
-        return String.format("Mem used: %s", used);
+        return String.format("Mem used: %s, free: %s", used, free);
     }
 
     /**

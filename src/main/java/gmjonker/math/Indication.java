@@ -35,7 +35,6 @@ import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
  * Indication replaces Score, which didn't have a range defined which was inconvenient w.r.t. the neutral score.
  */
 @SuppressWarnings("WeakerAccess")
-@AllArgsConstructor
 @NoArgsConstructor
 public class Indication implements Comparable<Indication>
 {
@@ -58,11 +57,16 @@ public class Indication implements Comparable<Indication>
 
     protected static final LambdaLogger log = new LambdaLogger(Indication.class);
 
-    public Indication(double value, double confidence)
+    public Indication(double value, double confidence, String comment)
     {
         this.value = value;
         this.confidence = confidence;
-        this.comment = "";
+        this.comment = comment;
+    }
+
+    public Indication(double value, double confidence)
+    {
+        this(value, confidence, "");
     }
 
     /**

@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static gmjonker.math.GeneralMath.max;
 import static gmjonker.math.GeneralMath.round;
 import static gmjonker.math.NaType.NA_I;
 import static gmjonker.util.FormattingUtil.nanosToString;
@@ -68,10 +69,11 @@ public class Util
     public static String getVeryConciseMemoryInfo()
     {
         Runtime runtime = Runtime.getRuntime();
+        long max       = round(1.0 * runtime.maxMemory()   / 1024 / 1024);
         long allocated = round(1.0 * runtime.totalMemory() / 1024 / 1024);
         long free      = round(1.0 * runtime.freeMemory()  / 1024 / 1024);
         long used = allocated - free;
-        return String.format("Mem used: %s, free: %s", used, free);
+        return String.format("Mem used: %s, free: %s", used, max - used);
     }
 
     /**

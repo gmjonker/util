@@ -335,10 +335,17 @@ public class FormattingUtil
         if (string == null) {
             return "";
         }
-        if (string.length() > width)
-            return NativeString.substring(string, 0, width - 3) + (dots ? "..." : "");
-        else
+        if (width < 0)
+            width = string.length() + width;
+        if (string.length() > width) {
+            if (dots)
+                return NativeString.substring(string, 0, width - 3) + "...";
+            else
+                return NativeString.substring(string, 0, width);
+        }
+        else {
             return string;
+        }
     }
 
     /**

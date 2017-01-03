@@ -482,9 +482,22 @@ public class IoUtil
 
     public static <V> void writeMultisetToCsv(Multiset<V> multiset, Function<V, ?> elementMapper, String fileName) throws IOException
     {
+        writeMultisetToCsv(multiset, elementMapper, fileName, 0);
+    }
+    
+    public static <V> void writeMultisetToCsv(Multiset<V> multiset, String fileName, int threshold) throws IOException
+    {
+        writeMultisetToCsv(multiset, el -> el, fileName, threshold);
+    }
+    
+    public static <V> void writeMultisetToCsv(Multiset<V> multiset, Function<V, ?> elementMapper, String fileName, int threshold) throws IOException
+    {
         @Cleanup CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
         for (Multiset.Entry<V> entry : multiset.entrySet()) {
-            csvPrinter.printRecord(elementMapper.apply(entry.getElement()), entry.getCount());
+            int count = entry.getCount();
+            if (count < threshold)
+                continue;
+            csvPrinter.printRecord(elementMapper.apply(entry.getElement()), count);
         }
         csvPrinter.close();
     }

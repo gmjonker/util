@@ -1,5 +1,6 @@
 package gmjonker.util;
 
+import com.google.common.base.Ascii;
 import com.google.common.base.Stopwatch;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +20,7 @@ import java.util.function.Function;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static gmjonker.math.GeneralMath.max;
 import static gmjonker.math.GeneralMath.round;
+import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.NA_I;
 import static gmjonker.util.FormattingUtil.nanosToString;
 
@@ -41,7 +43,12 @@ public class Util
     {
         return ! Objects.equals(a, b);
     }
-    
+
+    public static boolean eqci(String a, String b)
+    {
+        return Ascii.equalsIgnoreCase(a, b);
+    }
+
     public static void simpleSleep(long millis)
     {
         try {
@@ -192,6 +199,15 @@ public class Util
             return Integer.valueOf(s);
         } catch (NumberFormatException e) {
             return NA_I;
+        }
+    }
+
+    public static Double tryParseDouble(String s)
+    {
+        try {
+            return Double.valueOf(s);
+        } catch (NumberFormatException e) {
+            return NA;
         }
     }
 

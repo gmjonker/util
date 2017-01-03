@@ -320,6 +320,9 @@ public class CollectionsUtil
         return map;
     }
 
+    /**
+     * @param map values must be unique.
+     */
     @Nonnull
     public static <K, V> Map<V, K> invertMap(Map<K, V> map)
     {

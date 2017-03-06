@@ -122,6 +122,11 @@
             <version>3.2.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>me.yanaga</groupId>
+            <artifactId>guava-stream</artifactId>
+            <version>RELEASE</version>
+        </dependency>
     </dependencies>
 
     <build>

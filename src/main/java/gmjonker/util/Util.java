@@ -58,10 +58,10 @@ public class Util
         }
     }
 
-    public static void logMemory()
-    {
-        log.info(getConciseMemoryInfo());
-    }
+//    public static void logMemory()
+//    {
+//        log.info(getConciseMemoryInfo());
+//    }
 
     public static String getConciseMemoryInfo()
     {

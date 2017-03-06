@@ -2,41 +2,41 @@ package gmjonker.math;
 
 import org.junit.*;
 
-public class IndicationCovarianceTest
+public class IndicationCovarianceOnlineTest
 {
     @Test
     public void test()
     {
         // Basic cases
         {
-            IndicationCovariance indicationCovariance = new IndicationCovariance();
+            IndicationCovarianceOnline indicationCovariance = new IndicationCovarianceOnline();
             System.out.println("indicationCovariance.getCovariance() = " + indicationCovariance.getCovariance());
         }
         {
-            IndicationCovariance indicationCovariance = new IndicationCovariance();
+            IndicationCovarianceOnline indicationCovariance = new IndicationCovarianceOnline();
             indicationCovariance.addDataPoint(new Indication(1, 1), new Indication(1, 1));
             System.out.println("indicationCovariance.getCovariance() = " + indicationCovariance.getCovariance());
         }
         {
-            IndicationCovariance indicationCovariance = new IndicationCovariance();
+            IndicationCovarianceOnline indicationCovariance = new IndicationCovarianceOnline();
             indicationCovariance.addDataPoint(new Indication(1, 1), new Indication(1, 1));
             indicationCovariance.addDataPoint(new Indication(-1, 1), new Indication(-1, 1));
             System.out.println("indicationCovariance.getCovariance() = " + indicationCovariance.getCovariance());
         }
         {
-            IndicationCovariance indicationCovariance = new IndicationCovariance();
+            IndicationCovarianceOnline indicationCovariance = new IndicationCovarianceOnline();
             indicationCovariance.addDataPoint(new Indication(1, 1), new Indication(-1, 1));
             indicationCovariance.addDataPoint(new Indication(-1, 1), new Indication(1, 1));
             System.out.println("indicationCovariance.getCovariance() = " + indicationCovariance.getCovariance());
         }
         {
-            IndicationCovariance indicationCovariance = new IndicationCovariance();
+            IndicationCovarianceOnline indicationCovariance = new IndicationCovarianceOnline();
             indicationCovariance.addDataPoint(new Indication( 1, .1), new Indication( 1, .1));
             indicationCovariance.addDataPoint(new Indication(-1, .1), new Indication(-1, .1));
             System.out.println("indicationCovariance.getCovariance() = " + indicationCovariance.getCovariance());
         }
         {
-            IndicationCovariance indicationCovariance = new IndicationCovariance();
+            IndicationCovarianceOnline indicationCovariance = new IndicationCovarianceOnline();
             indicationCovariance.addDataPoint(new Indication( 1, .1), new Indication(-1, .1));
             indicationCovariance.addDataPoint(new Indication(-1, .1), new Indication( 1, .1));
             System.out.println("indicationCovariance.getCovariance() = " + indicationCovariance.getCovariance());
@@ -45,19 +45,19 @@ public class IndicationCovarianceTest
         // Point-pairs with low joint confidence should add little to the score
         System.out.println();
         {
-            IndicationCovariance indicationCovariance = new IndicationCovariance();
+            IndicationCovarianceOnline indicationCovariance = new IndicationCovarianceOnline();
             indicationCovariance.addDataPoint(new Indication( 1, 1), new Indication(1, 1));
             indicationCovariance.addDataPoint(new Indication(-1, 1), new Indication( 1, 1));
             System.out.println("indicationCovariance.getCovariance() = " + indicationCovariance.getCovariance());
         }
         {
-            IndicationCovariance indicationCovariance = new IndicationCovariance();
+            IndicationCovarianceOnline indicationCovariance = new IndicationCovarianceOnline();
             indicationCovariance.addDataPoint(new Indication( 1, 1), new Indication(1, 1));
             indicationCovariance.addDataPoint(new Indication(-1, .1), new Indication( 1, .1));
             System.out.println("indicationCovariance.getCovariance() = " + indicationCovariance.getCovariance());
         }
         {
-            IndicationCovariance indicationCovariance = new IndicationCovariance();
+            IndicationCovarianceOnline indicationCovariance = new IndicationCovarianceOnline();
             indicationCovariance.addDataPoint(new Indication( 1, 1), new Indication(1, 1));
             indicationCovariance.addDataPoint(new Indication(-1, 1), new Indication( 1, 0));
             System.out.println("indicationCovariance.getCovariance() = " + indicationCovariance.getCovariance());
@@ -68,13 +68,13 @@ public class IndicationCovarianceTest
     public void pearson()
     {
         {
-            IndicationCovariance indicationCovariance = new IndicationCovariance();
+            IndicationCovarianceOnline indicationCovariance = new IndicationCovarianceOnline();
             indicationCovariance.addDataPoint(new Indication( 1, 1), new Indication(1, 1));
             indicationCovariance.addDataPoint(new Indication(-1, 1), new Indication(-1, 1));
             System.out.println("indicationCovariance.getPearsonSimilarity() = " + indicationCovariance.getPearsonSimilarity());
         }
         {
-            IndicationCovariance indicationCovariance = new IndicationCovariance();
+            IndicationCovarianceOnline indicationCovariance = new IndicationCovarianceOnline();
             indicationCovariance.addDataPoint(new Indication( 1, 1), new Indication(1, 1));
             indicationCovariance.addDataPoint(new Indication(-1, 1), new Indication(1, 1));
             System.out.println("indicationCovariance.getPearsonSimilarity() = " + indicationCovariance.getPearsonSimilarity());

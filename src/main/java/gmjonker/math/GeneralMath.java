@@ -1,11 +1,14 @@
 package gmjonker.math;
 
+import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 import gmjonker.util.LambdaLogger;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 
 import javax.annotation.Nullable;
@@ -17,6 +20,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static gmjonker.math.NaType.*;
+import static gmjonker.util.CollectionsUtil.map;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 
 /**
@@ -25,6 +29,10 @@ import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 @SuppressWarnings("WeakerAccess")
 public class GeneralMath
 {
+    public static final long KILO = 1000;
+    public static final long MEGA = 1000000;
+    public static final long GIGA = 1000000000;
+    
     public static final double NANOS_TO_SECONDS = .001 * .001 * .001;
 
     private static final LambdaLogger log = new LambdaLogger(GeneralMath.class);
@@ -44,7 +52,13 @@ public class GeneralMath
         return Math.pow(x, exponent);
     }
 
+    @Deprecated // Clashes with Logger log
     public static double log(double x)
+    {
+        return Math.log(x);
+    }
+
+    public static double ln(double x)
     {
         return Math.log(x);
     }
@@ -57,6 +71,12 @@ public class GeneralMath
     public static double sqrt(double x)
     {
         return Math.sqrt(x);
+    }
+
+    public static double sqrtSigned(double x)
+    {
+        int sign = sign(x);
+        return Math.sqrt(x * sign) * sign;
     }
 
     public static double cbrt(double x)
@@ -228,6 +248,27 @@ public class GeneralMath
         for (int i = 0; i < values.length; i++) {
             double value = values[i];
             double weight = weights[i];
+            if (weight == Double.POSITIVE_INFINITY)
+                weight = Double.MAX_VALUE / 1000;
+            else if (weight == Double.NEGATIVE_INFINITY)
+                weight = Double.MIN_VALUE * 1000;
+            sum += weight * value;
+            totalWeight += weight;
+        }
+        if (totalWeight < 0) {
+            log.error("sum(weights) must be positive");
+            return NA;
+        }
+        return sum / totalWeight;
+    }
+
+    public static double weightedMean(Collection<Pair<Double, Double>> valueWeightPairs)
+    {
+        double sum = 0;
+        double totalWeight = 0;
+        for (Pair<Double, Double> valueWeightPair : valueWeightPairs) {
+            double value  = valueWeightPair.getLeft();
+            double weight = valueWeightPair.getRight();
             if (weight == Double.POSITIVE_INFINITY)
                 weight = Double.MAX_VALUE / 1000;
             else if (weight == Double.NEGATIVE_INFINITY)
@@ -417,6 +458,22 @@ public class GeneralMath
         return Math.sqrt(total / weightsSum);
     }
 
+    public static double rootWeightedMeanSquareNegSafe(Collection<Pair<Double, Double>> valueWeightPairs)
+    {
+        double total = 0;
+        double weightsSum = 0;
+        for (Pair<Double, Double> valueWeightPair : valueWeightPairs) {
+            Double value = valueWeightPair.getLeft();
+            Double weight = valueWeightPair.getRight();
+            if (weight == 0) // for case value = inf, weight = 0
+                continue;
+            total += weight * Math.pow(value, 2) * sign(value); // retain sign of value
+            weightsSum += weight;
+        }
+        int sign = sign(total);
+        return Math.sqrt(sign * total / weightsSum) * sign;
+    }
+
     public static double rootMeanSquareError(double[] values)
     {
         double temp = 0;
@@ -516,6 +573,22 @@ public class GeneralMath
             total += diff * diff;
         }
         return 1.0 / length * total;
+    }
+    
+    public static double correlation(List<Double> series1, List<Double> series2)
+    {
+        double[] d1 = Doubles.toArray(series1);
+        double[] d2 = Doubles.toArray(series2);
+        return new PearsonsCorrelation().correlation(d1, d2);
+    }
+
+    public static <T> double correlation(Collection<T> keys, Function<T, Double> f1, Function<T, Double> f2)
+    {
+        List<Double> series1 = map(keys, f1);
+        List<Double> series2 = map(keys, f2);
+        double[] d1 = Doubles.toArray(series1);
+        double[] d2 = Doubles.toArray(series2);
+        return new PearsonsCorrelation().correlation(d1, d2);
     }
 
     @SuppressWarnings("ConstantConditions")

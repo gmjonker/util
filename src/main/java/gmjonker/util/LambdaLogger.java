@@ -1,6 +1,5 @@
 package gmjonker.util;
 
-import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -14,9 +13,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static gmjonker.util.CollectionsUtil.getOr;
 import static gmjonker.util.CollectionsUtil.map;
-import static gmjonker.util.FormattingUtil.getIndentation;
 import static gmjonker.util.FormattingUtil.take;
 
 /**
@@ -175,26 +172,40 @@ public class LambdaLogger implements Logger
 
     // --------------------------------------------------------------------------------------------
 
-    /** Log separate lines separately, indents all between first and last line of argument **/
-    public void debug2(String format, Object argument)
+//    /** Log separate lines separately, indents all lines of argument.toString() **/
+//    public void debugv(String format, @Nullable Object argument)
+//    {
+//        if (logger.isDebugEnabled()) {
+//            String[] formatParts = format.split("\\{\\}");
+//            int indentation = getIndentation(format);
+//            String begin = getOr(formatParts, 0, "");
+//            String end = getOr(formatParts, 1, "");
+//            if (begin.trim().length() > 0)
+//                logger.debug(begin);
+//            String s = argument != null ? argument.toString() : "";
+//            String[] lines = s.split("\n");
+//            for (String line : lines) {
+//                logger.debug(Strings.repeat(" ", indentation + 2) + "{}", line);
+//            }
+//            if (end.trim().length() > 0)
+//                logger.debug(end);
+//        }
+//    }
+
+    /** Log separate lines separately, indents all lines of argument.toString() **/
+    public void debugv(String format, Object... arguments)
     {
         if (logger.isDebugEnabled()) {
-            String[] formatParts = format.split("\\{\\}");
-            int indentation = getIndentation(format);
-            String begin = getOr(formatParts, 0, "");
-            String end = getOr(formatParts, 1, "");
-            if (begin.trim().length() > 0)
-                logger.debug(begin);
-            String s = argument.toString();
-            String[] lines = s.split("\n");
-            for (String line : lines) {
-                logger.debug(Strings.repeat(" ", indentation) + "{}", line);
+            String formattedMessage = MessageFormatter.arrayFormat(format, arguments).getMessage();
+            String[] lines = formattedMessage.split("\n");
+            for (int i = 0; i < lines.length; i++) {
+                if (i == 0 || i == lines.length - 1)
+                    logger.debug(lines[i]);
+                else 
+                    logger.debug("  " + lines[i]);
             }
-            if (end.trim().length() > 0)
-                logger.debug(end);
         }
     }
-
 
     public final void debug(Supplier<String> argument)
     {
@@ -244,6 +255,43 @@ public class LambdaLogger implements Logger
     }
 
     // --------------------------------------------------------------------------------------------
+
+//    /** Log separate lines separately, indents all between first and last line of argument **/
+//    public void tracev(String format, Object argument)
+//    {
+//        if (logger.isDebugEnabled()) {
+//            String[] formatParts = format.split("\\{\\}");
+//            int indentation = getIndentation(format);
+//            String begin = getOr(formatParts, 0, "");
+//            String end = getOr(formatParts, 1, "");
+//            if (begin.trim().length() > 0)
+//                logger.trace(begin);
+//            String s = argument.toString();
+//            String[] lines = s.split("\n");
+//            for (String line : lines) {
+//                logger.trace(Strings.repeat(">", indentation) + "{}", line);
+//            }
+//            if (end.trim().length() > 0)
+//                logger.trace(end);
+//        }
+//    }
+
+    /** Log separate lines separately, indents all lines of argument.toString() **/
+    public void tracev(String format, Object... arguments)
+    {
+        if (logger.isTraceEnabled()) {
+            String formattedMessage = MessageFormatter.arrayFormat(format, arguments).getMessage();
+//            System.out.println("formattedMessage = " + formattedMessage);
+            String[] lines = formattedMessage.split("\n");
+//            System.out.println("lines = " + Arrays.toString(lines));
+            for (int i = 0; i < lines.length; i++) {
+                if (i == 0 || i == lines.length - 1)
+                    logger.trace(lines[i]);
+                else
+                    logger.trace("  " + lines[i]);
+            }
+        }
+    }
 
     public final void trace(Supplier<String> argument)
     {

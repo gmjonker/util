@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Queue;
 
 import static gmjonker.math.GeneralMath.abs;
+import static gmjonker.math.GeneralMath.limit;
 import static gmjonker.math.GeneralMath.sign;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
@@ -68,6 +70,13 @@ public class Indication implements Comparable<Indication>
     {
         this(value, confidence, "");
     }
+    
+    public Indication correct()
+    {
+        value = limit(value, -1, 1);
+        confidence = limit(confidence, 0, 1);
+        return this;
+    }
 
     /**
      * Has valid value and valid confidence.
@@ -88,7 +97,7 @@ public class Indication implements Comparable<Indication>
     /** Is valid and confidence > 0. **/
     public boolean indicatesSomething()
     {
-        return isValid() && confidence > 0;
+        return isValid() && value > 0.000000000000001 &&  confidence > 0.000000000000001;
     }
 
     public boolean isNa()
@@ -125,6 +134,11 @@ public class Indication implements Comparable<Indication>
     public Indication multiplyWith(Indication indication)
     {
         return new Indication(this.value * indication.value, this.confidence * indication.confidence, this.comment);
+    }
+    
+    public Indication diffWith(Indication indication)
+    {
+        return new Indication(this.value - indication.value, this.confidence - indication.confidence);
     }
 
     /**
@@ -210,7 +224,7 @@ public class Indication implements Comparable<Indication>
 
     public String toFullString()
     {
-        return String.format("%f/%f->%f (%s)", value, confidence, deriveDouble(), comment);
+        return String.format("%.22f/%.22f->%f (%s)", value, confidence, deriveDouble(), comment);
     }
 
     public String toLongString()

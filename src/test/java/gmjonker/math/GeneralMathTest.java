@@ -3,6 +3,7 @@ package gmjonker.math;
 import cern.colt.list.DoubleArrayList;
 import cern.jet.stat.Descriptive;
 import com.google.common.math.DoubleMath;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 import org.junit.*;
 
@@ -144,6 +145,13 @@ public class GeneralMathTest
         assertEquals(GeneralMath.rootWeightedMeanSquareError(new double[]{.3, .5, .7}, new double[]{.5, 1., 2}), 0.439155, 0.00001);
         assertEquals(GeneralMath.rootWeightedMeanSquareError(new double[]{.3, .5, .7}, new double[]{.5, 1., 2}),
                 GeneralMath.rootWeightedMeanSquareError(asList(.3, .5, .7), asList(.5, 1., 2)), 0.00001);
+    }
+    
+    @Test
+    public void rootWeightedMeanSquareNegSafe()
+    {
+        assertThat(GeneralMath.rootWeightedMeanSquareNegSafe(Arrays.asList(Pair.of(-1.0, 1.0))), closeTo(-1.0, .000001));
+        assertThat(GeneralMath.rootWeightedMeanSquareNegSafe(Arrays.asList(Pair.of(-1.0, 1.0), Pair.of(-3.0, 1.0))), closeTo(-sqrt(5), .000001));
     }
 
     @Test

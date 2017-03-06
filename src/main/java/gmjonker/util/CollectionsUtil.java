@@ -20,6 +20,8 @@ import static gmjonker.math.GeneralMath.max;
 import static gmjonker.math.NaType.getValueOr;
 import static gmjonker.math.NaType.isValue;
 import static java.util.Collections.*;
+import static java.util.Collections.reverseOrder;
+import static java.util.Comparator.*;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 /**
@@ -53,6 +55,17 @@ public class CollectionsUtil
                 .filter(o -> o != null)
                 .map(function)
                 .collect(Collectors.toList());
+    }
+
+    @Nonnull
+    public static <E, K, V> Map<K, V> map(Collection<E> collection, Function<E, K> keyFunction, Function<E, V> valueFunction)
+    {
+        if (collection == null)
+            return emptyMap();
+
+        return collection.stream()
+                .filter(o -> o != null)
+                .collect(Collectors.toMap(keyFunction, valueFunction));
     }
 
     @Nonnull
@@ -91,6 +104,22 @@ public class CollectionsUtil
             K1 key = entry.getKey();
             V1 value = entry.getValue();
             newMap.put(keyMapper.apply(key), valueMapper.apply(value));
+        }
+        return newMap;
+    }
+
+    /** Retains ordering **/
+    @Nonnull
+    public static <K1,V1,K2,V2> Map<K2,V2> map(Map<K1,V1> map, Function<K1,K2> keyMapper, BiFunction<K1,V1,V2> valueMapper)
+    {
+        if (map == null)
+            return emptyMap();
+
+        Map<K2,V2> newMap = new LinkedHashMap<>();
+        for (Map.Entry<K1, V1> entry : map.entrySet()) {
+            K1 key = entry.getKey();
+            V1 value = entry.getValue();
+            newMap.put(keyMapper.apply(key), valueMapper.apply(key, value));
         }
         return newMap;
     }
@@ -183,6 +212,18 @@ public class CollectionsUtil
         return outputArray;
     }
 
+    public static <K, V1, V2> Map<K, V2> reduce(Multimap<K, V1> multimap, Function<Collection<V1>, V2> reducer)
+    {
+        Map<K, V2> result = new HashMap<>();
+        for (K key : multimap.keySet()) {
+            Collection<V1> values = multimap.get(key);
+            V2 reducedValues = reducer.apply(values);
+            result.put(key, reducedValues);
+            log.trace("{} = {} -> {}", key, values, reducedValues);
+        }
+        return result;
+    }
+
     @Nonnull
     public static <T> List<T> filter(List<T> list, Function<T, Boolean> function)
     {
@@ -204,9 +245,18 @@ public class CollectionsUtil
     @Nonnull
     public static <T> List<T> filterNulls(List<T> list)
     {
-        return filter(list, element -> element != null);
+        return filter(list, Objects::nonNull);
     }
 
+    /**
+     * Filter map by key and/or value. Entries must satify both the key filter and the value filter to be passed through.
+     */
+    @Nonnull
+    public static <K, V> Map<K, V> filter(Map<K, V> map, Function<K, Boolean> keyFilter)
+    {
+        return filter(map, keyFilter, value -> true);
+    }
+    
     /**
      * Filter map by key and/or value. Entries must satify both the key filter and the value filter to be passed through.
      */
@@ -229,6 +279,19 @@ public class CollectionsUtil
         }
 
         return newMap;
+    }
+
+    /**
+     * Remove all entries where both key and value satisfy the predicates
+     */
+    public static <K, V> void remove(Map<K, V> map, Function<K, Boolean> keyFilter, Function<V, Boolean> valueFilter)
+    {
+        if (map == null)
+            return;
+        Map<K, V> toRemove = filter(map, keyFilter, valueFilter);
+        for (K key : toRemove.keySet()) {
+            map.remove(key);
+        }
     }
     
     public static <T> List<T> removeDuplicates(List<T> list)
@@ -283,12 +346,19 @@ public class CollectionsUtil
     }
 
     @Nonnull
-    public static <T> Set<T> asSet(List<T> list)
+    public static <T> Set<T> asSet(Collection<T> collection)
     {
         Set<T> set = new HashSet<>();
-        if (list != null)
-            set.addAll(list);
+        if (collection != null)
+            set.addAll(collection);
         return set;
+    }
+
+    @Nonnull
+    @SafeVarargs
+    public static <T> List<T> asList(T... objects)
+    {
+        return Arrays.asList(objects);
     }
 
     @Nonnull
@@ -317,6 +387,15 @@ public class CollectionsUtil
         for (int i = 0; i < objects.length; i += 2) {
             map.put((K)objects[i], (V)objects[i+1]);
         }
+        return map;
+    }
+
+    @Nonnull
+    public static <K,V> DefaultingMap<K,V> asDefaultingMap(Object... objects)
+    {
+        V lastArgument = (V) objects[objects.length - 1];
+        DefaultingMap<K,V> map = new DefaultingHashmap<K,V>(lastArgument);
+        for (int i = 0; i < objects.length - 1; i += 2) map.put((K) objects[i], (V) objects[i + 1]);
         return map;
     }
 
@@ -428,6 +507,8 @@ public class CollectionsUtil
     {
         if (array == null)
             return or;
+        if (index < 0)
+            return array[array.length + index];
         if (index < array.length)
             return array[index];
         return or;
@@ -558,7 +639,9 @@ public class CollectionsUtil
 
     /**
      * Sorts a map by value. Adapted from http://stackoverflow.com/a/2581754/1901037
-     *
+     * 
+     * Null values come last always.
+     * 
      * @return A map that, when iterated over, returns keys, values or entries sorted by value
      */
     @Nonnull
@@ -570,10 +653,10 @@ public class CollectionsUtil
             return result;
 
         Stream<Map.Entry<K,V>> st = map.entrySet().stream();
-        Comparator<Map.Entry<K, V>> comparator = Comparator.comparing(Map.Entry::getValue);
-        if ( ! ascending)
-            comparator = comparator.reversed();
-        st.sorted(comparator).forEach(e -> result.put(e.getKey(), e.getValue()));
+        Comparator<V> order = ascending ? naturalOrder() : reverseOrder();
+        Comparator<Map.Entry<K, V>> comparator = comparing(Map.Entry::getValue, nullsLast(order));
+        Stream<Map.Entry<K, V>> sorted = st.sorted(comparator);
+        sorted.forEach(e -> result.put(e.getKey(), e.getValue()));
 
         return result;
     }
@@ -592,7 +675,7 @@ public class CollectionsUtil
             return result;
 
         Stream<Map.Entry<K,V>> entries = map.entrySet().stream();
-        Comparator<Map.Entry<K, V>> comparator = Comparator.comparing(
+        Comparator<Map.Entry<K, V>> comparator = comparing(
                 (Function<Map.Entry<K, V>, Comparable>) (kvEntry) -> function.apply(kvEntry.getValue())
         );
         if ( ! ascending)
@@ -621,7 +704,7 @@ public class CollectionsUtil
             return result;
 
         Comparator<Map.Entry<K, V>> comparator =
-                Comparator.comparing(
+                comparing(
                         (Function<Map.Entry<K, V>, Double>) (kvEntry) -> {
                             Double value = function.apply(kvEntry.getValue());
                             if (!isValue(value))
@@ -706,6 +789,30 @@ public class CollectionsUtil
     }
 
     /**
+     * Returns a list of multiset entries, sorted by counts.
+     */
+    public static <T> LinkedHashMultiset<T> sortMultisetByCounts2(Multiset<T> multiSet)
+    {
+        List<Multiset.Entry<T>> entries = sortMultisetByCounts(multiSet);
+        LinkedHashMultiset<T> linkedHashMultiset = LinkedHashMultiset.create();
+        for (Multiset.Entry<T> entry : entries) {
+            linkedHashMultiset.add(entry.getElement(), entry.getCount());
+        }
+        return linkedHashMultiset;
+    }
+
+    public static <T> Multiset<T> filterMultisetByCounts(Multiset<T> multiSet, int minimumCount, int maximumCount)
+    {
+        Multiset<T> newMultiset = HashMultiset.create();
+        for (T element : multiSet) {
+            int count = multiSet.count(element);
+            if (count >= minimumCount && count <= maximumCount)
+                newMultiset.add(element, count);
+        }
+        return newMultiset;        
+    }
+
+    /**
      * Wrapper around Apache Commons CollectionUtils.isEqualCollection that accepts nulls and considers null equal to
      * an empty collection.
      */
@@ -726,5 +833,11 @@ public class CollectionsUtil
             table.put(row, column, v);
         }
         return v;
+    }
+    
+    public static <V> Map<V, Integer> createCounts(Collection<V> collection)
+    {
+        HashMultiset<V> multiset = HashMultiset.create(collection);
+        return map(multiset.elementSet(), value -> value, multiset::count);
     }
 }

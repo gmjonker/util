@@ -1,5 +1,6 @@
 package gmjonker.math;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.util.MathArrays;
 import org.junit.*;
 
@@ -10,22 +11,34 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
 import static spock.util.matcher.HamcrestMatchers.closeTo;
 
-public class IndicationStatisticsTest
+public class IndicationStatsTest
 {
     @Test
-    public void euclideanDist()
+    public void euclideanDist1()
     {
         double dist1 = MathArrays.distance(new double[]{.1, .2, .3}, new double[]{-.2, -.5, .12});
         System.out.println("dist1 = " + dist1);
 
-        double dist2 = IndicationStatistics.euclideanDistance(
+        double dist2 = IndicationStats.euclideanDistance1(
                 asList(ind( .1, 1), ind( .2, 1), ind( .3 , 1)),
                 asList(ind(-.2, 1), ind(-.5, 1), ind( .12, 1))
         );
         System.out.println("dist2 = " + dist2);
+    }
+
+    @Test
+    public void euclideanDist2()
+    {
+        double               dist1  = IndicationStats.euclideanDistance1(asList(ind(1, 1)), asList(ind( 1, 0)));
+        Pair<Double, Double> dist2a = IndicationStats.euclideanDistance2(asList(ind(1, 1)), asList(ind( 1, 0)));
+        Pair<Double, Double> dist2b = IndicationStats.euclideanDistance2(asList(ind(1, 1)), asList(ind( 1, .5)));
+        Pair<Double, Double> dist2c = IndicationStats.euclideanDistance2(asList(ind(1, 1)), asList(ind(.5, .5)));
+        System.out.println("dist1 = " + dist1);
+        System.out.println("dist2a = " + dist2a);
+        System.out.println("dist2b = " + dist2b);
+        System.out.println("dist2c = " + dist2c);
     }
 
     @Test

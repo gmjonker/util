@@ -97,17 +97,23 @@ public class IoUtil
     // CSV
     ///
 
-    public static CSVParser readCsvFileWithHeaders(String fileName) throws IOException
+    public static CSVParser readCsvFile(String fileName, boolean hasHeaders) throws IOException
     {
         String fileContent = readFileAsOneString(fileName);
-        return CSVParser.parse(fileContent, CSVFormat.EXCEL.withHeader().withAllowMissingColumnNames()
-                .withIgnoreEmptyLines().withIgnoreSurroundingSpaces());
+        CSVFormat format = CSVFormat.EXCEL.withIgnoreEmptyLines().withIgnoreSurroundingSpaces();
+        if (hasHeaders)
+            format = format.withHeader().withAllowMissingColumnNames();
+        return CSVParser.parse(fileContent, format);
+    }
+
+    public static CSVParser readCsvFileWithHeaders(String fileName) throws IOException
+    {
+        return readCsvFile(fileName, true);
     }
 
     public static CSVParser readCsvFileWithoutHeaders(String fileName) throws IOException
     {
-        String fileContent = readFileAsOneString(fileName);
-        return CSVParser.parse(fileContent, CSVFormat.EXCEL.withIgnoreEmptyLines().withIgnoreSurroundingSpaces());
+        return readCsvFile(fileName, false);
     }
 
     public static CSVParser readCsvFileWithHeadersOrRTE(String fileName)
@@ -122,7 +128,6 @@ public class IoUtil
     @SneakyThrows
     public static CSVParser readCsvFileWithoutHeadersSneaky(String fileName)
     {
-        System.out.println("sneaky");
         String fileContent = readFileAsOneString(fileName);
         return CSVParser.parse(fileContent, CSVFormat.EXCEL.withIgnoreEmptyLines().withIgnoreSurroundingSpaces());
     }
@@ -227,6 +232,18 @@ public class IoUtil
         for (CSVRecord record : csvParser.getRecords()) {
             String key   = record.get(0);
             String value = record.get(1);
+            map.put(key, value);
+        }
+        return map;
+    }
+
+    public static LinkedHashMap<String, String> readCsvIntoMap(String fileName, boolean hasHeaders, int keyColumn, int valueColumn) throws IOException
+    {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        CSVParser csvParser = readCsvFile(fileName, hasHeaders);
+        for (CSVRecord record : csvParser.getRecords()) {
+            String key   = record.get(keyColumn);
+            String value = record.get(valueColumn);
             map.put(key, value);
         }
         return map;
@@ -348,7 +365,49 @@ public class IoUtil
         }
     }
 
+    public static <K, V> void writeMapToCsv(Map<K, V> map, String fileName) throws IOException
+    {
+        CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
+        for (K key : map.keySet()) {
+            csvPrinter.print(key);
+            csvPrinter.print(map.get(key));
+            csvPrinter.println();
+        }
+        csvPrinter.close();
+    }
 
+    public static <K, V> void writeMapToCsv(Map<K, V> map, String keyHeader, String valueHeader, String fileName) throws IOException
+    {
+        CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
+        csvPrinter.printRecord(keyHeader, valueHeader);
+        for (K key : map.keySet()) {
+            csvPrinter.print(key);
+            csvPrinter.print(map.get(key));
+            csvPrinter.println();
+        }
+        csvPrinter.close();
+    }
+
+
+
+
+
+
+    public static ArrayListMultimap<String, String> readCsvIntoMultimapOrRTE(String fileName, boolean hasHeaders, int keyColumn, int valueColumn)
+    {
+        try {
+            ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+            CSVParser csvParser = readCsvFile(fileName, hasHeaders);
+            for (CSVRecord record : csvParser.getRecords()) {
+                String key = record.get(keyColumn);
+                String value = record.get(valueColumn);
+                map.put(key, value);
+            }
+            return map;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /** CSV is assumed to have no headers. **/
     public static ArrayListMultimap<String, String> readCsvIntoMultimapOrRTE(String fileName)
@@ -411,6 +470,9 @@ public class IoUtil
         writeTableToCsv(table, fileName, FormattingUtil::toStringer, FormattingUtil::toStringer, valueTransformer);
     }
 
+    /**
+     * @param valueTransformer NOP form: (row, column) -> ((value) -> value)
+     */
     public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, 
             BiFunction<R, C, Function<V, String>> valueTransformer) throws IOException
     {
@@ -433,7 +495,7 @@ public class IoUtil
             Function<C, String> columnHeaderTransformer, Function<V, String> valueTransformer, @Nullable Comparator<R> rowComparator, 
             @Nullable Comparator<C> columnComparator) throws IOException
     {
-        writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, (R row, C column) -> valueTransformer, null, null);
+        writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, (R row, C column) -> valueTransformer, rowComparator, columnComparator);
     }
 
     public static <R, C, V> void writeTableToCsv(
@@ -541,6 +603,15 @@ public class IoUtil
         if (fileSystem != null)
             fileSystem.close();
         return results;
+    }
+    
+    public static int countLines(File file) throws IOException
+    {
+        @Cleanup BufferedReader reader = new BufferedReader(new FileReader(file));
+        int lines = 0;
+        while (reader.readLine() != null) 
+            lines++;
+        return lines;
     }
 
 }

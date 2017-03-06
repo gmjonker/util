@@ -1,17 +1,18 @@
 package gmjonker.math;
 
 import gmjonker.util.LambdaLogger;
+import lombok.Getter;
 import lombok.val;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class IndicationCovariance
+public class IndicationCovarianceOnline
 {
-    List<Indication> series1 = new ArrayList<>();
-    List<Indication> series2 = new ArrayList<>();
+    @Getter private List<Indication> series1 = new ArrayList<>();
+    @Getter private List<Indication> series2 = new ArrayList<>();
 
-    private static final LambdaLogger log = new LambdaLogger(IndicationCovariance.class);
+    private static final LambdaLogger log = new LambdaLogger(IndicationCovarianceOnline.class);
     
     public void addDataPoint(Indication indication1, Indication indication2)
     {
@@ -40,7 +41,7 @@ public class IndicationCovariance
         for (int i = 0; i < series1.size(); i++) {
             val indication1 = series1.get(i);
             val indication2 = series2.get(i);
-            double jointConfidence = IndicationMath.combine(indication2, indication2).confidence;
+            double jointConfidence = IndicationMath.combine(indication1, indication2).confidence;
             // TODO: use average instead of 0 as reference point? Then handle the case of series.size() == 1
             total += indication1.value * indication2.value * jointConfidence;
             n += jointConfidence;
@@ -51,11 +52,16 @@ public class IndicationCovariance
     public double getPearsonSimilarity()
     {
         double cov = getCovariance();
-        double sd1 = IndicationStatistics.standardDeviation(series1);
-        double sd2 = IndicationStatistics.standardDeviation(series2);
+        double sd1 = IndicationStats.standardDeviation(series1);
+        double sd2 = IndicationStats.standardDeviation(series2);
         log.trace("cov = {}", cov);
         log.trace("sd1 = {}", sd1);
         log.trace("sd2 = {}", sd2);
         return cov / (sd1 * sd2);
+    }
+    
+    public long getN()
+    {
+        return series1.size();
     }
 }

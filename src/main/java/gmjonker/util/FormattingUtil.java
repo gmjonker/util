@@ -22,8 +22,10 @@ import java.util.function.Function;
 
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.isValue;
+import static java.lang.System.lineSeparator;
 import static java.util.concurrent.TimeUnit.*;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.apache.commons.lang3.StringUtils.strip;
 
 public class FormattingUtil
@@ -212,6 +214,22 @@ public class FormattingUtil
     }
 
     /**
+     * Alias for toHumanReadableNumber
+     */
+    public static String human(int number)
+    {
+        return toHumanReadableNumber(number);
+    }
+
+    /**
+     * Alias for toHumanReadableNumber
+     */
+    public static String human(long number)
+    {
+        return toHumanReadableNumber(number);
+    }
+
+    /**
      * Recursive implementation, invokes itself for each factor of a thousand, increasing the class on each invokation.
      * Taken from http://stackoverflow.com/a/4753866/1901037
      * @param n the number to format
@@ -282,12 +300,26 @@ public class FormattingUtil
         return String.format("%d:%02d:%02d", s / 3600, (s % 3600) / 60, (s % 60));
     }
 
+    /** Indents every line in the string **/
+    public static String indent(String string, int indentation)
+    {
+        StringBuilder result = new StringBuilder();
+        for (String line : string.split("\n")) {
+            result.append(repeat(" ", indentation));
+            result.append(line);
+            result.append(lineSeparator());
+        }
+        result.deleteCharAt(result.length() - 1);
+        return result.toString();        
+    }
+    
     public static <T> String toStringLineByLine(Collection<T> collection)
     {
         char[] outer = collection instanceof List ? new char[]{'[', ']'} : new char[]{'{', '}'};
         String result = outer[0] + "\n";
         for (T t : collection)
-            result += "    " + t.toString() + "\n";
+//            result += "    " + t.toString() + "\n";
+            result += indent(t != null ? t.toString() : "", 3) + "\n";
         result += outer[1];
         return result;
     }
@@ -388,7 +420,6 @@ public class FormattingUtil
             if (string.charAt(indentation) != ' ')
                 return indentation;
         }
-        System.out.println("indentation = " + indentation);
         return indentation;
     }
 
@@ -461,7 +492,7 @@ public class FormattingUtil
             String string = toWidth(columnHeaderFormatter.apply(col), maxWidths.get(col) + 1);
             result += string;
         }
-        result += System.lineSeparator();
+        result += lineSeparator();
         int count = 0;
         for (R rowKey : rowKeys) {
             result += toWidth(rowHeaderFormatter.apply(rowKey), maxRowHeaderWidth) + " ";
@@ -471,7 +502,7 @@ public class FormattingUtil
                 String string = toWidth(valueFormatter.apply(value), maxWidths.get(col) + 1);
                 result += string;
             }
-            result += System.lineSeparator();
+            result += lineSeparator();
 //            if (count++ % 100 == 0)
 //                System.out.print(".");
         }

@@ -3,6 +3,7 @@ package gmjonker.util;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.text.Normalizer;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,6 +13,8 @@ public class StringNormalization
 {
     /** 
      * - Removes accents
+     * - Removes non-printable characters 
+     * - Replaces non-breakable spaces with breakable spaces
      * - Trims
      * - Lowercases
      **/
@@ -19,6 +22,14 @@ public class StringNormalization
     {
         if (string == null)
             return null;
+////        string = string.replaceAll("[\\p{Cc}\\p{Cf}\\p{Co}\\p{Cn}]", ""); // remove unprintable characters
+////        string = removeUnprintableCharacters(string);
+////        string = string.replace("\u00A0", " "); // replace non-breakable spaces
+//        string = string.replaceAll("[\\p{Cc}\\p{Cf}\\p{Co}\\p{Cn}\\u00A0]", " "); // replace unprintable characters and non-breakable spaces
+////        string = string.replaceAll("\\u00A0", " "); // replace non-breakable spaces
+        string = Normalizer.normalize(string, Normalizer.Form.NFKC);
+        if (string.contains("\u00A0"))
+            System.out.println("wtf");
         return StringUtils.stripAccents(string.trim().toLowerCase());
     }
 
@@ -59,5 +70,31 @@ public class StringNormalization
     public static boolean containsNormalized(String string1, String string2)
     {
         return (StringUtils.contains(normalize(string1), normalize(string2)));
+    }
+    
+    public static String removeUnprintableCharacters(String myString)
+    {
+        StringBuilder newString = new StringBuilder(myString.length());
+        for (int offset = 0; offset < myString.length();)
+        {
+            int codePoint = myString.codePointAt(offset);
+            offset += Character.charCount(codePoint);
+
+            // Replace invisible control characters and unused code points
+            switch (Character.getType(codePoint))
+            {
+                case Character.CONTROL:     // \p{Cc}
+                case Character.FORMAT:      // \p{Cf}
+                case Character.PRIVATE_USE: // \p{Co}
+                case Character.SURROGATE:   // \p{Cs}
+                case Character.UNASSIGNED:  // \p{Cn}
+                    newString.append('?');
+                    break;
+                default:
+                    newString.append(Character.toChars(codePoint));
+                    break;
+            }
+        }
+        return newString.toString();
     }
 }

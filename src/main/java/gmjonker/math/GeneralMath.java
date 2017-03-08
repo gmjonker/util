@@ -5,6 +5,7 @@ import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 import gmjonker.util.LambdaLogger;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.stat.StatUtils;
@@ -21,6 +22,7 @@ import java.util.function.Function;
 
 import static gmjonker.math.NaType.*;
 import static gmjonker.util.CollectionsUtil.map;
+import static org.apache.commons.collections4.IterableUtils.toList;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 
 /**
@@ -584,8 +586,9 @@ public class GeneralMath
 
     public static <T> double correlation(Collection<T> keys, Function<T, Double> f1, Function<T, Double> f2)
     {
-        List<Double> series1 = map(keys, f1);
-        List<Double> series2 = map(keys, f2);
+        List<T> keyList = toList(keys);
+        List<Double> series1 = map(keyList, f1);
+        List<Double> series2 = map(keyList, f2);
         double[] d1 = Doubles.toArray(series1);
         double[] d2 = Doubles.toArray(series2);
         return new PearsonsCorrelation().correlation(d1, d2);

@@ -34,27 +34,33 @@ public class CollectionsUtil
     protected static final LambdaLogger log = new LambdaLogger(CollectionsUtil.class);
 
     @Nonnull
-    public static <T, R> List<R> map(Iterable<T> collection, Function<T, R> function)
+    public static <T, R> Iterable<R> map(Iterable<T> collection, Function<T, R> function)
     {
         if (collection == null)
             return emptyList();
-
-        return StreamSupport.stream(collection.spliterator(), false)
-                .filter(o -> o != null)
-                .map(function)
-                .collect(Collectors.toList());
+        
+        List<R> list = new ArrayList<>();
+        for (T el : collection) {
+            if (el == null) 
+                continue;
+            list.add(function.apply(el));
+        }
+        return list;
     }
 
     @Nonnull
-    public static <T, R> List<R> map(Collection<T> collection, Function<T, R> function)
+    public static <T, R> Collection<R> map(Collection<T> collection, Function<T, R> function)
     {
         if (collection == null)
             return emptyList();
 
-        return collection.stream()
-                .filter(o -> o != null)
-                .map(function)
-                .collect(Collectors.toList());
+        List<R> list = new ArrayList<>();
+        for (T el : collection) {
+            if (el == null)
+                continue;
+            list.add(function.apply(el));
+        }
+        return list;
     }
 
     @Nonnull
@@ -63,9 +69,13 @@ public class CollectionsUtil
         if (collection == null)
             return emptyMap();
 
-        return collection.stream()
-                .filter(o -> o != null)
-                .collect(Collectors.toMap(keyFunction, valueFunction));
+        Map<K, V> map = new HashMap<>();
+        for (E el : collection) {
+            if (el == null)
+                continue;
+            map.put(keyFunction.apply(el), valueFunction.apply(el));
+        }
+        return map;
     }
 
     @Nonnull
@@ -74,10 +84,13 @@ public class CollectionsUtil
         if (list == null)
             return emptyList();
 
-        return list.stream()
-                .filter(o -> o != null)
-                .map(function)
-                .collect(Collectors.toList());
+        List<R> newList = new ArrayList<>();
+        for (T el : list) {
+            if (el == null)
+                continue;
+            newList.add(function.apply(el));
+        }
+        return newList;
     }
 
     @Nonnull
@@ -86,10 +99,13 @@ public class CollectionsUtil
         if (set == null)
             return emptySet();
 
-        return set.stream()
-                .filter(o -> o != null)
-                .map(function)
-                .collect(Collectors.toSet());
+        Set<R> newSet = new HashSet<>();
+        for (T el : set) {
+            if (el == null)
+                continue;
+            newSet.add(function.apply(el));
+        }
+        return newSet;
     }
 
     /** Retains ordering **/
@@ -804,7 +820,7 @@ public class CollectionsUtil
     public static <T> Multiset<T> filterMultisetByCounts(Multiset<T> multiSet, int minimumCount, int maximumCount)
     {
         Multiset<T> newMultiset = HashMultiset.create();
-        for (T element : multiSet) {
+        for (T element : multiSet.elementSet()) {
             int count = multiSet.count(element);
             if (count >= minimumCount && count <= maximumCount)
                 newMultiset.add(element, count);

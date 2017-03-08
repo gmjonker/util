@@ -250,6 +250,20 @@ public class IoUtil
     }
 
     /** CSV file must not have headers. **/
+    public static <K, V> LinkedHashMap<K,V> readTwoColumnCsvIntoMap(String fileName, Function<String, K> keyTransform,
+            Function<String, V> valueTransform) throws IOException
+    {
+        LinkedHashMap<K, V> map = new LinkedHashMap<>();
+        CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
+        for (CSVRecord record : csvParser.getRecords()) {
+            K key = keyTransform.apply(record.get(0));
+            V value = valueTransform.apply(record.get(1));
+            map.put(key, value);
+        }
+        return map;
+    }
+
+    /** CSV file must not have headers. **/
     public static LinkedHashMap<String, String> readTwoColumnCsvIntoMapOrRTE(String fileName)
     {
         try {
@@ -264,20 +278,6 @@ public class IoUtil
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /** CSV file must not have headers. **/
-    public static <K, V> LinkedHashMap<K,V> readTwoColumnCsvIntoMap(String fileName, Function<String, K> keyTransform,
-            Function<String, V> valueTransform) throws IOException
-    {
-        LinkedHashMap<K, V> map = new LinkedHashMap<>();
-        CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
-        for (CSVRecord record : csvParser.getRecords()) {
-            K key = keyTransform.apply(record.get(0));
-            V value = valueTransform.apply(record.get(1));
-            map.put(key, value);
-        }
-        return map;
     }
 
     /** CSV file must not have headers. **/
@@ -334,6 +334,23 @@ public class IoUtil
         }
     }
 
+    /** CSV file must not have headers. **/
+    public static SetMultimap<String, String> readTwoColumnCsvIntoSetMultiMapOrRTE(String fileName)
+    {
+        try {
+            SetMultimap<String, String> map = HashMultimap.create();
+            CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
+            for (CSVRecord record : csvParser.getRecords()) {
+                String key = record.get(0);
+                String value = record.get(1);
+                map.put(key, value);
+            }
+            return map;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /** CSV file must have headers. **/
     public static <K, V> LinkedHashMap<K,V> readTwoColumnsOfCsvIntoMap(String fileName, String keyColumn, String valueColumn,
             Function<String, K> keyTransform, Function<String, V> valueTransform) throws IOException
@@ -362,6 +379,17 @@ public class IoUtil
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> void writeCollectionToCsv(String filename, Collection<T> collection, Function<T, String>... columnMappers) throws IOException
+    {
+        @Cleanup CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(filename), CSVFormat.EXCEL);
+        for (T element : collection) {
+            for (Function<T, String> columnMapper : columnMappers) {
+                csvPrinter.print(columnMapper.apply(element));
+            }
+            csvPrinter.println();
         }
     }
 
@@ -613,5 +641,4 @@ public class IoUtil
             lines++;
         return lines;
     }
-
 }

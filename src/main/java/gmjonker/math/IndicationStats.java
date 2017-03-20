@@ -60,7 +60,7 @@ public class IndicationStats
      * Then sums and square-roots the results.
      * @return Pair of distance and confidence
      */
-    public static Pair<Double, Double> euclideanDistance2(List<Indication> indications1, List<Indication> indications2)
+    public static Pair<Double, Double> euclideanDistanceWithConfidence(List<Indication> indications1, List<Indication> indications2)
     {
         double total = 0;
         double totalConfidence = 0;

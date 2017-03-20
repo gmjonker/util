@@ -14,7 +14,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static gmjonker.math.GeneralMath.max;
 import static gmjonker.math.NaType.getValueOr;
@@ -264,6 +263,12 @@ public class CollectionsUtil
         return filter(list, Objects::nonNull);
     }
 
+    @Nonnull
+    public static <T> Collection<T> filterNulls(Collection<T> list)
+    {
+        return filter(list, Objects::nonNull);
+    }
+
     /**
      * Filter map by key and/or value. Entries must satify both the key filter and the value filter to be passed through.
      */
@@ -308,6 +313,13 @@ public class CollectionsUtil
         for (K key : toRemove.keySet()) {
             map.remove(key);
         }
+    }
+    
+    public static <T> boolean containsNoDuplicates(Collection<T> collection)
+    {
+        Set<T> set = new HashSet<T>();
+        set.addAll(collection);
+        return set.size() == collection.size();
     }
     
     public static <T> List<T> removeDuplicates(List<T> list)
@@ -700,6 +712,8 @@ public class CollectionsUtil
 
         return result;
     }
+    
+//    public static <T extends Comparable> sortByDescencing(Iterable<T> iterable, 
 
     /**
      * Sorts a Map by a function on its value, descendingly. Can handle NA.

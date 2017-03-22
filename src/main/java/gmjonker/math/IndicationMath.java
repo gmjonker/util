@@ -4,7 +4,10 @@ import gmjonker.util.LambdaLogger;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.StringJoiner;
 
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.Indication.NA_INDICATION;
@@ -192,11 +195,22 @@ public class IndicationMath
         return combineNoDisagreementEffect(indications, null);
     }
 
+    public static Indication combineNoDisagreementEffect(List<Pair<Indication, Double>> indicationWeightPairs)
+    {
+        Indication[] indications = new Indication[indicationWeightPairs.size()]; 
+        double[] weights = new double[indicationWeightPairs.size()];
+        for (int i = 0; i < indicationWeightPairs.size(); i++) {
+            indications[i] = indicationWeightPairs.get(i).getLeft();
+            weights[i] = indicationWeightPairs.get(i).getRight();
+        }
+        return combineNoDisagreementEffect(indications, weights);
+    }
+
     /**
      * Infers a new indication based on given indications, where indications may be weighted to indicate that some indications should have
      * more weight in the outcome than others.
      *
-     * <p>Disagreement among the indications has a no effect on confidence. The more indications are combines, the higher the
+     * <p>Disagreement among the indications has a no effect on confidence. The more indications are combined, the higher the
      * resulting confidence.</p>
      *
      * <p>Indication values in range (-1,1). Weights have no constraints (will be normalized on the fly).

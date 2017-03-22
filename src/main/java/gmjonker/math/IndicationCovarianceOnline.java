@@ -49,6 +49,26 @@ public class IndicationCovarianceOnline
         return total / n;
     }
     
+    public Indication getCovarianceWithConfidence()
+    {
+        assert series1.size() == series2.size();
+        
+        int numPairs = series1.size();
+        double cumValue = 0;
+        double cumJointConfidence = 0;
+        double cumSumConfidence = 0;
+        for (int i = 0; i < numPairs; i++) {
+            val indication1 = series1.get(i);
+            val indication2 = series2.get(i);
+            double jointConfidence = IndicationMath.combine(indication1, indication2).confidence;
+            cumValue += indication1.value * indication2.value * jointConfidence;
+            cumJointConfidence += jointConfidence;
+            cumSumConfidence += indication1.confidence + indication2.confidence;
+        }
+        double finalConfidence = SigmoidMath.toMinusOneOneInterval(cumSumConfidence, .1);
+        return new Indication(cumValue / cumJointConfidence, finalConfidence);
+    }
+    
     public double getPearsonSimilarity()
     {
         double cov = getCovariance();

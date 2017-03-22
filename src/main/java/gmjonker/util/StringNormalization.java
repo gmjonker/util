@@ -5,12 +5,15 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nullable;
 import java.text.Normalizer;
 import java.util.List;
-import java.util.Objects;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import static gmjonker.util.Util.eq;
 
 public class StringNormalization
 {
+    private static final LambdaLogger log = new LambdaLogger(StringNormalization.class);
+    
     /** 
      * - Removes accents
      * - Removes non-printable characters 
@@ -96,5 +99,20 @@ public class StringNormalization
             }
         }
         return newString.toString();
+    }
+
+    static Pattern pattern = Pattern.compile("[\\.:,\"'“”\\(\\)\\[\\]|/?!;=_*<>€]+");
+
+    public static final Function<String, String> punctuationRemover =
+            text -> {
+                log.trace("text = '{}'", text);
+                String ppText = pattern.matcher(text).replaceAll("");
+                log.trace("ppText = '{}'", ppText);
+                return ppText;
+            };
+
+    public static String removeAllPunctuation(String text)
+    {
+        return punctuationRemover.apply(text);
     }
 }

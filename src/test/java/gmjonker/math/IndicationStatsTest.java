@@ -1,6 +1,5 @@
 package gmjonker.math;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.util.MathArrays;
 import org.junit.*;
 
@@ -31,10 +30,10 @@ public class IndicationStatsTest
     @Test
     public void euclideanDist2()
     {
-        double               dist1  = IndicationStats.euclideanDistance1(asList(ind(1, 1)), asList(ind( 1, 0)));
-        Pair<Double, Double> dist2a = IndicationStats.euclideanDistanceWithConfidence(asList(ind(1, 1)), asList(ind( 1, 0)));
-        Pair<Double, Double> dist2b = IndicationStats.euclideanDistanceWithConfidence(asList(ind(1, 1)), asList(ind( 1, .5)));
-        Pair<Double, Double> dist2c = IndicationStats.euclideanDistanceWithConfidence(asList(ind(1, 1)), asList(ind(.5, .5)));
+        double    dist1  = IndicationStats.euclideanDistance1(asList(ind(1, 1)), asList(ind( 1, 0)));
+        ValueConf dist2a = IndicationStats.euclideanDistanceWithConfidence(asList(ind(1, 1)), asList(ind( 1, 0)));
+        ValueConf dist2b = IndicationStats.euclideanDistanceWithConfidence(asList(ind(1, 1)), asList(ind( 1, .5)));
+        ValueConf dist2c = IndicationStats.euclideanDistanceWithConfidence(asList(ind(1, 1)), asList(ind(.5, .5)));
         System.out.println("dist1 = " + dist1);
         System.out.println("dist2a = " + dist2a);
         System.out.println("dist2b = " + dist2b);

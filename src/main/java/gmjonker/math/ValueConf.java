@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class ValueConf
 {
-    public double value;
-    public double confidence;
+    public final double value;
+    public final double confidence;
 }

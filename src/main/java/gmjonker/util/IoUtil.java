@@ -351,6 +351,21 @@ public class IoUtil
         }
     }
 
+    public static List<String> readOneColumnsOfCsvIntoList(String fileName, int column, boolean hasHeaders) throws IOException
+    {
+        List<String> values = new ArrayList<>();
+        CSVParser csvParser = readCsvFile(fileName, hasHeaders);
+        for (CSVRecord record : csvParser.getRecords()) {
+            try {
+                values.add(record.get(column));
+            } catch (Exception e) {
+                log.warn("Error in record '{}'", record);
+                throw e;
+            }
+        }
+        return values;
+    }
+
     /** CSV file must have headers. **/
     public static <K, V> LinkedHashMap<K,V> readTwoColumnsOfCsvIntoMap(String fileName, String keyColumn, String valueColumn,
             Function<String, K> keyTransform, Function<String, V> valueTransform) throws IOException

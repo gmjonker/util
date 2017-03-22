@@ -1,14 +1,11 @@
 package gmjonker.math;
 
 import gmjonker.util.LambdaLogger;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collection;
 import java.util.List;
 
-import static gmjonker.math.GeneralMath.min;
-import static gmjonker.math.GeneralMath.sqrt;
-import static gmjonker.math.GeneralMath.weightedStandardDeviation;
+import static gmjonker.math.GeneralMath.*;
 
 /**
  * See also IndicationCovarianceOnline.
@@ -60,7 +57,7 @@ public class IndicationStats
      * Then sums and square-roots the results.
      * @return Pair of distance and confidence
      */
-    public static Pair<Double, Double> euclideanDistanceWithConfidence(List<Indication> indications1, List<Indication> indications2)
+    public static ValueConf euclideanDistanceWithConfidence(List<Indication> indications1, List<Indication> indications2)
     {
         double total = 0;
         double totalConfidence = 0;
@@ -77,6 +74,6 @@ public class IndicationStats
         }
         double valueDist = sqrt(total);
         double confidence = totalConfidence / n;
-        return Pair.of(valueDist, confidence);
+        return new ValueConf(valueDist, confidence);
     }
 }

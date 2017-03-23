@@ -1,19 +1,16 @@
 package gmjonker.math;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Doubles;
 import gmjonker.util.LambdaLogger;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Queue;
 
-import static gmjonker.math.GeneralMath.abs;
-import static gmjonker.math.GeneralMath.limit;
-import static gmjonker.math.GeneralMath.sign;
+import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
 import static gmjonker.util.FormattingUtil.*;
@@ -55,6 +52,7 @@ public class Indication implements Comparable<Indication>
 
     @Getter
     @Setter
+    @JsonIgnore
     public String comment; // can be handy for explanations
 
     protected static final LambdaLogger log = new LambdaLogger(Indication.class);
@@ -89,6 +87,7 @@ public class Indication implements Comparable<Indication>
     /**
      * Has valid value and valid confidence.
      */
+    @JsonIgnore
     public boolean isValid()
     {
         return isValue(value) && isValue(confidence);
@@ -100,6 +99,7 @@ public class Indication implements Comparable<Indication>
         return isValid() && value > 0.000000000000001 &&  confidence > 0.000000000000001;
     }
 
+    @JsonIgnore
     public boolean isNa()
     {
         return this.equals(NA_INDICATION);
@@ -168,11 +168,13 @@ public class Indication implements Comparable<Indication>
         return value * confidence;
     }
 
+    @JsonIgnore
     public boolean isMaximal()
     {
         return value >= 1 && confidence >= 1;
     }
 
+    @JsonIgnore
     public boolean isWeakOrNeutral()
     {
         return abs(deriveDouble()) < .25;

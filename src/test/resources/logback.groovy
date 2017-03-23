@@ -1,5 +1,4 @@
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
-import ch.qos.logback.core.ConsoleAppender
 
 appender("STDOUT", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
@@ -7,6 +6,7 @@ appender("STDOUT", ConsoleAppender) {
     }
 }
 
+//logger("gmjonker.math.Correlation", TRACE)
 //logger("gmjonker.math.Score", TRACE)
 //logger("gmjonker.math.ScoreMath", TRACE)
 //logger("gmjonker.math.IndicationMath", TRACE)

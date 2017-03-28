@@ -192,7 +192,7 @@ public class LambdaLogger implements Logger
 //        }
 //    }
 
-    /** Log separate lines separately, indents all lines of argument.toString() **/
+    /** Log separate lines separately, indents all lines of argument.toString() except the first and the last **/
     public void debugv(String format, Object... arguments)
     {
         if (logger.isDebugEnabled()) {

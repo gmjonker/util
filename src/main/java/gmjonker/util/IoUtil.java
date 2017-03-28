@@ -86,7 +86,7 @@ public class IoUtil
         return reader.lines();
     }
 
-    public static void writeToFile(Set<String> strings, String filename) throws IOException
+    public static void writeToFile(Iterable<String> strings, String filename) throws IOException
     {
         @Cleanup FileWriter writer = new FileWriter(filename);
         for (String str: strings)
@@ -239,11 +239,17 @@ public class IoUtil
 
     public static LinkedHashMap<String, String> readCsvIntoMap(String fileName, boolean hasHeaders, int keyColumn, int valueColumn) throws IOException
     {
-        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        return readCsvIntoMap(fileName, hasHeaders, keyColumn, valueColumn, s -> s, s -> s); 
+    }
+    
+    public static <K, V> LinkedHashMap<K, V> readCsvIntoMap(String fileName, boolean hasHeaders, int keyColumn, int valueColumn,
+            Function<String, K> keyTransform, Function<String, V> valueTransform) throws IOException
+    {
+        LinkedHashMap<K, V> map = new LinkedHashMap<>();
         CSVParser csvParser = readCsvFile(fileName, hasHeaders);
         for (CSVRecord record : csvParser.getRecords()) {
-            String key   = record.get(keyColumn);
-            String value = record.get(valueColumn);
+            K key   = keyTransform.apply(record.get(keyColumn));
+            V value = valueTransform.apply(record.get(valueColumn));
             map.put(key, value);
         }
         return map;
@@ -418,19 +424,27 @@ public class IoUtil
         }
         csvPrinter.close();
     }
-
-    public static <K, V> void writeMapToCsv(Map<K, V> map, String keyHeader, String valueHeader, String fileName) throws IOException
+    public static <K, V> void writeMapToCsv(Map<K, V> map, @Nullable String keyHeader, @Nullable String valueHeader,
+            String fileName) throws IOException
+    {
+        writeMapToCsv(map, keyHeader, valueHeader, Object::toString, Object::toString, fileName);
+    }
+    
+    public static <K, V> void writeMapToCsv(Map<K, V> map, @Nullable String keyHeader, @Nullable String valueHeader,
+            Function<K, String> keyMapper, Function<V, String> valueMapper, String fileName) throws IOException
     {
         CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
-        csvPrinter.printRecord(keyHeader, valueHeader);
+        if (keyHeader != null && valueHeader != null)
+            csvPrinter.printRecord(keyHeader, valueHeader);
         for (K key : map.keySet()) {
-            csvPrinter.print(key);
-            csvPrinter.print(map.get(key));
+            csvPrinter.print(keyMapper.apply(key));
+            csvPrinter.print(valueMapper.apply(map.get(key)));
             csvPrinter.println();
         }
         csvPrinter.close();
     }
 
+    
 
 
 

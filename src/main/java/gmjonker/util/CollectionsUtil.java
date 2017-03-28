@@ -1,5 +1,6 @@
 package gmjonker.util;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
@@ -264,9 +265,21 @@ public class CollectionsUtil
     }
 
     @Nonnull
-    public static <T> Collection<T> filterNulls(Collection<T> list)
+    public static <T> Collection<T> filterNulls(Collection<T> coll)
     {
-        return filter(list, Objects::nonNull);
+        return filter(coll, Objects::nonNull);
+    }
+
+    @Nonnull
+    public static List<String> filterNullOrEmptys(List<String> coll)
+    {
+        return filter(coll, string -> ! Strings.isNullOrEmpty(string));
+    }
+
+    @Nonnull
+    public static Collection<String> filterNullOrEmptys(Collection<String> coll)
+    {
+        return filter(coll, string -> ! Strings.isNullOrEmpty(string));
     }
 
     /**
@@ -483,6 +496,12 @@ public class CollectionsUtil
     }
 
     @Nonnull
+    public static <T> List<T> toList(Set<T> set)
+    {
+        return new ArrayList<>(set);
+    }
+
+    @Nonnull
     public static <R,C,V> Table<R,C,V> asTableSingleRow(R rowKey, Map<C,V> map)
     {
         Table<R,C,V> table = HashBasedTable.create();
@@ -552,16 +571,29 @@ public class CollectionsUtil
     }
 
     /**
-     * Take the first X items of collection, or less if there are less.
+     * Take the first X items of set, or less if there are less.
+     */
+    @Nonnull
+    public static <T> Set<T> take(Set<T> set, int max)
+    {
+        Set<T> result = new HashSet<T>();
+        Iterator<T> iterator = set.iterator();
+        while (iterator.hasNext() && result.size() < max)
+            result.add(iterator.next());
+        return result;
+    }
+
+    /**
+     * Take the first X items of iterable, or less if there are less.
      */
     @Nonnull
     public static <T> List<T> take(Iterable<T> iterable, int max)
     {
-        List<T> collection = new ArrayList<>();
+        List<T> result = new ArrayList<>();
         Iterator<T> iterator = iterable.iterator();
-        while (iterator.hasNext() && collection.size() < max)
-            collection.add(iterator.next());
-        return collection;
+        while (iterator.hasNext() && result.size() < max)
+            result.add(iterator.next());
+        return result;
     }
 
     /**

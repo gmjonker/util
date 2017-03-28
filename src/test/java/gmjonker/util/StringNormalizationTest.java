@@ -13,6 +13,12 @@ public class StringNormalizationTest
     public void normalize() throws Exception
     {
         {
+            String string = "";
+            String normalize = StringNormalization.normalize(string);
+            System.out.println(" = '" + normalize + "'");
+            System.out.println("StringNormalization.isNormalized(\"\") = " + StringNormalization.isNormalized(""));
+        }
+        {
             String string = "description ";
             System.out.println(" = '" + string + "'");
             System.out.println(" = '" + StringEscapeUtils.escapeJava(string) + "'");

@@ -80,7 +80,7 @@ public class Correlation
      * Profile correlation: a correlation metric that:
      *  - uses 0 as reference point instead of mean
      *  - considers high and low values (1, -1) to carry more information than neutral values (0)
-     *  - emphasizes pairs with high joint information
+     *  - emphasizes pairs with high joint information ((1,1) and (-1,-1) correlate highly, (0,0) not, (1,-1) negatively)
      *  - favours more high-info pairs over fewer high-info pairs
      *  - returns 1 only if each pair is either (1,1) or (-1,-1)
      * Values must lie between -1 inclusive and 1 inclusive. 
@@ -88,19 +88,20 @@ public class Correlation
     public static double profileCorrelation(List<Double> series1, List<Double> series2)
     {
         assert series1.size() == series2.size();
+        
         double totalValue = 0;
         double totalWeight = 0;
         for (int i = 0; i < series1.size(); i++) {
             double v1 = series1.get(i);
             double v2 = series2.get(i);
-            double weight = (abs(v1) + abs(v2)) / 2;
-            totalValue += v1 * v2 * weight;
-            totalWeight += weight;
+            double info = (abs(v1) + abs(v2)) / 2;
+            totalValue += v1 * v2 * info;
+            totalWeight += info;
         }
         if (totalWeight == 0)
             return 0;
         
-        double covariance = totalValue / totalWeight;
+        double weightedCovariance = totalValue / totalWeight;
         
         // Multiply with a factor that is 1 if all pairs where high-info, medium if some where, zero if none where.
         double maxWeight = series1.size();
@@ -109,11 +110,11 @@ public class Correlation
 
         log.trace("totalValue = {}", totalValue);
         log.trace("totalWeight = {}", totalWeight);
-        log.trace("covariance = {}", covariance);
+        log.trace("weightedCovariance = {}", weightedCovariance);
         log.trace("maxWeight = {}", maxWeight);
         log.trace("relativeWeight = {}", relativeWeight);
         log.trace("factor = {}", factor);
         
-        return covariance * factor;
+        return weightedCovariance * factor;
     }
 }

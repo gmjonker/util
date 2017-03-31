@@ -8,7 +8,7 @@ import java.util.List;
 import static gmjonker.math.GeneralMath.*;
 
 /**
- * See also IndicationCovarianceOnline.
+ * See also IndicationCorrelationOnline.
  */
 public class IndicationStats
 {

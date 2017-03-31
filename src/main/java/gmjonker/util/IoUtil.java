@@ -621,6 +621,16 @@ public class IoUtil
         csvPrinter.close();
     }
 
+    public static <V> void writeListOfListsToCsv(List<List<V>> listOfLists, String fileName) throws IOException
+    {
+        CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);
+        csvPrinter.printRecords(listOfLists);
+//        for (List<V> list : listOfLists) {
+//            csvPrinter.printRecord(list);
+//        }
+        csvPrinter.close();
+    }
+
     /** Returns relative filenames, e.g. "restaurantTaggings/Amersfoort.csv". **/
     public static List<String> getFilenamesInDirectory(String directoryName) throws IOException
     {

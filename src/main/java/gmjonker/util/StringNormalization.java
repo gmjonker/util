@@ -111,8 +111,8 @@ public class StringNormalization
                 return ppText;
             };
 
-    public static String removeAllPunctuation(String text)
+    public static String replacePunctuation(String text, String replacement)
     {
-        return punctuationRemover.apply(text);
+        return pattern.matcher(text).replaceAll(replacement);
     }
 }

@@ -105,22 +105,31 @@ public class Indication implements Comparable<Indication>
         return this.equals(NA_INDICATION);
     }
 
-    public Indication combineWith(Indication indication)
+    @JsonIgnore
+    public boolean isMaximal()
     {
-        Indication result = IndicationMath.combine(this, indication);
-        log.trace("this: {}", this);
-        log.trace("indication: {}", indication);
-        log.trace("combined Indication: {}", result);
-        return result;
+        return value >= 1 && confidence >= 1;
     }
 
-    public Indication combineWithNoDisagreementEffect(Indication indication)
+    @JsonIgnore
+    public boolean isWeakOrNeutral()
     {
-        Indication result = IndicationMath.combineNoDisagreementEffect(this, indication);
-        log.trace("this: {}", this);
-        log.trace("indication: {}", indication);
-        log.trace("combined Indication: {}", result);
-        return result;
+        return abs(deriveDouble()) < .25;
+    }
+
+    public Indication withConfidence(double confidence)
+    {
+        return new Indication(this.value, confidence, this.comment);
+    }
+
+    public Indication withComment(String comment)
+    {
+        return new Indication(value, confidence, comment);
+    }
+
+    public Indication multiplyConfidence(double factor)
+    {
+        return new Indication(value, confidence * factor, this.comment);
     }
 
     public Indication multiply(double valueFactor, double confidenceFactor)
@@ -168,31 +177,74 @@ public class Indication implements Comparable<Indication>
         return value * confidence;
     }
 
-    @JsonIgnore
-    public boolean isMaximal()
+    public Indication combineWith(Indication indication)
     {
-        return value >= 1 && confidence >= 1;
+        Indication result = IndicationMath.combine(this, indication);
+        log.trace("this: {}", this);
+        log.trace("indication: {}", indication);
+        log.trace("combined Indication: {}", result);
+        return result;
     }
 
-    @JsonIgnore
-    public boolean isWeakOrNeutral()
+    public Indication combineWithNoDisagreementEffect(Indication indication)
     {
-        return abs(deriveDouble()) < .25;
+        Indication result = IndicationMath.combineNoDisagreementEffect(this, indication);
+        log.trace("this: {}", this);
+        log.trace("indication: {}", indication);
+        log.trace("combined Indication: {}", result);
+        return result;
     }
 
-    public Indication withConfidence(double confidence)
+    /**
+     * Measure of how well this indication matches with another indication.
+     **/
+    public Indication match(Indication that)
     {
-        return new Indication(this.value, confidence, this.comment);
+        return new Indication(
+                1 - abs(this.value - that.value),
+                this.confidence * that.confidence
+        );
     }
 
-    public Indication multiplyConfidence(double factor)
+    /**
+     * Measure of how well this indication matches with another indication, where two indication must have high 
+     * (or low) values to achieve a high (or low) match score. In other words, neutral values can't lead to high
+     * match score.
+     *
+     * Consider two persons' preferences for a band:
+     *
+     *          person A    person B
+     * lyrics   +           -    
+     * melody   -           +
+     * rating   0           0
+     *
+     * Although the ratings are equal, person A and B are not 'taste neighbours'.
+     *
+     *          person A    person B
+     * lyrics   +           +    
+     * melody   +           +
+     * rating   +           +
+     *
+     *          person A    person B
+     * lyrics   -           -    
+     * melody   -           -
+     * rating   -           -
+     *
+     * In these two examples, the ratings are equal again, but this time person A and B can be considered taste neighbours.
+     * 
+     * Note that {@code corr} has the same characteristics.
+     */
+    public Indication matchPositivelyBiased(Indication that)
     {
-        return new Indication(value, confidence * factor, this.comment);
+        return new Indication(
+                (1 - abs(this.value - that.value)) * ((abs(this.value) + abs(that.value)) / 2),
+                this.confidence * that.confidence
+        );
     }
 
-    public Indication withComment(String comment)
+    public Indication corr(Indication that)
     {
-        return new Indication(value, confidence, comment);
+        return this.multiplyWith(that);
     }
 
     @Override

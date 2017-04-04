@@ -232,7 +232,7 @@ public class Indication implements Comparable<Indication>
      *
      * In these two examples, the ratings are equal again, but this time person A and B can be considered taste neighbours.
      * 
-     * Note that {@code corr} has the same characteristics.
+     * Note that {@code cov} has the same characteristics.
      */
     public Indication matchPositivelyBiased(Indication that)
     {
@@ -242,7 +242,7 @@ public class Indication implements Comparable<Indication>
         );
     }
 
-    public Indication corr(Indication that)
+    public Indication cov(Indication that)
     {
         return this.multiplyWith(that);
     }

@@ -123,16 +123,16 @@ public class IndicationTest
     @Test
     public void corr() throws Exception
     {
-        assertThat(ind(1  , 1  ).corr(ind(1   , 1  )), equalTo(ind(1    , 1   )));
-        assertThat(ind(1  , 1  ).corr(ind(1   , 0.2)), equalTo(ind(1    , 0.2 )));
-        assertThat(ind(1  , 1  ).corr(ind(-1  , 1  )), equalTo(ind(-1   , 1   )));
-        assertThat(ind(1  , 1  ).corr(ind(0.2 , 1  )), equalTo(ind(0.2  , 1   )));
-        assertThat(ind(1  , 1  ).corr(ind(0   , 1  )), equalTo(ind(0    , 1   )));
-        assertThat(ind(1  , 1  ).corr(ind(0.2 , 0.2)), equalTo(ind(0.2  , 0.2 )));
-        assertThat(ind(0.5, 0.5).corr(ind(-0.5, 0.5)), equalTo(ind(-.25 , 0.25)));
-        assertThat(ind(1  , 0.8).corr(ind(0.8 , 1  )), equalTo(ind(0.8  , 0.8 )));
-        assertThat(ind(0  , 1  ).corr(ind(0   , 1  )), equalTo(ind(0    , 1   )));
-        assertThat(ind(1  , 0  ).corr(ind(1   , 0  )), equalTo(ind(1    , 0   )));
-        assertThat(ind(0  , 1  ).corr(ind(0.5 , 1  )), equalTo(ind(0    , 1   )));
+        assertThat(ind(1  , 1  ).cov(ind(1   , 1  )), equalTo(ind(1    , 1   )));
+        assertThat(ind(1  , 1  ).cov(ind(1   , 0.2)), equalTo(ind(1    , 0.2 )));
+        assertThat(ind(1  , 1  ).cov(ind(-1  , 1  )), equalTo(ind(-1   , 1   )));
+        assertThat(ind(1  , 1  ).cov(ind(0.2 , 1  )), equalTo(ind(0.2  , 1   )));
+        assertThat(ind(1  , 1  ).cov(ind(0   , 1  )), equalTo(ind(0    , 1   )));
+        assertThat(ind(1  , 1  ).cov(ind(0.2 , 0.2)), equalTo(ind(0.2  , 0.2 )));
+        assertThat(ind(0.5, 0.5).cov(ind(-0.5, 0.5)), equalTo(ind(-.25 , 0.25)));
+        assertThat(ind(1  , 0.8).cov(ind(0.8 , 1  )), equalTo(ind(0.8  , 0.8 )));
+        assertThat(ind(0  , 1  ).cov(ind(0   , 1  )), equalTo(ind(0    , 1   )));
+        assertThat(ind(1  , 0  ).cov(ind(1   , 0  )), equalTo(ind(1    , 0   )));
+        assertThat(ind(0  , 1  ).cov(ind(0.5 , 1  )), equalTo(ind(0    , 1   )));
     }
 }

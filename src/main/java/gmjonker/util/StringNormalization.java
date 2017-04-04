@@ -91,7 +91,7 @@ public class StringNormalization
                 case Character.PRIVATE_USE: // \p{Co}
                 case Character.SURROGATE:   // \p{Cs}
                 case Character.UNASSIGNED:  // \p{Cn}
-                    newString.append('?');
+                    newString.append(' ');
                     break;
                 default:
                     newString.append(Character.toChars(codePoint));
@@ -99,6 +99,18 @@ public class StringNormalization
             }
         }
         return newString.toString();
+    }
+
+    public static String removeNbsp(String string)
+    {
+        StringBuilder sb = new StringBuilder(string.length());
+        for (char c : string.toCharArray()) {
+            if (c == '\u00A0')
+                sb.append(' ');
+            else
+                sb.append(c);
+        }
+        return sb.toString();
     }
 
     static Pattern pattern = Pattern.compile("[\\.:,\"'“”\\(\\)\\[\\]|/?!;=_*<>€]+");
@@ -115,4 +127,23 @@ public class StringNormalization
     {
         return pattern.matcher(text).replaceAll(replacement);
     }
+    
+    public static String replacePunctuationFast(String text, String replacement)
+    {
+        final String punctuation = ".:,\"'“”()[]|/?!;=_*<>€";
+        final String replacementList = StringUtils.repeat(replacement, punctuation.length());
+        return StringUtils.replaceChars(text, punctuation, replacement);
+    }
+
+    //    // This should solve the problem of Excel not wanting to import the CSV, but doesn't...
+    //    private static String flattenToAscii(String string)
+    //    {
+    //        StringBuilder sb = new StringBuilder(string.length());
+    //        string = Normalizer.normalize(string, Normalizer.Form.NFD);
+    //        for (char c : string.toCharArray())
+    //            if (c <= '\u007F')
+    //                sb.append(c);
+    //        return sb.toString();
+    //    }
+
 }

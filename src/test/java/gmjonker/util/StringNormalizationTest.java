@@ -5,12 +5,14 @@ import org.junit.*;
 
 import java.text.Normalizer;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
 
+@SuppressWarnings("InvisibleCharacter")
 public class StringNormalizationTest
 {
     @Test
-    public void normalize() throws Exception
+    public void normalizeWithInvisibleCharacters() throws Exception
     {
         {
             String string = "";
@@ -48,6 +50,13 @@ public class StringNormalizationTest
             System.out.println("NFKC  = '" + StringEscapeUtils.escapeJava(normalize) + "'");
             System.out.println("NFKC  = '" + StringEscapeUtils.escapeXml(normalize) + "'");
         }
+    }
+    
+    @Test
+    public void removePunct()
+    {
+        String text = "Price/quality, café, verjaardag, (\"a:b\").";
+        assertThat(StringNormalization.removePunctuation(text), equalTo("Price quality café verjaardag a b"));
     }
 
 }

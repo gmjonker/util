@@ -128,11 +128,17 @@ public class StringNormalization
         return pattern.matcher(text).replaceAll(replacement);
     }
     
+    public static String removePunctuation(String text)
+    {
+        final Pattern pattern = Pattern.compile("[\\s\\.:,\"'“”\\(\\)\\[\\]|/?!;=_*<>€]+");
+        return pattern.matcher(text).replaceAll(" ").trim();
+    }
+    
     public static String replacePunctuationFast(String text, String replacement)
     {
         final String punctuation = ".:,\"'“”()[]|/?!;=_*<>€";
         final String replacementList = StringUtils.repeat(replacement, punctuation.length());
-        return StringUtils.replaceChars(text, punctuation, replacement);
+        return StringUtils.replaceChars(text, punctuation, replacementList);
     }
 
     //    // This should solve the problem of Excel not wanting to import the CSV, but doesn't...

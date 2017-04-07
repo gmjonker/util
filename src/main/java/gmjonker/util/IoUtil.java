@@ -86,6 +86,12 @@ public class IoUtil
         return reader.lines();
     }
 
+    public static void writeToFile(String string, String filename) throws IOException
+    {
+        @Cleanup FileWriter writer = new FileWriter(filename);
+        writer.write(string);
+    }
+
     public static void writeToFile(Iterable<String> strings, String filename) throws IOException
     {
         @Cleanup FileWriter writer = new FileWriter(filename);

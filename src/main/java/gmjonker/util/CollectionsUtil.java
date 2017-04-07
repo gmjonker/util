@@ -22,6 +22,7 @@ import static gmjonker.math.NaType.isValue;
 import static java.util.Collections.*;
 import static java.util.Collections.reverseOrder;
 import static java.util.Comparator.*;
+import static org.apache.commons.collections4.CollectionUtils.emptyCollection;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 /**
@@ -93,19 +94,22 @@ public class CollectionsUtil
         return newList;
     }
 
+    /**
+     * Note: output may contain duplicates.
+     */
     @Nonnull
-    public static <T, R> Set<R> map(Set<T> set, Function<T, R> function)
+    public static <T, R> Collection<R> map(Set<T> set, Function<T, R> function)
     {
         if (set == null)
-            return emptySet();
+            return emptyCollection();
 
-        Set<R> newSet = new HashSet<>();
+        Collection<R> newCollection = new ArrayList<>();
         for (T el : set) {
             if (el == null)
                 continue;
-            newSet.add(function.apply(el));
+            newCollection.add(function.apply(el));
         }
-        return newSet;
+        return newCollection;
     }
 
     /** Retains ordering **/
@@ -240,6 +244,7 @@ public class CollectionsUtil
         return result;
     }
 
+    /** Removes items that do not satisify the function. **/
     @Nonnull
     public static <T> List<T> filter(List<T> list, Function<T, Boolean> function)
     {
@@ -496,7 +501,7 @@ public class CollectionsUtil
     }
 
     @Nonnull
-    public static <T> List<T> toList(Set<T> set)
+    public static <T> List<T> toList(Collection<T> set)
     {
         return new ArrayList<>(set);
     }
@@ -675,6 +680,21 @@ public class CollectionsUtil
     // ###################################################### SORTING ##################################################
     //
 
+    public static <T extends Comparable<? super T>> List<T> sortAsc(Collection<T> collection) 
+    {
+        ArrayList<T> list = new ArrayList<>(collection);
+        sort(list);
+        return list;
+    }
+    
+    public static <T extends Comparable<? super T>> List<T> sortDesc(Collection<T> collection) 
+    {
+        ArrayList<T> list = new ArrayList<>(collection);
+        sort(list);
+        reverse(list);
+        return list;
+    }
+    
     /**
      * Sorts a map by value. Adapted from http://stackoverflow.com/a/2581754/1901037
      *

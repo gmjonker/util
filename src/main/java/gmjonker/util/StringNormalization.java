@@ -130,7 +130,7 @@ public class StringNormalization
     
     public static String removePunctuation(String text)
     {
-        final Pattern pattern = Pattern.compile("[\\s\\.:,\"'“”\\(\\)\\[\\]|/?!;=_*<>€]+");
+        final Pattern pattern = Pattern.compile("[\\s\\.:,\"'‘“”„\\(\\)\\[\\]|/?!;=_*#<>€]+");
         return pattern.matcher(text).replaceAll(" ").trim();
     }
     

@@ -2,6 +2,7 @@ package gmjonker.util;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,9 +25,7 @@ import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.isValue;
 import static java.lang.System.lineSeparator;
 import static java.util.concurrent.TimeUnit.*;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.repeat;
-import static org.apache.commons.lang3.StringUtils.strip;
+import static org.apache.commons.lang3.StringUtils.*;
 
 public class FormattingUtil
 {
@@ -328,6 +327,15 @@ public class FormattingUtil
     {
         String result = "[\n";
         for (Map.Entry<K, V> entry : map.entrySet())
+            result += "  " + entry.getKey().toString() + " -> " + entry.getValue() + "\n";
+        result += "]";
+        return result;
+    }
+
+    public static <K,V> String multimapToStringLineByLine(Multimap<K,V> map)
+    {
+        String result = "[\n";
+        for (Map.Entry<K, V> entry : map.entries())
             result += "  " + entry.getKey().toString() + " -> " + entry.getValue() + "\n";
         result += "]";
         return result;

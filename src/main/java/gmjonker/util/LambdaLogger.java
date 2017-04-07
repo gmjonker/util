@@ -293,6 +293,23 @@ public class LambdaLogger implements Logger
         }
     }
 
+    /** Log separate lines separately, indents all lines of argument.toString() **/
+    @SafeVarargs
+    public final void tracev(String format, Supplier<Object>... arguments)
+    {
+        if (logger.isTraceEnabled()) {
+            Object[] resolvedArgs = Arrays.stream(arguments).map(Supplier::get).toArray();
+            String formattedMessage = MessageFormatter.arrayFormat(format, resolvedArgs).getMessage();
+            String[] lines = formattedMessage.split("\n");
+            for (int i = 0; i < lines.length; i++) {
+                if (i == 0 || i == lines.length - 1)
+                    logger.trace(lines[i]);
+                else
+                    logger.trace("  " + lines[i]);
+            }
+        }
+    }
+
     public final void trace(Supplier<String> argument)
     {
         if (logger.isTraceEnabled())
@@ -302,8 +319,9 @@ public class LambdaLogger implements Logger
     @SafeVarargs
     public final void trace(String format, Supplier<Object>... arguments)
     {
-        if (logger.isTraceEnabled())
+        if (logger.isTraceEnabled()) {
             trace(format, Arrays.stream(arguments).map(Supplier::get).toArray());
+        }
     }
 
     public final void traceOnce(String message)

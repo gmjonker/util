@@ -392,7 +392,7 @@ public class CollectionsUtil
     }
 
     @Nonnull
-    public static <T> Set<T> asSet(Collection<T> collection)
+    public static <T> Set<T> toSet(Collection<T> collection)
     {
         Set<T> set = new HashSet<>();
         if (collection != null)

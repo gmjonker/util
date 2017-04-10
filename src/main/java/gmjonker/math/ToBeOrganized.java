@@ -10,9 +10,15 @@ public class ToBeOrganized
 {
     public static List<Double> changeMeanAndStdDev(List<Double> values, double newMean, double newStdDev)
     {
-        double mean = mean(values);
-        double stdDev = standardDeviation(values);
-        double factor = newStdDev / stdDev;
-        return map(values, x -> newMean + (x - mean) * factor);
+        double currentMean = mean(values);
+        double currentStdDev = standardDeviation(values);
+        return changeMeanAndStdDev(values, currentMean, currentStdDev, newMean, newStdDev);
+    }
+
+    public static List<Double> changeMeanAndStdDev(List<Double> values, double currentMean, double currentStdDev, double newMean,
+            double newStdDev)
+    {
+        double factor = newStdDev / currentStdDev;
+        return map(values, x -> newMean + (x - currentMean) * factor);
     }
 }

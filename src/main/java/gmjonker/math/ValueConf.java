@@ -18,6 +18,6 @@ public class ValueConf
 
     public String toShortString()
     {
-        return asPercentage(value) + "|" + asPercentage(confidence);
+        return asPercentage(value) + "/" + asPercentage(confidence);
     }
 }

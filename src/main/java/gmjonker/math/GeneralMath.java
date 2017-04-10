@@ -1,5 +1,6 @@
 package gmjonker.math;
 
+import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 import gmjonker.util.LambdaLogger;
@@ -582,6 +583,13 @@ public class GeneralMath
     {
         boolean isBiasCorrected = false;
         return sqrt(new Variance(isBiasCorrected).evaluate(values));
+    }
+
+    public static double standardDeviation(Collection<Double> values)
+    {
+        double[] array = Doubles.toArray(values);
+        boolean isBiasCorrected = false;
+        return sqrt(new Variance(isBiasCorrected).evaluate(array));
     }
 
     @SuppressWarnings("ConstantConditions")

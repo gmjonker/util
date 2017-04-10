@@ -1,11 +1,15 @@
 package gmjonker.math;
 
 import gmjonker.util.LambdaLogger;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
+@AllArgsConstructor
 public class IndicationCorrelationOnline
 {
     @Getter private List<Indication> series1 = new ArrayList<>();
@@ -38,10 +42,10 @@ public class IndicationCorrelationOnline
         double total = 0;
         double n = 0;
         for (int i = 0; i < series1.size(); i++) {
-            Indication indication1 = series1.get(i);
-            Indication indication2 = series2.get(i);
-            double jointConfidence = indication1.confidence * indication2.confidence;
-            total += indication1.value * indication2.value * jointConfidence;
+            Indication ind1 = series1.get(i);
+            Indication ind2 = series2.get(i);
+            double jointConfidence = ind1.confidence * ind2.confidence;
+            total += ind1.value * ind2.value * jointConfidence;
             n += jointConfidence;
         }
         return total / n;

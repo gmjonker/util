@@ -60,7 +60,7 @@ public class Correlation
     /**
      * Covariance that 
      *  * uses 0 as reference point instead of mean.
-     *  * weighs high and low values more than neutral values  
+     *  * weighs high and low values more than neutral values. So, for instance, (0,0) pairs do not have an effect on the outcome.  
      */
     public static double covariance0inflated(List<Double> series1, List<Double> series2)
     {
@@ -77,11 +77,16 @@ public class Correlation
     }
 
     /**
+     * What we want for profile correlation:
+     * * high-info (anti)matches say something, low-info matches don't
+     * * longer profiles are better: correlation is derived from more datapoints, so more confidence. But we can't return confidence
+     * here, so we should discard this effect.
+     * 
      * Profile correlation: a correlation metric that:
      *  - uses 0 as reference point instead of mean
      *  - considers high and low values (1, -1) to carry more information than neutral values (0)
-     *  - emphasizes pairs with high joint information ((1,1) and (-1,-1) correlate highly, (0,0) not, (1,-1) negatively)
-     *  - favours more high-info pairs over fewer high-info pairs
+     *  - emphasizes pairs with high joint information.  So, for instance, (0,0) pairs do not have an effect on the outcome.
+     *  - favours more high-info pairs over fewer high-info pairs (DEBATABLE)
      *  - returns 1 only if each pair is either (1,1) or (-1,-1)
      * Values must lie between -1 inclusive and 1 inclusive. 
      */

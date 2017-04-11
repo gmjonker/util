@@ -113,7 +113,7 @@ public class StringNormalization
         return sb.toString();
     }
 
-    static Pattern pattern = Pattern.compile("[\\.:,\"'“”\\(\\)\\[\\]|/?!;=_*<>€]+");
+    static Pattern pattern = Pattern.compile("[\\.:,\"'‘’“”\\(\\)\\[\\]|/?!;=_*<>€]+");
 
     public static final Function<String, String> punctuationRemover =
             text -> {
@@ -128,12 +128,14 @@ public class StringNormalization
         return pattern.matcher(text).replaceAll(replacement);
     }
     
+    /** A bit slower but neater than replacePunctuationFast **/
     public static String removePunctuation(String text)
     {
-        final Pattern pattern = Pattern.compile("[\\s\\.:,\"'‘“”„\\(\\)\\[\\]|/?!;=_*#<>€]+");
+        final Pattern pattern = Pattern.compile("[\\s\\.:,\"'‘’“”„\\(\\)\\[\\]|/?!;=_*#<>€]+");
         return pattern.matcher(text).replaceAll(" ").trim();
     }
     
+    /** Fast but can leave gaps of multiple spaces **/
     public static String replacePunctuationFast(String text, String replacement)
     {
         final String punctuation = ".:,\"'“”()[]|/?!;=_*<>€";

@@ -138,6 +138,23 @@ public class IoUtil
         return CSVParser.parse(fileContent, CSVFormat.EXCEL.withIgnoreEmptyLines().withIgnoreSurroundingSpaces());
     }
 
+    public static List<List<String>> readCsvIntoListOfListsOrRTE(String fileName)
+    {
+        try {
+            List<List<String>> result = new ArrayList<>();
+            CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
+            for (CSVRecord record : csvParser.getRecords()) {
+                List<String> list = new ArrayList<>();
+                for (String s : record) 
+                    list.add(s);
+                result.add(list);
+            }
+            return result;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     /**
      * Reads from a CSV file that has row and column headers.
      */
@@ -246,6 +263,17 @@ public class IoUtil
     public static LinkedHashMap<String, String> readCsvIntoMap(String fileName, boolean hasHeaders, int keyColumn, int valueColumn) throws IOException
     {
         return readCsvIntoMap(fileName, hasHeaders, keyColumn, valueColumn, s -> s, s -> s); 
+    }
+    
+    public static <K, V> LinkedHashMap<K, V> readCsvIntoMapOrRTE(String fileName, boolean hasHeaders, int keyColumn, int valueColumn,
+            Function<String, K> keyTransform, Function<String, V> valueTransform)
+    {
+        try {
+            return readCsvIntoMap(fileName, hasHeaders, keyColumn, valueColumn, keyTransform, valueTransform);
+        } catch (IOException e) {
+            log.error("Couldn't read CSV {} into map", fileName, e);
+            throw new RuntimeException("Couldn't read CSV into map", e);
+        }
     }
     
     public static <K, V> LinkedHashMap<K, V> readCsvIntoMap(String fileName, boolean hasHeaders, int keyColumn, int valueColumn,

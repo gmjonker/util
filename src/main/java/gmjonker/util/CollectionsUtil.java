@@ -254,6 +254,16 @@ public class CollectionsUtil
         return list.stream().filter(function::apply).collect(Collectors.toList());
     }
 
+    /** Removes items that do satisify the function. **/
+    @Nonnull
+    public static <T> List<T> remove(List<T> list, Function<T, Boolean> function)
+    {
+        if (list == null)
+            return emptyList();
+
+        return list.stream().filter(t -> ! function.apply(t)).collect(Collectors.toList());
+    }
+
     @Nonnull
     public static <T> Collection<T> filter(Collection<T> collection, Function<T, Boolean> function)
     {

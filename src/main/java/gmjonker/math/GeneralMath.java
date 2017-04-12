@@ -139,7 +139,7 @@ public class GeneralMath
         return Collections.max(coll);
     }
 
-    public static <V> double max(Iterable<V> iterable, Function<V, Double> valueExtractor)
+    public static <V> double maxBy(Iterable<V> iterable, Function<V, Double> valueExtractor)
     {
         double max = Double.MIN_VALUE;
         for (V v : iterable) {
@@ -152,7 +152,7 @@ public class GeneralMath
         return max;
     }
 
-    public static <V> int maxx(Iterable<V> iterable, Function<V, Integer> valueExtractor)
+    public static <V> int maxByI(Iterable<V> iterable, Function<V, Integer> valueExtractor)
     {
         Integer max = Integer.MIN_VALUE;
         for (V v : iterable) {

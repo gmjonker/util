@@ -2,7 +2,6 @@ package gmjonker.math;
 
 import cern.colt.list.DoubleArrayList;
 import cern.jet.stat.Descriptive;
-import com.google.common.math.DoubleMath;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 import org.junit.*;
@@ -35,9 +34,9 @@ public class GeneralMathTest
     @Test
     public void maxBy()
     {
-        assertThat(maxx(Arrays.asList("geert", "jonker"), String::length), is(6));
-        assertThat(max(Arrays.asList("geert", "jonker"), s -> s.length() * 2.0), closeTo(12, .0001));
-        assertThat(max(new ArrayList<String>(), s -> s.length() * 2.0), not(isValueMatch()));
+        assertThat(maxByI(Arrays.asList("geert", "jonker"), String::length), is(6));
+        assertThat(GeneralMath.maxBy(Arrays.asList("geert", "jonker"), s -> s.length() * 2.0), closeTo(12, .0001));
+        assertThat(GeneralMath.maxBy(new ArrayList<String>(), s -> s.length() * 2.0), not(isValueMatch()));
     }
 
 

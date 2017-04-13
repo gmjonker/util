@@ -323,7 +323,7 @@ public class FormattingUtil
         return result;
     }
 
-    public static <K,V> String mapToStringLineByLine(Map<K,V> map)
+    public static <K,V> String toStringLineByLine(Map<K,V> map)
     {
         String result = "[\n";
         for (Map.Entry<K, V> entry : map.entrySet())
@@ -332,7 +332,7 @@ public class FormattingUtil
         return result;
     }
 
-    public static <K,V> String multimapToStringLineByLine(Multimap<K,V> map)
+    public static <K,V> String toStringLineByLine(Multimap<K,V> map)
     {
         String result = "[\n";
         for (Map.Entry<K, V> entry : map.entries())

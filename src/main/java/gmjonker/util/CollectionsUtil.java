@@ -5,6 +5,7 @@ import com.google.common.collect.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.collections4.keyvalue.DefaultMapEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -206,6 +207,23 @@ public class CollectionsUtil
         return newMap;
     }
 
+    /** 
+     * Retains ordering, allows duplicate key/value pairs in the result. 
+     **/
+    @Nonnull
+    public static <K1,V1,K2,V2> List<Map.Entry<K2,V2>> mapAllowDuplicates(Map<K1,V1> map, Function<K1,K2> keyMapper, Function<V1,V2> valueMapper)
+    {
+        if (map == null)
+            return emptyList();
+
+        List<Map.Entry<K2,V2>> list = new ArrayList<>();
+        for (Map.Entry<K1, V1> entry : map.entrySet()) {
+            K1 key = entry.getKey();
+            V1 value = entry.getValue();
+            list.add(new DefaultMapEntry<>(keyMapper.apply(key), valueMapper.apply(value)));
+        }
+        return list;
+    }
 
     @SuppressWarnings("unchecked")
     @Nonnull

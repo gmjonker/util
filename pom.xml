@@ -53,6 +53,12 @@
             <artifactId>guava</artifactId>
             <version>19.0</version>
         </dependency>
+        <!-- MultiTable -->
+        <dependency>
+            <groupId>com.github.gaohanghbut</groupId>
+            <artifactId>freetookit</artifactId>
+            <version>33864cb4ce</version>
+        </dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
@@ -80,6 +86,7 @@
             <artifactId>colt</artifactId>
             <version>1.2.0</version>
         </dependency>
+        
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>

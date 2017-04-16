@@ -1,5 +1,7 @@
 package gmjonker.util;
 
+import cn.yxffcode.freetookit.collection.MultiTable;
+import cn.yxffcode.freetookit.collection.MultiTables;
 import com.google.common.base.Strings;
 import com.google.common.collect.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -249,7 +251,33 @@ public class CollectionsUtil
              outputArray[i] = function.apply(inputArray[i]);
         return outputArray;
     }
-
+    
+    @Nonnull
+    public static <R,C,V1,V2> Table<R,C,V2> map(Table<R,C,V1> table, Function<V1,V2> valueMapper)
+    {
+        Table<R,C,V2> result = HashBasedTable.create();
+        for (R rowKey : table.rowKeySet()) {
+            for (C columnKey : table.row(rowKey).keySet()) {
+                V1 value = table.get(rowKey, columnKey);
+                result.put(rowKey, columnKey, valueMapper.apply(value));
+            }
+        }
+        return result;
+    }
+    
+    @Nonnull
+    public static <R,C,V1,V2> MultiTable<R,C,V2> map(MultiTable<R,C,V1> table, Function<V1,V2> valueMapper)
+    {
+        MultiTable<R,C,V2> result = MultiTables.newListHashMultiTable();
+        for (R rowKey : table.rowKeySet()) {
+            for (C columnKey : table.row(rowKey).keySet()) {
+                Collection<V1> valueCollection = table.get(rowKey, columnKey);
+                result.putAll(rowKey, columnKey, map(valueCollection, valueMapper));
+            }
+        }
+        return result;
+    }
+    
     public static <K, V1, V2> Map<K, V2> reduce(Multimap<K, V1> multimap, Function<Collection<V1>, V2> reducer)
     {
         Map<K, V2> result = new HashMap<>();

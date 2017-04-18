@@ -600,7 +600,7 @@ public class IoUtil
     ) throws IOException
     {
         FileWriter fileWriter = new FileWriter(fileName);
-        @Cleanup CSVPrinter csvPrinter = new CSVPrinter(fileWriter, CSVFormat.EXCEL);
+        CSVPrinter csvPrinter = new CSVPrinter(fileWriter, CSVFormat.EXCEL);
         csvPrinter.print("");
         // Traversing all column keys is very slow; we do it here once, and reuse the result in an inner loop later
         Set<C> columnKeys = new LinkedHashSet<>();
@@ -621,8 +621,18 @@ public class IoUtil
         csvPrinter.println();
         for (R rowKey : rowKeys) {
             csvPrinter.print(rowHeaderTransformer.apply(rowKey));
-            for (C columnKey : columnKeys)
-                csvPrinter.print(valueTransformer.apply(rowKey, columnKey).apply(table.get(rowKey, columnKey)));
+            for (C columnKey : columnKeys) {
+                Function<V, String> function = valueTransformer.apply(rowKey, columnKey);
+                V cell = table.get(rowKey, columnKey);
+                String string;
+                // Try-catching this to catch a mysterious null pointer exception when cell is null, but function should accept null variables AFAIK
+                try {
+                    string = function.apply(cell);
+                } catch (NullPointerException npe) {
+                    string = "NPE";
+                }
+                csvPrinter.print(string);
+            }
             csvPrinter.println();
         }
         csvPrinter.close();

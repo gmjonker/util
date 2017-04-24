@@ -137,6 +137,12 @@ public class Indication implements Comparable<Indication>
         return new Indication(this.value * valueFactor, this.confidence * confidenceFactor, this.comment);
     }
 
+    public void multiplyInPlace(double valueFactor, double confidenceFactor)
+    {
+        this.value *= valueFactor;
+        this.confidence *= confidenceFactor;
+    }
+
     /**
      * Simply multiplies respective values and indications.
      */

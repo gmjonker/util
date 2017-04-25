@@ -160,7 +160,7 @@ public class IoUtil
      */
     public static Table<String, String, String> readCsvIntoTable(String fileName) throws IOException
     {
-        return _readCsvIntoTable(fileName, o -> o, o -> o, o -> o, DefaultingHashBasedTable.create(null));
+        return _readCsvIntoTable(fileName, null, o -> o, o -> o, o -> o, DefaultingHashBasedTable.create(null));
     }
 
     /**
@@ -169,7 +169,7 @@ public class IoUtil
     public static DefaultingHashBasedTable<String, String, String> readCsvIntoTableOrRTE(String fileName)
     {
         try {
-            return _readCsvIntoTable(fileName, o -> o, o -> o, o -> o, DefaultingHashBasedTable.create(null));
+            return _readCsvIntoTable(fileName, null, o -> o, o -> o, o -> o, DefaultingHashBasedTable.create(null));
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -182,7 +182,7 @@ public class IoUtil
     public static <R, C, T> Table<R, C, T> readCsvIntoTable(String fileName, Function<String, R> rowTypeMapper,
             Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper) throws IOException
     {
-        return _readCsvIntoTable(fileName, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(null));
+        return _readCsvIntoTable(fileName, null, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(null));
     }
 
     /**
@@ -192,7 +192,7 @@ public class IoUtil
             Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper)
     {
         try {
-            return _readCsvIntoTable(fileName, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(null));
+            return _readCsvIntoTable(fileName, null, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(null));
         } catch (IOException e) {
             return HashBasedTable.create();
         }
@@ -205,7 +205,7 @@ public class IoUtil
             Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper)
     {
         try {
-            return _readCsvIntoTable(fileName, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(null));
+            return _readCsvIntoTable(fileName, null, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(null));
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -219,28 +219,42 @@ public class IoUtil
             Function<String, R> rowTypeMapper, Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper,
             T defaultValue) throws IOException
     {
-        return _readCsvIntoTable(fileName, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(defaultValue));
+        return _readCsvIntoTable(fileName, null, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(defaultValue));
     }
 
-    private static <R, C, T> DefaultingHashBasedTable<R, C, T> _readCsvIntoTable(String fileName,
+    /**
+     * Reads from a CSV file that has row and column headers.
+     */
+    public static <R, C, T> DefaultingHashBasedTable<R, C, T> readCsvIntoDefaultingTable(String fileName,
+            TriFunction<String, String, String, Boolean> cellFilter, Function<String, R> rowTypeMapper, 
+            Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper, T defaultValue) throws IOException
+    {
+        return _readCsvIntoTable(fileName, cellFilter, rowTypeMapper, columnTypeMapper, cellTypeMapper, DefaultingHashBasedTable.create(defaultValue));
+    }
+
+    private static <R, C, T> DefaultingHashBasedTable<R, C, T> _readCsvIntoTable(String fileName, 
+            @Nullable TriFunction<String, String, String, Boolean> valueFilter,
             Function<String, R> rowTypeMapper, Function<String, C> columnTypeMapper, Function<String, T> cellTypeMapper,
             DefaultingHashBasedTable<R, C, T> table) throws IOException
     {
         CSVParser csvParser = readCsvFileWithHeaders(fileName);
-        Set<String> headers = csvParser.getHeaderMap().entrySet().stream()
+        Set<String> columnHeaders = csvParser.getHeaderMap().entrySet().stream()
                 .filter(entry -> entry.getValue() > 0) // skip the first column, it contains row headers
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
-        for (CSVRecord record : csvParser.getRecords()) {
+        for (CSVRecord record : csvParser.getRecords()) 
+        {
             String rowHeader = record.get(0);
-            R r = rowTypeMapper.apply(rowHeader);
-            for (String header : headers) {
-                C c = columnTypeMapper.apply(header);
-                String cell = record.get(header);
+            for (String columnHeader : columnHeaders) 
+            {
+                String cell = record.get(columnHeader);
+                if (valueFilter != null && ! valueFilter.apply(rowHeader, columnHeader, cell))
+                    continue;
+                R r = rowTypeMapper.apply(rowHeader);
+                C c = columnTypeMapper.apply(columnHeader);
                 T t = cellTypeMapper.apply(cell);
-                if (t != null) {
+                if (t != null) 
                     table.put(r, c, t);
-                }
             }
         }
         csvParser.close();

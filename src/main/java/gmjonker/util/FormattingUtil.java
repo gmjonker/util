@@ -478,7 +478,8 @@ public class FormattingUtil
             rowKeys = sortedRowKeys;
         }
         for (C col : columnKeys) {
-            Integer width = columnHeaderFormatter.apply(col).length();
+            String apply = columnHeaderFormatter.apply(col);
+            Integer width = apply != null ? apply.length() : 4;
             maxWidths.compute(col, (k, v) -> (v == null) ? width : max(v, width));
         }
         int maxRowHeaderWidth = Integer.MIN_VALUE;

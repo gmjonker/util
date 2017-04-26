@@ -484,8 +484,9 @@ public class FormattingUtil
         }
         int maxRowHeaderWidth = Integer.MIN_VALUE;
         for (R rowKey : rowKeys) {
-            if (rowHeaderFormatter.apply(rowKey).length() > maxRowHeaderWidth)
-                maxRowHeaderWidth = rowHeaderFormatter.apply(rowKey).length();
+            String formattedRowHeader = rowHeaderFormatter.apply(rowKey);
+            if (formattedRowHeader != null && formattedRowHeader.length() > maxRowHeaderWidth)
+                maxRowHeaderWidth = formattedRowHeader.length();
             Map<C, V> row = table.row(rowKey);
             for (C col : row.keySet()) {
                 V value = row.get(col);

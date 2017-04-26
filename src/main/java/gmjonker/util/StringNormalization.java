@@ -143,15 +143,15 @@ public class StringNormalization
         return StringUtils.replaceChars(text, punctuation, replacementList);
     }
 
-    //    // This should solve the problem of Excel not wanting to import the CSV, but doesn't...
-    //    private static String flattenToAscii(String string)
-    //    {
-    //        StringBuilder sb = new StringBuilder(string.length());
-    //        string = Normalizer.normalize(string, Normalizer.Form.NFD);
-    //        for (char c : string.toCharArray())
-    //            if (c <= '\u007F')
-    //                sb.append(c);
-    //        return sb.toString();
-    //    }
+    // This should solve the problem of Excel not wanting to import the CSV, but doesn't...
+    public static String flattenToAscii(String string)
+    {
+        StringBuilder sb = new StringBuilder(string.length());
+        string = Normalizer.normalize(string, Normalizer.Form.NFD);
+        for (char c : string.toCharArray())
+            if (c <= '\u007F')
+                sb.append(c);
+        return sb.toString();
+    }
 
 }

@@ -563,6 +563,19 @@ public class CollectionsUtil
     }
 
     @Nonnull
+    public static <R,C,V> Table<R,C,V> asTable(Object... objects)
+    {
+        Table<R,C,V> table = HashBasedTable.create();
+        for (int i = 0; i < objects.length; i += 3) {
+            R row = (R) objects[i];
+            C col = (C) objects[i + 1];
+            V val = (V) objects[i + 2];
+            table.put(row, col, val);
+        }            
+        return table;
+    }
+
+    @Nonnull
     public static <R,C,V> Table<R,C,V> asTableSingleRow(R rowKey, Map<C,V> map)
     {
         Table<R,C,V> table = HashBasedTable.create();

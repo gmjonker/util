@@ -185,6 +185,32 @@ public class GeneralMath
         return Ints.min(values);
     }
 
+    public static <V> double minBy(Iterable<V> iterable, Function<V, Double> valueExtractor)
+    {
+        double min = Double.MAX_VALUE;
+        for (V v : iterable) {
+            double value = valueExtractor.apply(v);
+            if (value < min)
+                min = value;
+        }
+        if (min == Double.MAX_VALUE)
+            min = NA;
+        return min;
+    }
+
+    public static <V> int minByI(Iterable<V> iterable, Function<V, Integer> valueExtractor)
+    {
+        Integer min = Integer.MAX_VALUE;
+        for (V v : iterable) {
+            int value = valueExtractor.apply(v);
+            if (value < min)
+                min = value;
+        }
+        if (min == Integer.MAX_VALUE)
+            min = NA_I;
+        return min;
+    }
+
     /** Returns max(min(x, max), min). **/
     public static double limit(double x, double min, double max)
     {

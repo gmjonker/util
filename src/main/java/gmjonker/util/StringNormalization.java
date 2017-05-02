@@ -31,7 +31,7 @@ public class StringNormalization
 //        string = string.replaceAll("[\\p{Cc}\\p{Cf}\\p{Co}\\p{Cn}\\u00A0]", " "); // replace unprintable characters and non-breakable spaces
 ////        string = string.replaceAll("\\u00A0", " "); // replace non-breakable spaces
         string = Normalizer.normalize(string, Normalizer.Form.NFKC);
-        if (string.contains("\u00A0"))
+        if (string.contains("\u00A0")) // non-breaking space
             System.out.println("wtf");
         return StringUtils.stripAccents(string.trim().toLowerCase());
     }

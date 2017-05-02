@@ -991,4 +991,18 @@ public class CollectionsUtil
         HashMultiset<V> multiset = HashMultiset.create(collection);
         return map(multiset.elementSet(), value -> value, multiset::count);
     }
+
+    public static <E> E randomElement(Collection<? extends E> coll, Random rand)
+    {
+        if (coll.size() == 0) return null;
+        
+        int index = rand.nextInt(coll.size());
+        if (coll instanceof List)  // optimization
+            return ((List<? extends E>) coll).get(index);
+        
+        Iterator<? extends E> iter = coll.iterator();
+        for (int i = 0; i < index; i++) 
+            iter.next();
+        return iter.next();
+    }
 }

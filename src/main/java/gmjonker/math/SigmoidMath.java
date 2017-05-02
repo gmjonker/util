@@ -64,6 +64,14 @@ public class SigmoidMath
             throw new RuntimeException("getConfidence not defined for sampleSize < 0");
         return toMinusOneOneInterval(sampleSize, growthParameter);
     }
+    
+    public static double getGrowthParameter(double sampleSize, double desiredConfidence)
+    {
+        if (desiredConfidence == 1)
+            throw new IllegalArgumentException("desiredConfidence cannot be 0");
+        return (1.0 / (1 - desiredConfidence) - 1) / sampleSize;
+        
+    }
 
     public static double toMinusOneOneInterval(double number, double growthParameter)
     {

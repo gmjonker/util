@@ -310,6 +310,16 @@ public class CollectionsUtil
         return list.stream().filter(t -> ! function.apply(t)).collect(Collectors.toList());
     }
 
+    /** Removes items that do not satisify the function. **/
+    @Nonnull
+    public static <T> Iterable<T> filter(Iterable<T> iterable, Function<T, Boolean> function)
+    {
+        if (iterable == null)
+            return IterableUtils.emptyIterable();
+
+        return Streams.stream(iterable).filter(function::apply).collect(Collectors.toList());
+    }
+
     @Nonnull
     public static <T> Collection<T> filter(Collection<T> collection, Function<T, Boolean> function)
     {

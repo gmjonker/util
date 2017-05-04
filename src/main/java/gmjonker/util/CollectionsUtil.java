@@ -317,7 +317,8 @@ public class CollectionsUtil
         if (iterable == null)
             return IterableUtils.emptyIterable();
 
-        return Streams.stream(iterable).filter(function::apply).collect(Collectors.toList());
+//        return Streams.stream(iterable).filter(function::apply).collect(Collectors.toList());
+        return  Lists.newArrayList(iterable).stream().filter(function::apply).collect(Collectors.toList());
     }
 
     @Nonnull

@@ -1,5 +1,9 @@
 package gmjonker.util;
 
+import cn.yxffcode.freetookit.collection.MultiTable;
+import cn.yxffcode.freetookit.collection.MultiTables;
+import com.google.common.collect.Table;
+import gmjonker.math.GeneralMath;
 import org.junit.*;
 
 import java.util.HashMap;
@@ -7,10 +11,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
+import static gmjonker.math.GeneralMath.sum_i;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
@@ -91,6 +95,29 @@ public class CollectionsUtilTest
         map.put(2, 2.2);
         DefaultingHashmap<Integer, Double> mappedmap = CollectionsUtil.map(map, integer -> integer + 2, dbl -> dbl + .2);
         System.out.println("mappedmap = " + mappedmap);
+    }
+    
+    @Test
+    public void reduceMultiTable()
+    {
+        MultiTable<Integer, String, Integer> multiTable = MultiTables.newListHashMultiTable();
+        multiTable.put(1, "1", 1);
+        multiTable.put(1, "2", 12);
+        multiTable.put(1, "2", 120);
+        multiTable.put(1, "2", 1200);
+        multiTable.put(2, "1", 21);
+        multiTable.put(2, "1", 21);
+
+        System.out.println("multiTable = " + multiTable);
+
+        Table<Integer, String, Integer> table = CollectionsUtil.reduce(multiTable, GeneralMath::sum_i);
+
+        System.out.println("table = " + table);
+        assertThat(table.get(1, "1"), equalTo(sum_i(multiTable.get(1, "1"))));
+        assertThat(table.get(1, "2"), equalTo(sum_i(multiTable.get(1, "2"))));
+        assertThat(table.get(2, "1"), equalTo(sum_i(multiTable.get(2, "1"))));
+        assertThat(table.get(2, "2"), nullValue());
+        assertThat(table.size(), equalTo(3));
     }
 
     @Test

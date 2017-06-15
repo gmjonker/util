@@ -15,7 +15,7 @@ public final class MultiTables {
   private MultiTables() {
   }
 
-  public static <R, C, V> MultiTable<R, C, V> newHashMultiTable() {
+  public static <R, C, V> MultiTable<R, C, V> newSetHashMultiTable() {
     return new StandardMultiTable<R, C, V>(new HashBasedTableSupplier<R, C, V>(), new HashSetSupplier<V>());
   }
 

@@ -230,6 +230,17 @@ public class GeneralMath
         return StatUtils.sum(values);
     }
 
+    public static int sum_i(Collection<Integer> values)
+    {
+        int sum = NA_I;
+        if ( ! CollectionUtils.isEmpty(values) ) {
+            sum = 0;
+            for (Integer value : values)
+                sum += value;
+        }
+        return sum;
+    }
+
     public static double sum(Collection<Double> values)
     {
         double sum = NA;

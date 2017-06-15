@@ -290,6 +290,19 @@ public class CollectionsUtil
         return result;
     }
 
+    @Nonnull
+    public static <R,C,V1,V2> Table<R,C,V2> reduce(MultiTable<R,C,V1> table, Function<Collection<V1>,V2> valueMapper)
+    {
+        Table<R,C,V2> result = HashBasedTable.create();
+        for (R rowKey : table.rowKeySet()) {
+            for (C columnKey : table.row(rowKey).keySet()) {
+                Collection<V1> valueCollection = table.get(rowKey, columnKey);
+                result.put(rowKey, columnKey, valueMapper.apply(valueCollection));
+            }
+        }
+        return result;
+    }
+    
     /** Removes items that do not satisify the function. **/
     @Nonnull
     public static <T> List<T> filter(List<T> list, Function<T, Boolean> function)

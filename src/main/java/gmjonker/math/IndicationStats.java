@@ -34,7 +34,7 @@ public class IndicationStats
      * - multiply these two
      * Then sums and square-roots the results.
      */
-    public static double euclideanDistance1(List<Indication> indications1, List<Indication> indications2)
+    public static double euclideanDistance(List<Indication> indications1, List<Indication> indications2)
     {
         double total = 0;
         for (int i = 0; i < indications1.size(); i++) {

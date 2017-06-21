@@ -6,6 +6,7 @@ import com.google.common.collect.Table;
 import gmjonker.math.GeneralMath;
 import org.junit.*;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,7 +15,10 @@ import java.util.Random;
 import static gmjonker.math.GeneralMath.sum_i;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
 
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
@@ -130,6 +134,15 @@ public class CollectionsUtilTest
         System.out.println("map = " + map);
         Map<Integer, Integer> shuffledMap = CollectionsUtil.shuffleMap(map);
         System.out.println("map = " + shuffledMap);
+    }
+    
+    @Test
+    public void maxess()
+    {
+        System.out.println("strings = " + CollectionsUtil.max(
+                asList("asdf", "qwer", "zxcv", "qwer", "zxcv", "zxc"), Comparator.naturalOrder()));
+        System.out.println("strings = " + CollectionsUtil.max(
+                asList("asdf", "qwer", "zxcv", "qwer", "zxcv", "zxc"), Comparator.reverseOrder()));
     }
 
 }

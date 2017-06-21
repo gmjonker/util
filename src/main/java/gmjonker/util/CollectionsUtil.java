@@ -3,7 +3,16 @@ package gmjonker.util;
 import cn.yxffcode.freetookit.collection.MultiTable;
 import cn.yxffcode.freetookit.collection.MultiTables;
 import com.google.common.base.Strings;
-import com.google.common.collect.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.LinkedHashMultiset;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Table;
+import gmjonker.math.GeneralMath;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -12,19 +21,37 @@ import org.apache.commons.collections4.keyvalue.DefaultMapEntry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static gmjonker.math.GeneralMath.max;
 import static gmjonker.math.NaType.getValueOr;
 import static gmjonker.math.NaType.isValue;
-import static java.util.Collections.*;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.reverse;
 import static java.util.Collections.reverseOrder;
-import static java.util.Comparator.*;
+import static java.util.Collections.shuffle;
+import static java.util.Collections.sort;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsLast;
 import static org.apache.commons.collections4.CollectionUtils.emptyCollection;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
@@ -585,6 +612,15 @@ public class CollectionsUtil
     {
         return new ArrayList<>(set);
     }
+    
+    public static <T,K,V> Map<K,V> toMap(Collection<T> coll, Function<T,K> keyMapper, Function<T,V> valueMapper)
+    {
+        Map<K,V> map = new HashMap<>();
+        for (T el : coll) {
+            map.put(keyMapper.apply(el), valueMapper.apply(el));
+        }
+        return map;        
+    }
 
     @Nonnull
     public static <R,C,V> Table<R,C,V> asTable(Object... objects)
@@ -639,8 +675,8 @@ public class CollectionsUtil
         int size = list.size();
         if (fromIndex == null) fromIndex = 0;
         if (toIndex == null) toIndex = size;
-        if (fromIndex < 0) fromIndex = max(size + fromIndex, 0);
-        if (toIndex < 0) toIndex = max(size + toIndex, 0);
+        if (fromIndex < 0) fromIndex = GeneralMath.max(size + fromIndex, 0);
+        if (toIndex < 0) toIndex = GeneralMath.max(size + toIndex, 0);
         if (toIndex > size) toIndex = size;
         if (fromIndex >= toIndex)
             return emptyList();
@@ -985,6 +1021,28 @@ public class CollectionsUtil
                 newMultiset.add(element, count);
         }
         return newMultiset;        
+    }
+    
+    public static <T> Collection<T> max(Collection<T> coll, Comparator<T> comparator)
+    {
+        ArrayList<T> maxes = new ArrayList<>();
+        for (T el : coll) {
+            if (maxes.isEmpty()) {
+                maxes.add(el);
+                continue;
+            }
+            T currentMax = maxes.get(0);
+            int compare = comparator.compare(el, currentMax);
+            if (compare < 0)
+                continue;
+            if (compare == 0)
+                maxes.add(el);
+            else {
+                maxes.clear();
+                maxes.add(el);
+            }
+        }
+        return maxes;
     }
 
     /**

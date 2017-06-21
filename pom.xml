@@ -86,7 +86,6 @@
             <artifactId>colt</artifactId>
             <version>1.2.0</version>
         </dependency>
-        
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -3,7 +3,6 @@ package gmjonker.util;
 import com.google.common.base.Ascii;
 import com.google.common.base.Stopwatch;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static gmjonker.math.GeneralMath.max;
 import static gmjonker.math.GeneralMath.round;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.NA_I;
@@ -263,5 +261,13 @@ public class Util
     public static URL toUrlSneaky(String urlString)
     {
         return new URL(urlString);
+    }
+    
+    public boolean isAssertionsEnabled()
+    {
+        boolean assertsEnabled = false;
+        assert assertsEnabled = true; // Intentional side-effect!!!
+        // Now assertsEnabled is set to the correct value
+        return assertsEnabled;
     }
 }

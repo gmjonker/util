@@ -20,7 +20,7 @@ public class IndicationStatsTest
         double dist1 = MathArrays.distance(new double[]{.1, .2, .3}, new double[]{-.2, -.5, .12});
         System.out.println("dist1 = " + dist1);
 
-        double dist2 = IndicationStats.euclideanDistance1(
+        double dist2 = IndicationStats.euclideanDistance(
                 asList(ind( .1, 1), ind( .2, 1), ind( .3 , 1)),
                 asList(ind(-.2, 1), ind(-.5, 1), ind( .12, 1))
         );
@@ -30,7 +30,7 @@ public class IndicationStatsTest
     @Test
     public void euclideanDist2()
     {
-        double    dist1  = IndicationStats.euclideanDistance1(asList(ind(1, 1)), asList(ind( 1, 0)));
+        double    dist1  = IndicationStats.euclideanDistance(asList(ind(1, 1)), asList(ind( 1, 0)));
         ValueConf dist2a = IndicationStats.euclideanDistanceWithConfidence(asList(ind(1, 1)), asList(ind( 1, 0)));
         ValueConf dist2b = IndicationStats.euclideanDistanceWithConfidence(asList(ind(1, 1)), asList(ind( 1, .5)));
         ValueConf dist2c = IndicationStats.euclideanDistanceWithConfidence(asList(ind(1, 1)), asList(ind(.5, .5)));

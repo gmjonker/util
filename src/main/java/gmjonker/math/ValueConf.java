@@ -7,6 +7,8 @@ import static gmjonker.util.FormattingUtil.asPercentage;
 @Data
 public class ValueConf
 {
+    public static final ValueConf UNKNOWN = new ValueConf(0, 0);
+    
     public final double value;
     public final double confidence;
 
@@ -18,6 +20,6 @@ public class ValueConf
 
     public String toShortString()
     {
-        return asPercentage(value) + "/" + asPercentage(confidence);
+        return value + "/" + asPercentage(confidence);
     }
 }

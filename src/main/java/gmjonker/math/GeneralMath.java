@@ -29,6 +29,9 @@ public class GeneralMath
     public static final long MEGA = 1000000;
     public static final long GIGA = 1000000000;
     
+    public static final double MILIS_TO_NANOS = 1000 * 1000;
+    public static final double NANOS_TO_MILIS = .001 * .001;
+    public static final double SECONDS_TO_NANOS = 1000 * 1000 * 1000;
     public static final double NANOS_TO_SECONDS = .001 * .001 * .001;
 
     private static final LambdaLogger log = new LambdaLogger(GeneralMath.class);

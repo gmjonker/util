@@ -366,7 +366,7 @@ public class FormattingUtil
     @Nonnull
     public static String take(@Nullable String string, int width)
     {
-        return take(string, width, true);
+        return take(string, width, false);
     }
 
     @Nonnull

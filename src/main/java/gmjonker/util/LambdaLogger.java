@@ -170,6 +170,15 @@ public class LambdaLogger implements Logger
         }
     }
 
+    @SafeVarargs
+    public final void info(Marker marker, String format, Supplier<Object>... arguments)
+    {
+        if (logger.isInfoEnabled()) {
+            Function<Supplier<Object>, Object> get = Supplier::get;
+            info(marker, format, map(arguments, get, Object.class));
+        }
+    }
+
     // --------------------------------------------------------------------------------------------
 
 //    /** Log separate lines separately, indents all lines of argument.toString() **/
@@ -249,7 +258,6 @@ public class LambdaLogger implements Logger
     {
         if (logger.isDebugEnabled()) {
             Function<Supplier<Object>, Object> get = Supplier::get;
-//            debug(format, Arrays.stream(arguments).map(get).toArray());
             debug(marker, format, map(arguments, get, Object.class));
         }
     }
@@ -344,6 +352,17 @@ public class LambdaLogger implements Logger
             rememberedTraces.add(formattedMessage);
         }
     }
+
+    @SafeVarargs
+    public final void trace(Marker marker, String format, Supplier<Object>... arguments)
+    {
+        if (logger.isTraceEnabled()) {
+            Function<Supplier<Object>, Object> get = Supplier::get;
+            trace(marker, format, map(arguments, get, Object.class));
+        }
+    }
+
+
 
 
 

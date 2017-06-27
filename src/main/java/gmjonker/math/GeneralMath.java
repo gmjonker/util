@@ -220,28 +220,9 @@ public class GeneralMath
         return max(min(x, max), min);
     }
 
-    public static <T> int sum(Collection<T> coll, Function<T,Integer> mapper)
-    {
-        int sum = 0;
-        for (T t : coll)
-            sum += mapper.apply(t);
-        return sum;
-    }
-
     public static double sum(double... values)
     {
         return StatUtils.sum(values);
-    }
-
-    public static int sum_i(Collection<Integer> values)
-    {
-        int sum = NA_I;
-        if ( ! CollectionUtils.isEmpty(values) ) {
-            sum = 0;
-            for (Integer value : values)
-                sum += value;
-        }
-        return sum;
     }
 
     public static double sum(Collection<Double> values)
@@ -255,6 +236,45 @@ public class GeneralMath
         return sum;
     }
 
+    public static int sum_i(Collection<Integer> values)
+    {
+        int sum = NA_I;
+        if ( ! CollectionUtils.isEmpty(values) ) {
+            sum = 0;
+            for (Integer value : values)
+                sum += value;
+        }
+        return sum;
+    }
+
+    public static double sumOr(Collection<Double> values, double defaultValue)
+    {
+        if (CollectionUtils.isEmpty(values) ) 
+            return defaultValue;
+        double sum = 0.0;
+        for (Double value : values)
+            sum += value;
+        return sum;
+    }
+
+    public static <T> int sum_i(Collection<T> coll, Function<T,Integer> mapper)
+    {
+        int sum = 0;
+        for (T t : coll)
+            sum += mapper.apply(t);
+        return sum;
+    }
+
+    public static <T> double sumByOr(Collection<T> coll, Function<T, Double> mapper, double defaultValue)
+    {
+        if (CollectionUtils.isEmpty(coll) )
+            return defaultValue;
+        double sum = 0.0;
+        for (T el : coll)
+            sum += mapper.apply(el);
+        return sum;
+    }
+    
     public static double mean(double... values)
     {
         if (values.length == 0)

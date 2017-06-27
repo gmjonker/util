@@ -719,4 +719,11 @@ public class GeneralMath
     {
         return (1.0 /(-1.5 * x + 2) - .5) / 1.5;
     }
+    
+    public static double translate(double x, double fromMin, double fromMax, double toMin, double toMax)
+    {
+        double fromRange = fromMax - fromMin;
+        double toRange = toMax - toMin;
+        return (x - fromMin) / fromRange * toRange + toMin;
+    }
 }

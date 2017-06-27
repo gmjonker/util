@@ -14,8 +14,6 @@ import static gmjonker.matchers.IsValueMatcher.isValueMatch;
 import static gmjonker.math.GeneralMath.*;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
-import static gmjonker.math.SigmoidMath.fastLogitAlternative;
-import static gmjonker.math.SigmoidMath.fastSigmoidAlternative;
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -284,5 +282,12 @@ public class GeneralMathTest
     public void expand()
     {
         TextPlot.plotf(GeneralMath::expand, 0, 1, -.2, 1, 100, 40);
+    }
+    
+    @Test
+    public void translateTest()
+    {
+        assertThat(translate(3, 0, 10, 20, 40), closeTo(26, .000001));
+        assertThat(translate(5, 10, 20, 4, 2), closeTo(5, .000001));
     }
 }

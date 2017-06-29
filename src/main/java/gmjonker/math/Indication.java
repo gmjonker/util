@@ -299,7 +299,7 @@ public class Indication implements Comparable<Indication>
 
     public String toShortStringWithComment()
     {
-        return toShortString() + "(" + comment + ")";
+        return toShortString() + " (" + comment + ")";
     }
 
     /** 4A, 9F **/

@@ -332,6 +332,14 @@ public class FormattingUtil
         return result;
     }
 
+    public static <K,V> String toStringLineByLineNoBrackets(Map<K,V> map)
+    {
+        String result = "";
+        for (Map.Entry<K, V> entry : map.entrySet())
+            result += entry.getKey().toString() + " -> " + entry.getValue() + "\n";
+        return result;
+    }
+
     public static <K,V> String toStringLineByLine(Multimap<K,V> map)
     {
         String result = "[\n";

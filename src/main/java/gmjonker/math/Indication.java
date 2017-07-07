@@ -316,7 +316,8 @@ public class Indication implements Comparable<Indication>
     /** 1, 6 **/
     public String toNanoString()
     {
-        return toMicroFormatM01(deriveDouble01(.5));
+//        return toMicroFormatM01(deriveDouble01(.5));
+        return toMicroFormatSub(deriveDouble());
     }
 
     public String toAlignedString()

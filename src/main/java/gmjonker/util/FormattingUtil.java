@@ -193,6 +193,41 @@ public class FormattingUtil
     }
 
     /**
+     * Formats a value in (-1,1) as a single digit, where -1->, -.8->, ..., 0->, .2->, ... .8->, 1->, >1 -> '>', <-1 -> '<'
+     * @param d value in (-1,1)
+     **/
+    @Deprecated
+    public static String toMicroFormatSub(double d)
+    {
+        if ( ! isValue(d))
+            return "-";
+        int rounded = (int)round(d * 10); // result in (-10..10)
+
+        if (rounded < -10)
+            return "<";
+        else if (rounded > 10)
+            return ">";
+        else if (rounded == 10)
+            return "!";
+        else if (rounded >= 0)
+            return String.valueOf(rounded);
+        else switch (rounded) {
+                case -1: return "₁"; 
+                case -2: return "₂"; 
+                case -3: return "₃"; 
+                case -4: return "₄"; 
+                case -5: return "₅"; 
+                case -6: return "₆"; 
+                case -7: return "₇"; 
+                case -8: return "₈"; 
+                case -9: return "₉"; 
+                case -10: return "_";
+                default: return "?";
+            }
+    }
+
+
+    /**
      * Produces string representations of numbers like 1, 11, 111, 1.1k, 1m, etc.
      */
     public static String toHumanReadableNumber(int number)

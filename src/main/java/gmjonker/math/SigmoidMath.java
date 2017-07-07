@@ -1,12 +1,20 @@
 package gmjonker.math;
 
+import gmjonker.util.LambdaLogger;
 import org.apache.commons.math3.analysis.function.Logit;
 import org.apache.commons.math3.analysis.function.Sigmoid;
 
+import java.util.Collection;
+
 import static gmjonker.math.GeneralMath.abs;
+import static gmjonker.math.GeneralMath.max;
+import static gmjonker.math.GeneralMath.powSignSafe;
+import static gmjonker.math.NaType.NA;
 
 public class SigmoidMath
 {
+    private static final LambdaLogger log = new LambdaLogger(SigmoidMath.class);
+    
     /** The logistic or standard sigmoid function, output in range (0,1) **/
     public static double sigmoid(double x)
     {
@@ -125,5 +133,36 @@ public class SigmoidMath
             else
                 return (x - middle) / (rangeHigh - x);
         }
+    }
+    
+    public static double sigmoidPowerSumLogit(Collection<Double> values, double p)
+    {
+        final double sigmoidRangeLow = -1.01;
+        final double sigmoidRangeHigh = 1.01;
+
+        log.trace("values = {}", values);
+        if (p <= 0) {
+            log.error("Invalid value of p: {}", p);
+            return NA;
+        }            
+
+        double t = 0;
+        for (Double x : values) {
+            log.trace("x = {}", x);
+            double logit = logit(x, sigmoidRangeLow, sigmoidRangeHigh);
+            log.trace("logit = {}", logit);
+            logit = powSignSafe(logit, p);
+            log.trace("powed logit = {}", logit);
+            if (Double.isInfinite(logit)) {
+                log.warn("Power too high, falling back to MAX");
+                return max(values);
+            } 
+            t += logit;
+            log.trace("t = {}", t);
+        }
+        t = powSignSafe(t, 1.0/p);
+        double sigmoid = sigmoid(t, sigmoidRangeLow, sigmoidRangeHigh);
+        log.trace("sigmoid = {}", sigmoid);
+        return sigmoid;
     }
 }

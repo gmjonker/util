@@ -22,6 +22,17 @@ import static org.junit.Assert.*;
 public class GeneralMathTest
 {
     @Test
+    public void poww()
+    {
+        System.out.println("pow( 2,  2) = " + pow( 2,  2));
+        System.out.println("pow( 2, .5) = " + pow( 2, .5));
+        System.out.println("pow(-2, .5) = " + pow(-2, .5));
+        System.out.println("powSS( 2,  2) = " + powSignSafe( 2,  2));
+        System.out.println("powSS( 2, .5) = " + powSignSafe( 2, .5));
+        System.out.println("powSS(-2, .5) = " + powSignSafe(-2, .5));
+    }
+    
+    @Test
     public void roundd()
     {
         System.out.println("round(1.23, 1) = " + round(1.23, 1));
@@ -100,7 +111,8 @@ public class GeneralMathTest
         assertEquals(GeneralMath.weightedMeanAbsoluteError(new double[]{1.0, .5, .2}, new double[]{1, 2, 5}), 5.0/8, 0.00001);
     }
 
-    public static void powerMean()
+    @Test
+    public void powerMean()
     {
         int p = 25;
         System.out.println(GeneralMath.powerMean(new double[]{0, 0, 0}, p));
@@ -122,6 +134,9 @@ public class GeneralMathTest
         System.out.println(GeneralMath.powerMean(new double[]{.8}, p));
         System.out.println(GeneralMath.powerMean(new double[]{.8, .5}, p));
         System.out.println(GeneralMath.powerMean(new double[]{.8, .5, .5}, p));
+        System.out.println();
+        System.out.println(GeneralMath.powerMean(new double[]{.8,  0,  0,  0,  0}, 1000));
+        System.out.println(GeneralMath.powerMean(new double[]{.8, .8, .8, .8, .8}, 1000));
     }
 
     @Test
@@ -285,9 +300,26 @@ public class GeneralMathTest
     }
     
     @Test
+    public void softsign()
+    {
+        TextPlot.plotf(x -> GeneralMath.softSign(x, .1), -1, 1, -1, 1, 80, 30);
+    }
+    
+    @Test
     public void translateTest()
     {
         assertThat(translate(3, 0, 10, 20, 40), closeTo(26, .000001));
         assertThat(translate(5, 10, 20, 4, 2), closeTo(5, .000001));
+    }
+    
+    @Test
+    public void center11()
+    {
+        double eps = .00001;
+        assertThat(centerM11(-1, .2), closeTo(-1, eps));
+        assertThat(centerM11( 0, .2), closeTo(-1 + 5d/6, eps));
+        assertThat(centerM11(.2, .2), closeTo(0, eps));
+        assertThat(centerM11(.4, .2), closeTo(.25, eps));
+        assertThat(centerM11( 1, .2), closeTo(1, eps));
     }
 }

@@ -10,7 +10,8 @@ appender("STDOUT", ConsoleAppender) {
 //logger("gmjonker.math.Score", TRACE)
 //logger("gmjonker.math.ScoreMath", TRACE)
 //logger("gmjonker.math.IndicationMath", TRACE)
-logger("gmjonker.math.IndicationStats", TRACE)
+//logger("gmjonker.math.IndicationStats", TRACE)
+//logger("gmjonker.math.SigmoidMath", TRACE)
 //logger("gmjonker.math.IndicationCorrelationOnline", TRACE)
 
 root(INFO, ["STDOUT"])

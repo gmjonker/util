@@ -4,11 +4,11 @@ import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 import gmjonker.util.LambdaLogger;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.function.Function;
 
 import static gmjonker.math.NaType.*;
+import static gmjonker.util.CollectionsUtil.filterNulls;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 
 /**
@@ -49,6 +51,14 @@ public class GeneralMath
     public static double pow(double x, double exponent)
     {
         return Math.pow(x, exponent);
+    }
+
+    public static double powSignSafe(double x, double exponent)
+    {
+        int sign = sign(x);
+        x *= sign;
+        double result = Math.pow(x, exponent);
+        return result * sign;
     }
 
     @Deprecated // Clashes with Logger log
@@ -137,8 +147,17 @@ public class GeneralMath
     @Nullable
     public static <T extends Object & Comparable<? super T>> T max(Collection<? extends T> coll)
     {
-        if (CollectionUtils.isEmpty(coll))
+        if (isEmpty(filterNulls(coll)))
             return null;
+        return Collections.max(coll);
+    }
+
+    @Nonnull
+    public static <T extends Object & Comparable<? super T>> T maxOr(Collection<? extends T> coll, @Nonnull T defaultValue)
+    {
+        coll = filterNulls(coll);
+        if (isEmpty(coll))
+            return defaultValue;
         return Collections.max(coll);
     }
 
@@ -188,6 +207,15 @@ public class GeneralMath
         return Ints.min(values);
     }
 
+    @Nonnull
+    public static <T extends Object & Comparable<? super T>> T minOr(Collection<? extends T> coll, @Nonnull T defaultValue)
+    {
+        coll = filterNulls(coll);
+        if (isEmpty(coll))
+            return defaultValue;
+        return Collections.min(coll);
+    }
+
     public static <V> double minBy(Iterable<V> iterable, Function<V, Double> valueExtractor)
     {
         double min = Double.MAX_VALUE;
@@ -228,7 +256,7 @@ public class GeneralMath
     public static double sum(Collection<Double> values)
     {
         double sum = NA;
-        if ( ! CollectionUtils.isEmpty(values) ) {
+        if ( ! isEmpty(values) ) {
             sum = 0.0;
             for (Double value : values)
                 sum += value;
@@ -239,7 +267,7 @@ public class GeneralMath
     public static int sum_i(Collection<Integer> values)
     {
         int sum = NA_I;
-        if ( ! CollectionUtils.isEmpty(values) ) {
+        if ( ! isEmpty(values) ) {
             sum = 0;
             for (Integer value : values)
                 sum += value;
@@ -249,7 +277,7 @@ public class GeneralMath
 
     public static double sumOr(Collection<Double> values, double defaultValue)
     {
-        if (CollectionUtils.isEmpty(values) ) 
+        if (isEmpty(values) ) 
             return defaultValue;
         double sum = 0.0;
         for (Double value : values)
@@ -267,7 +295,7 @@ public class GeneralMath
 
     public static <T> double sumByOr(Collection<T> coll, Function<T, Double> mapper, double defaultValue)
     {
-        if (CollectionUtils.isEmpty(coll) )
+        if (isEmpty(coll) )
             return defaultValue;
         double sum = 0.0;
         for (T el : coll)
@@ -284,7 +312,7 @@ public class GeneralMath
 
     public static double mean(Collection<Double> values)
     {
-        if (CollectionUtils.isEmpty(values))
+        if (isEmpty(values))
             return NA;
         double sum = 0;
         for (Double value : values)
@@ -739,11 +767,37 @@ public class GeneralMath
     {
         return (1.0 /(-1.5 * x + 2) - .5) / 1.5;
     }
+
+    /**
+     * This function could also be called 'expand' or 'changeContrast'. It's a S-shaped function meant to expand values in the (-1,1) interval
+     * a0=2&a1=1.1x/(.1+abs(x))&a2=&a3=&a4=1&a5=4&a6=8&a7=1&a8=1&a9=1&b0=480&b1=480&b2=-2&b3=2&b4=-2&b5=2&b6=8&b7=8&b8=5&b9=5&c0=3&c1=0&c2=1&c3=1&c4=1&c5=1&c6=1&c7=0&c8=0&c9=0&d0=1&d1=16&d2=16&d3=0&d4=&d5=&d6=&d7=&d8=&d9=&e0=&e1=&e2=&e3=&e4=14&e5=14&e6=13&e7=12&e8=0&e9=0&f0=0&f1=1&f2=1&f3=0&f4=0&f5=&f6=&f7=&f8=&f9=&g0=&g1=1&g2=1&g3=0&g4=0&g5=0&g6=Y&g7=ffffff&g8=a0b0c0&g9=6080a0&h0=1&h1=&h2=&h3=&h4=0&z
+     * <p> 
+     * <p>alpha 0  -> maximum expansion, maximum contrast increase, y=-1 before x=0 and y=1 after that
+     * <p>alpha .1 -> strong expansion, strong contrast increase, slope is ~ 7 at x=0
+     * <p>alpha .5 -> medium expansion, medium contrast increase, slope is ~ 2.7 at x=0
+     * <p>alpha 1  -> mild expansion, mild contrast increase, slope is 2 at x=0
+     * <p>alpha 2  -> very mild expansion, very mild contrast increase, slope is 1.5 at x=0
+     */
+    public static double softSign(double x, double alpha)
+    {
+        return (1 + alpha) * x / (alpha + abs(x));
+    }
     
     public static double translate(double x, double fromMin, double fromMax, double toMin, double toMax)
     {
         double fromRange = fromMax - fromMin;
         double toRange = toMax - toMin;
         return (x - fromMin) / fromRange * toRange + toMin;
+    }
+
+    /**
+     * For a value in (-1,1), transforms it such that -1 remains -1, 1 remains 1, oldCenter becomes 0, and other values
+     * are linearly interpolated.
+     */
+    public static double centerM11(double x, double oldCenter)
+    {
+        if (x < oldCenter)
+            return -1 + (x - -1) / (oldCenter - -1);
+        return (x - oldCenter) / (1 - oldCenter);        
     }
 }

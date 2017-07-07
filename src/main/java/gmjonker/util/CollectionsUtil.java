@@ -3,15 +3,7 @@ package gmjonker.util;
 import cn.yxffcode.freetookit.collection.MultiTable;
 import cn.yxffcode.freetookit.collection.MultiTables;
 import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.LinkedHashMultiset;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Table;
+import com.google.common.collect.*;
 import gmjonker.math.GeneralMath;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
@@ -21,37 +13,19 @@ import org.apache.commons.collections4.keyvalue.DefaultMapEntry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gmjonker.math.NaType.getValueOr;
 import static gmjonker.math.NaType.isValue;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.reverse;
+import static java.util.Collections.*;
 import static java.util.Collections.reverseOrder;
-import static java.util.Collections.shuffle;
-import static java.util.Collections.sort;
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.naturalOrder;
-import static java.util.Comparator.nullsLast;
+import static java.util.Comparator.*;
 import static org.apache.commons.collections4.CollectionUtils.emptyCollection;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
@@ -696,6 +670,28 @@ public class CollectionsUtil
     }
 
     /**
+     * Returns the first item of collection, or an empty collection.
+     */
+    @Nullable
+    public static <T> T first(Collection<T> coll)
+    {
+        if (coll.isEmpty())
+            return null;
+        return coll.iterator().next();
+    }
+
+//    /**
+//     * Returns the first item of collection, or an empty collection.
+//     */
+//    @Nonnull
+//    public static <T> Collection<T> first(Collection<T> coll, int max)
+//    {
+//        if (coll.isEmpty())
+//            return emptySet();
+//        return singleton(coll.iterator().next());
+//    }
+//
+    /**
      * Take the first X items of list, or less if there are less.
      */
     @Nonnull
@@ -747,6 +743,20 @@ public class CollectionsUtil
         }
         return newMap;
     }
+
+    @Nonnull
+    public static <T> List<T> takeUntil(Iterable<T> iterable, Predicate<T> condition)
+    {
+        List<T> result = new ArrayList<>();
+        for (T t : iterable) {
+//            System.out.println("condition.test(t) = " + condition.test(t) + "   " + t);
+            if (condition.test(t))
+                return result;
+            result.add(t);
+        }
+        return result;
+    }
+
 
     /**
      * Selects the elements from {@code list} for which their corresponding element in {@code mask} is true.

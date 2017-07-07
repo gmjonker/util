@@ -1,5 +1,6 @@
 package gmjonker.util;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.*;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
@@ -303,15 +304,26 @@ public class IoUtil
         return map;
     }
 
-    /** CSV file must not have headers. **/
+    /** 
+     * CSV file must not have headers.
+     * Skips empty rows.
+     **/
     public static <K, V> LinkedHashMap<K,V> readTwoColumnCsvIntoMap(String fileName, Function<String, K> keyTransform,
             Function<String, V> valueTransform) throws IOException
     {
         LinkedHashMap<K, V> map = new LinkedHashMap<>();
         CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
         for (CSVRecord record : csvParser.getRecords()) {
-            K key = keyTransform.apply(record.get(0));
-            V value = valueTransform.apply(record.get(1));
+            String rawKey = record.get(0);
+            String rawVal = record.get(1);
+            // skip empty rows
+            if (Strings.isNullOrEmpty(rawKey) && Strings.isNullOrEmpty(rawVal))
+                continue;
+            K key = keyTransform.apply(rawKey);
+            // don't overwrite already set keys if the value is empty
+            if (map.containsKey(key) && Strings.isNullOrEmpty(rawVal))
+                continue;
+            V value = valueTransform.apply(rawVal);
             map.put(key, value);
         }
         return map;

@@ -293,6 +293,22 @@ public class GeneralMath
         return sum;
     }
 
+    public static <T> double sumBy(Collection<T> coll, Function<T, Double> mapper)
+    {
+        double sum = 0.0;
+        for (T el : coll)
+            sum += mapper.apply(el);
+        return sum;
+    }
+    
+    public static <T> double sumBy_I(Collection<T> coll, Function<T, Integer> mapper)
+    {
+        int sum = 0;
+        for (T el : coll)
+            sum += mapper.apply(el);
+        return sum;
+    }
+    
     public static <T> double sumByOr(Collection<T> coll, Function<T, Double> mapper, double defaultValue)
     {
         if (isEmpty(coll) )

@@ -69,6 +69,21 @@ public class CollectionsUtil
     }
 
     @Nonnull
+    public static <T, R> Collection<R> flatMap(Collection<T> collection, Function<T, Collection<R>> function)
+    {
+        if (collection == null)
+            return emptyList();
+
+        List<R> list = new ArrayList<>();
+        for (T el : collection) {
+            if (el == null)
+                continue;
+            list.addAll(function.apply(el));
+        }
+        return list;
+    }
+
+    @Nonnull
     public static <E, K, V> Map<K, V> map(Collection<E> collection, Function<E, K> keyFunction, Function<E, V> valueFunction)
     {
         if (collection == null)
@@ -413,7 +428,17 @@ public class CollectionsUtil
             map.remove(key);
         }
     }
-    
+
+    /** Removes items that do not satisify the function. **/
+    @Nonnull
+    public static <T,U extends T> List<U> filterByType(List<T> list, Class<U> clazz)
+    {
+        if (list == null)
+            return emptyList();
+
+        return list.stream().filter((T t) -> t.getClass() == clazz).map(t -> (U)t).collect(Collectors.toList());
+    }
+
     public static <T> boolean containsNoDuplicates(Collection<T> collection)
     {
         Set<T> set = new HashSet<T>();
@@ -917,7 +942,7 @@ public class CollectionsUtil
      * @return New hash map, sorted.
      */
     @Nonnull
-    public static <K, V> LinkedHashMap<K, V> sortMap(Map<K, V> map, Function<V, Double> function)
+    public static <K, V> LinkedHashMap<K, V> sortMap(Map<K, V> map, Function<V, Number> function)
     {
         LinkedHashMap<K,V> result = new LinkedHashMap<>();
 
@@ -927,7 +952,7 @@ public class CollectionsUtil
         Comparator<Map.Entry<K, V>> comparator =
                 comparing(
                         (Function<Map.Entry<K, V>, Double>) (kvEntry) -> {
-                            Double value = function.apply(kvEntry.getValue());
+                            Double value = function.apply(kvEntry.getValue()).doubleValue();
                             if (!isValue(value))
                                 value = Double.MIN_VALUE;
                             return value;

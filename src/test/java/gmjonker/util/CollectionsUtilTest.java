@@ -4,26 +4,35 @@ import cn.yxffcode.freetookit.collection.MultiTable;
 import cn.yxffcode.freetookit.collection.MultiTables;
 import com.google.common.collect.Table;
 import gmjonker.math.GeneralMath;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Test;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 import static gmjonker.math.GeneralMath.sum_i;
+import static gmjonker.util.CollectionsUtil.filterByType;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public class CollectionsUtilTest
 {
+    @Test
+    public void filterByTyp()
+    {
+        List<Component> list = asList(
+                new Label("A"),
+                new Button("B"),
+                new Canvas()
+        );
+        List<Label> labels = filterByType(list, Label.class);
+        System.out.println("labels = " + labels);
+    }
+    
     @Test
     public void asMapp()
     {

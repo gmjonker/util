@@ -606,10 +606,16 @@ public class CollectionsUtil
         return list;
     }
 
+//    @Nonnull
+//    public static <T> List<T> toList(Collection<T> coll)
+//    {
+//        return new ArrayList<>(coll);
+//    }
+    
     @Nonnull
-    public static <T> List<T> toList(Collection<T> set)
+    public static <T> List<T> toList(Iterable<T> iterable)
     {
-        return new ArrayList<>(set);
+        return Lists.newArrayList(iterable);
     }
     
     public static <T,K,V> Map<K,V> toMap(Collection<T> coll, Function<T,K> keyMapper, Function<T,V> valueMapper)

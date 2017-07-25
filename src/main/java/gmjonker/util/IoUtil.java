@@ -510,10 +510,10 @@ public class IoUtil
 
 
 
-    public static ArrayListMultimap<String, String> readCsvIntoMultimapOrRTE(String fileName, boolean hasHeaders, int keyColumn, int valueColumn)
+    public static LinkedListMultimap<String, String> readCsvIntoMultimapOrRTE(String fileName, boolean hasHeaders, int keyColumn, int valueColumn)
     {
         try {
-            ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+            LinkedListMultimap<String, String> map = LinkedListMultimap.create();
             CSVParser csvParser = readCsvFile(fileName, hasHeaders);
             for (CSVRecord record : csvParser.getRecords()) {
                 String key = record.get(keyColumn);
@@ -527,22 +527,22 @@ public class IoUtil
     }
 
     /** CSV is assumed to have no headers. **/
-    public static ArrayListMultimap<String, String> readCsvIntoMultimapOrRTE(String fileName)
+    public static LinkedListMultimap<String, String> readCsvIntoMultimapOrRTE(String fileName)
     {
         return readCsvIntoMultimapOrRTE(fileName, k -> k, v -> v);
     }
 
-    public static <K, V> ArrayListMultimap<K, V> readCsvIntoMultimapOrRTE(String fileName, Function<String, K> keyMapper,
+    public static <K, V> LinkedListMultimap<K, V> readCsvIntoMultimapOrRTE(String fileName, Function<String, K> keyMapper,
             Function<String, V> valueMapper)
     {
         return readCsvIntoMultimapOrRTE(fileName, keyMapper, valueMapper, s -> true);
     }
     
-    public static <K, V> ArrayListMultimap<K, V> readCsvIntoMultimapOrRTE(String fileName, Function<String, K> keyMapper,
+    public static <K, V> LinkedListMultimap<K, V> readCsvIntoMultimapOrRTE(String fileName, Function<String, K> keyMapper,
             Function<String, V> valueMapper, Predicate<String> valueFilter)
     {
         try {
-            ArrayListMultimap<K, V> map = ArrayListMultimap.create();
+            LinkedListMultimap<K, V> map = LinkedListMultimap.create();
             CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
             for (CSVRecord record : csvParser.getRecords()) {
                 String key = record.get(0);

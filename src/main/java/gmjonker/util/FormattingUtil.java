@@ -347,7 +347,7 @@ public class FormattingUtil
         return result.toString();        
     }
     
-    public static <T> String toStringLineByLine(Collection<T> collection)
+    public static <T> String toStringLineByLine(Iterable<T> collection)
     {
         char[] outer = collection instanceof List ? new char[]{'[', ']'} : new char[]{'{', '}'};
         String result = outer[0] + "\n";

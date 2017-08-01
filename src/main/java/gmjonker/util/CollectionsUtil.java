@@ -113,11 +113,8 @@ public class CollectionsUtil
         return newList;
     }
 
-    /**
-     * Note: output may contain duplicates.
-     */
     @Nonnull
-    public static <T, R> Collection<R> map(Set<T> set, Function<T, R> function)
+    public static <T, R> Collection<R> mapAllowDupes(Set<T> set, Function<T, R> function)
     {
         if (set == null)
             return emptyCollection();
@@ -129,6 +126,21 @@ public class CollectionsUtil
             newCollection.add(function.apply(el));
         }
         return newCollection;
+    }
+
+    @Nonnull
+    public static <T, R> Set<R> mapNoDupes(Set<T> set, Function<T, R> function)
+    {
+        if (set == null)
+            return emptySet();
+
+        Set<R> newSet = new HashSet<>();
+        for (T el : set) {
+            if (el == null)
+                continue;
+            newSet.add(function.apply(el));
+        }
+        return newSet;
     }
 
     /** Retains ordering **/

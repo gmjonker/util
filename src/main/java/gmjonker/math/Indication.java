@@ -37,10 +37,10 @@ import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
 @NoArgsConstructor
 public class Indication implements Comparable<Indication>
 {
-    public static final Indication NA_INDICATION = new Indication(NA, NA);
-    public static final Indication UNKNOWN = new Indication(NA, 0);
-    public static final Indication NONE = new Indication(0, 0);
-    public static final Indication CERTAINTY = new Indication(1, 1);
+    public static final Indication NA_INDICATION = new ImmutableIndication(NA, NA);
+    public static final Indication UNKNOWN = new ImmutableIndication(NA, 0);
+    public static final Indication NONE = new ImmutableIndication(0, 0);
+    public static final Indication CERTAINTY = new ImmutableIndication(1, 1);
 
     @Getter
     @Setter

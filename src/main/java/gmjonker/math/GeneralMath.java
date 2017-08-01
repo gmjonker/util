@@ -301,7 +301,7 @@ public class GeneralMath
         return sum;
     }
     
-    public static <T> double sumBy_I(Collection<T> coll, Function<T, Integer> mapper)
+    public static <T> int sumBy_I(Collection<T> coll, Function<T, Integer> mapper)
     {
         int sum = 0;
         for (T el : coll)

@@ -131,7 +131,8 @@ public class StringNormalization
     /** A bit slower but neater than replacePunctuationFast **/
     public static String removePunctuation(String text)
     {
-        final Pattern pattern = Pattern.compile("[ \\t\\x0B\\f\\.:,\"'‘’“”„\\(\\)\\[\\]|/?!;=_*#<>€\\+]+");
+        // Also remove leading and trailing dashes
+        final Pattern pattern = Pattern.compile("(-\\s|\\s-|[ \\t\\x0B\\f\\.:,\"'‘’“”„\\(\\)\\[\\]|/?!;=_*#<>€\\+])+");
         return pattern.matcher(text).replaceAll(" ").trim();
     }
     

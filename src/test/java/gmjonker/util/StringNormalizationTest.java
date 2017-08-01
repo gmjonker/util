@@ -57,6 +57,11 @@ public class StringNormalizationTest
     {
         String text = "Price/quality, café, verjaardag, (\"a:b\").";
         assertThat(StringNormalization.removePunctuation(text), equalTo("Price quality café verjaardag a b"));
+
+        String text2 = "midden- en klein-bedrijf en -gedoe - --- hoi";
+        String noPunct = StringNormalization.removePunctuation(text2);
+        System.out.println("text2   = " + text2);
+        System.out.println("noPunct = " + noPunct);
     }
 
 }

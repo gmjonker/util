@@ -262,7 +262,15 @@ public class Util
     {
         return new URL(urlString);
     }
-    
+
+    public static <S,T> T nullSafeApply(S s, Function<S,T> function)
+    {
+        if (s == null) {
+            return null;
+        }
+        return function.apply(s);
+    }
+
     public boolean isAssertionsEnabled()
     {
         boolean assertsEnabled = false;

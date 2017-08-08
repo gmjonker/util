@@ -428,6 +428,22 @@ public class CollectionsUtil
         return newMap;
     }
 
+    @Nonnull
+    public static <T> Multiset<T> filter(Multiset<T> multiset, Function<Integer, Boolean> function)
+    {
+        Multiset<T> result = HashMultiset.create();
+        if (multiset == null)
+            return result;
+
+        for (Multiset.Entry<T> entry : multiset.entrySet()) {
+            int count = entry.getCount();
+            if (function.apply(count))
+                result.add(entry.getElement(), count);
+        }
+
+        return result;
+    }
+
     /**
      * Remove all entries where both key and value satisfy the predicates
      */

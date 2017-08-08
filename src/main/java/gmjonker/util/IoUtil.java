@@ -107,7 +107,16 @@ public class IoUtil
     public static CSVParser readCsvFile(String fileName, boolean hasHeaders) throws IOException
     {
         String fileContent = readFileAsOneString(fileName);
-        CSVFormat format = CSVFormat.EXCEL.withIgnoreEmptyLines().withIgnoreSurroundingSpaces();
+        CSVFormat format = CSVFormat.EXCEL.withIgnoreEmptyLines().withIgnoreSurroundingSpaces().withEscape('\\');
+        if (hasHeaders)
+            format = format.withHeader().withAllowMissingColumnNames();
+        return CSVParser.parse(fileContent, format);
+    }
+
+    public static CSVParser readCsvFile(String fileName, boolean hasHeaders, char delimiter) throws IOException
+    {
+        String fileContent = readFileAsOneString(fileName);
+        CSVFormat format = CSVFormat.EXCEL.withIgnoreEmptyLines().withIgnoreSurroundingSpaces().withDelimiter(delimiter).withEscape('\\');
         if (hasHeaders)
             format = format.withHeader().withAllowMissingColumnNames();
         return CSVParser.parse(fileContent, format);
@@ -116,6 +125,11 @@ public class IoUtil
     public static CSVParser readCsvFileWithHeaders(String fileName) throws IOException
     {
         return readCsvFile(fileName, true);
+    }
+
+    public static CSVParser readCsvFileWithHeaders(String fileName, char delimiter) throws IOException
+    {
+        return readCsvFile(fileName, true, delimiter);
     }
 
     public static CSVParser readCsvFileWithoutHeaders(String fileName) throws IOException
@@ -582,7 +596,7 @@ public class IoUtil
         writeTableToCsv(table, fileName, FormattingUtil::toStringer);
     }
 
-    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, Function<V, String> valueTransformer) throws IOException
+    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, @Nullable Function<V, String> valueTransformer) throws IOException
     {
         writeTableToCsv(table, fileName, FormattingUtil::toStringer, FormattingUtil::toStringer, valueTransformer);
     }
@@ -596,31 +610,32 @@ public class IoUtil
         writeTableToCsv(table, fileName, FormattingUtil::toStringer, FormattingUtil::toStringer, valueTransformer);
     }
 
-    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, Function<R, String> rowHeaderTransformer,
-            Function<C, String> columnHeaderTransformer, Function<V, String> valueTransformer) throws IOException
+    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, @Nullable Function<R, String> rowHeaderTransformer,
+            @Nullable Function<C, String> columnHeaderTransformer, @Nullable Function<V, String> valueTransformer) throws IOException
     {
         writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, valueTransformer, null, null);
     }
 
-    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, Function<R, String> rowHeaderTransformer,
-            Function<C, String> columnHeaderTransformer, BiFunction<R, C, Function<V, String>> valueTransformer) throws IOException
+    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, @Nullable Function<R, String> rowHeaderTransformer,
+            @Nullable Function<C, String> columnHeaderTransformer, @Nullable BiFunction<R, C, Function<V, String>> valueTransformer) throws IOException
     {
         writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, valueTransformer, null, null);
     }
 
-    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, Function<R, String> rowHeaderTransformer, 
-            Function<C, String> columnHeaderTransformer, Function<V, String> valueTransformer, @Nullable Comparator<R> rowComparator, 
+    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, @Nullable Function<R, String> rowHeaderTransformer, 
+            @Nullable Function<C, String> columnHeaderTransformer, @Nullable Function<V, String> valueTransformer, @Nullable Comparator<R> rowComparator, 
             @Nullable Comparator<C> columnComparator) throws IOException
     {
-        writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, (R row, C column) -> valueTransformer, rowComparator, columnComparator);
+        writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, 
+                valueTransformer != null ? (R row, C column) -> valueTransformer : null, rowComparator, columnComparator);
     }
 
     public static <R, C, V> void writeTableToCsv(
             Table<R, C, V> table,
             String fileName,
-            Function<R, String> rowHeaderTransformer,
-            Function<C, String> columnHeaderTransformer,
-            BiFunction<R, C, Function<V, String>> valueTransformer,
+            @Nullable Function<R, String> rowHeaderTransformer,
+            @Nullable Function<C, String> columnHeaderTransformer,
+            @Nullable BiFunction<R, C, Function<V, String>> valueTransformer,
             @Nullable Comparator<R> rowComparator,
             @Nullable Comparator<C> columnComparator
     ) throws IOException
@@ -643,12 +658,12 @@ public class IoUtil
             rowKeys = sortedRowKeys;
         }
         for (C columnKey : columnKeys)
-            csvPrinter.print(columnHeaderTransformer.apply(columnKey));
+            csvPrinter.print(columnHeaderTransformer != null ? columnHeaderTransformer.apply(columnKey) : columnKey);
         csvPrinter.println();
         for (R rowKey : rowKeys) {
-            csvPrinter.print(rowHeaderTransformer.apply(rowKey));
+            csvPrinter.print(rowHeaderTransformer != null ? rowHeaderTransformer.apply(rowKey) : rowKey);
             for (C columnKey : columnKeys) {
-                Function<V, String> function = valueTransformer.apply(rowKey, columnKey);
+                Function<V, String> function = valueTransformer != null ? valueTransformer.apply(rowKey, columnKey) : Object::toString;
                 V cell = table.get(rowKey, columnKey);
                 String string;
                 // Try-catching this to catch a mysterious null pointer exception when cell is null, but function should accept null variables AFAIK

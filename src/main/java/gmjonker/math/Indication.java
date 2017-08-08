@@ -96,7 +96,7 @@ public class Indication implements Comparable<Indication>
     /** Is valid and confidence > 0. **/
     public boolean indicatesSomething()
     {
-        return isValid() && value > 0.000000000000001 &&  confidence > 0.000000000000001;
+        return isValid() && abs(value) > 0.000000000000001 && confidence > 0.000000000000001;
     }
 
     @JsonIgnore

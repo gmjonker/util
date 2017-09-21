@@ -2,15 +2,14 @@ package gmjonker.math;
 
 import com.google.common.primitives.Doubles;
 import gmjonker.util.LambdaLogger;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-import static gmjonker.math.GeneralMath.abs;
-import static gmjonker.math.GeneralMath.mean;
-import static gmjonker.math.GeneralMath.pow;
+import static gmjonker.math.GeneralMath.*;
 import static gmjonker.util.CollectionsUtil.map;
 import static org.apache.commons.collections4.IterableUtils.toList;
 
@@ -33,6 +32,11 @@ public class Correlation
         double[] d1 = Doubles.toArray(series1);
         double[] d2 = Doubles.toArray(series2);
         return new PearsonsCorrelation().correlation(d1, d2);
+    }
+
+    public static double correlation(Collection<Pair<Double, Double>> points)
+    {
+        return correlation(points, Pair::getLeft, Pair::getRight);
     }
 
     public static double covariance(List<Double> series1, List<Double> series2)

@@ -35,6 +35,14 @@ public class SigmoidMathTest
     }
     
     @Test
+    public void testLogit()
+    {
+        System.out.println("logit(.5) = " + logit(.5));
+        System.out.println("logit(0) = " + logit(0));
+    }
+    
+    
+    @Test
     public void ssl()
     {
 //        {

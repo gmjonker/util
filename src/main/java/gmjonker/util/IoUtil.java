@@ -488,6 +488,15 @@ public class IoUtil
         }
     }
 
+    public static <T> void writeCollectionToCsv(String filename, Collection<T> collection) throws IOException
+    {
+        @Cleanup CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(filename), CSVFormat.EXCEL);
+        for (T element : collection) {
+            csvPrinter.print(element);
+            csvPrinter.println();
+        }
+    }
+
     public static <K, V> void writeMapToCsv(Map<K, V> map, String fileName) throws IOException
     {
         CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.EXCEL);

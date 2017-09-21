@@ -13,5 +13,6 @@ appender("STDOUT", ConsoleAppender) {
 //logger("gmjonker.math.IndicationStats", TRACE)
 //logger("gmjonker.math.SigmoidMath", TRACE)
 //logger("gmjonker.math.IndicationCorrelationOnline", TRACE)
+//logger("gmjonker.util.Node", TRACE)
 
 root(INFO, ["STDOUT"])

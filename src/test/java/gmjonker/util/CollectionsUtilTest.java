@@ -101,6 +101,40 @@ public class CollectionsUtilTest
     }
 
     @Test
+    public void sortMapByValueThenKey()
+    {
+        Random random = new Random(System.currentTimeMillis());
+        Map<Integer, Integer> testMap = new HashMap<>(1000);
+        for(int i = 0 ; i < 1000 ; ++i) {
+            testMap.put( random.nextInt(20), random.nextInt(20));
+        }
+        System.out.println("testMap = " + FormattingUtil.toStringLineByLine(testMap));
+
+        testMap = CollectionsUtil.sortMapByValueThenKey(testMap);
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println("testMap = " + FormattingUtil.toStringLineByLine(testMap));
+    }
+
+    @Test
+    public void sortMapByValueThenKeyMapped()
+    {
+        Random random = new Random(System.currentTimeMillis());
+        Map<Integer, Integer> testMap = new HashMap<>(1000);
+        for(int i = 0 ; i < 1000 ; ++i) {
+            testMap.put( random.nextInt(20), random.nextInt(20));
+        }
+        System.out.println("testMap = " + FormattingUtil.toStringLineByLine(testMap));
+
+        testMap = CollectionsUtil.sortMapByValueThenKey(testMap, x -> -x, x -> -x);
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println("testMap = " + FormattingUtil.toStringLineByLine(testMap));
+    }
+
+    @Test
     public void map()
     {
         DefaultingHashmap<Integer, Double> map = new DefaultingHashmap<>(new Double(2));

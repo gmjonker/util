@@ -139,7 +139,7 @@ public class StringNormalization
     /** Fast but can leave gaps of multiple spaces **/
     public static String replacePunctuationFast(String text, String replacement)
     {
-        final String punctuation = ".:,\"'“”()[]|/?!;=_*<>€";
+        final String punctuation = ".:,\"'“”()[]|/?!;=_*<>€-";
         final String replacementList = StringUtils.repeat(replacement, punctuation.length());
         return StringUtils.replaceChars(text, punctuation, replacementList);
     }

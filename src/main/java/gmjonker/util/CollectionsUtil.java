@@ -963,8 +963,6 @@ public class CollectionsUtil
         return result;
     }
     
-//    public static <T extends Comparable> sortByDescencing(Iterable<T> iterable, 
-
     /**
      * Sorts a Map by a function on its value, descendingly. Can handle NA.
      *
@@ -995,6 +993,66 @@ public class CollectionsUtil
         Stream<Map.Entry<K,V>> entries = map.entrySet().stream();
         entries.sorted(comparator).forEach(e -> result.put(e.getKey(), e.getValue()));
 
+        return result;
+    }
+
+    /**
+     * Sorts a Map by a function on its value, descendingly. Can handle NA.
+     *
+     * <p>Example usage:</p>
+     * <pre>
+     *  Map&lt;ItemId, ContentBasedScore&gt; sortedcontentBasedScores =
+     *      sortMap(recommendation.contentBasedScores, cbs -> cbs.contentBased);
+     * </pre>
+     * @return New hash map, sorted.
+     */
+    @Nonnull
+    public static <K, V> LinkedHashMap<K, V> sortMap(Map<K, V> map, BiFunction<K, V, Number> function)
+    {
+        if (map == null)
+            return new LinkedHashMap<>();
+
+        Comparator<Map.Entry<K, V>> comparator =
+                comparing(
+                        (Function<Map.Entry<K, V>, Double>) (kvEntry) -> {
+                            Double value = function.apply(kvEntry.getKey(), kvEntry.getValue()).doubleValue();
+                            if (!isValue(value))
+                                value = Double.MIN_VALUE;
+                            return value;
+                        }
+                ).reversed();
+
+        return sortMap(map, comparator);
+    }
+
+    public static <K, V> LinkedHashMap<K, V> sortMap(Map<K, V> map, Comparator<Map.Entry<K, V>> comparator)
+    {
+        LinkedHashMap<K,V> result = new LinkedHashMap<>();
+        Stream<Map.Entry<K,V>> entries = map.entrySet().stream();
+        entries.sorted(comparator).forEach(e -> result.put(e.getKey(), e.getValue()));
+        return result;
+    }
+
+    public static <K extends Comparable<K>, V extends Comparable<V>> LinkedHashMap<K, V> sortMapByValueThenKey(Map<K, V> map)
+    {
+        LinkedHashMap<K,V> result = new LinkedHashMap<>();
+        Function<Map.Entry<K, V>, V> valueExtractor = Map.Entry::getValue;
+        Function<Map.Entry<K, V>, K> keyExtractor = Map.Entry::getKey;
+        Comparator<Map.Entry<K,V>> comparator = Comparator.comparing(valueExtractor).thenComparing(keyExtractor);
+        map.entrySet().stream().sorted(comparator).forEach(e -> result.put(e.getKey(), e.getValue()));
+        return result;
+    }
+
+    public static <K, K2 extends Comparable<K2>, V, V2 extends Comparable<V2>> LinkedHashMap<K, V> sortMapByValueThenKey(
+            Map<K, V> map, Function<V,V2> valueMapper, Function<K,K2> keyMapper)
+    {
+        LinkedHashMap<K,V> result = new LinkedHashMap<>();
+        Function<Map.Entry<K, V>, V> valueExtractor = Map.Entry::getValue;
+        Function<Map.Entry<K, V>, K> keyExtractor = Map.Entry::getKey;
+        Comparator<Map.Entry<K,V>> comparator = Comparator
+                        .comparing(valueExtractor.andThen(valueMapper))
+                        .thenComparing(keyExtractor.andThen(keyMapper));
+        map.entrySet().stream().sorted(comparator).forEach(e -> result.put(e.getKey(), e.getValue()));
         return result;
     }
 

@@ -560,15 +560,22 @@ public class IoUtil
     {
         return readCsvIntoMultimapOrRTE(fileName, keyMapper, valueMapper, s -> true);
     }
+
+    public static <K, V> LinkedListMultimap<K, V> readCsvIntoMultimapOrRTE(String fileName, Function<String, K> keyMapper,
+           Function<String, V> valueMapper, Predicate<String> valueFilter) {
+        return readCsvIntoMultimapOrRTE(fileName, keyMapper, valueMapper, s -> true, valueFilter);
+    }
     
     public static <K, V> LinkedListMultimap<K, V> readCsvIntoMultimapOrRTE(String fileName, Function<String, K> keyMapper,
-            Function<String, V> valueMapper, Predicate<String> valueFilter)
+            Function<String, V> valueMapper, Predicate<String> keyFilter, Predicate<String> valueFilter)
     {
         try {
             LinkedListMultimap<K, V> map = LinkedListMultimap.create();
             CSVParser csvParser = readCsvFileWithoutHeaders(fileName);
             for (CSVRecord record : csvParser.getRecords()) {
                 String key = record.get(0);
+                if ( ! keyFilter.test(key))
+                    continue;
                 for (int i = 1; i < record.size(); i++) {
                     String value = record.get(i);
                     if ( ! valueFilter.test(value))

@@ -85,25 +85,25 @@ public class SigmoidTest
     @Test
     public void getConfidencez()
     {
-        System.out.println("getConfidence(0, 1) = " + getConfidence(0d, 1d));
-        System.out.println("getConfidence(1, 1) = " + getConfidence(1d, 1d));
-        System.out.println("getConfidence(2, 1) = " + getConfidence(2d, 1d));
-        System.out.println("getConfidence(4, 1) = " + getConfidence(4d, 1d));
-        System.out.println("getConfidence(8, 1) = " + getConfidence(8d, 1d));
+        System.out.println("sampleSizeToConfidenceFast(0, 1) = " + sampleSizeToConfidenceFast(0d, 1d));
+        System.out.println("sampleSizeToConfidenceFast(1, 1) = " + sampleSizeToConfidenceFast(1d, 1d));
+        System.out.println("sampleSizeToConfidenceFast(2, 1) = " + sampleSizeToConfidenceFast(2d, 1d));
+        System.out.println("sampleSizeToConfidenceFast(4, 1) = " + sampleSizeToConfidenceFast(4d, 1d));
+        System.out.println("sampleSizeToConfidenceFast(8, 1) = " + sampleSizeToConfidenceFast(8d, 1d));
 
-        System.out.println("getConfidence(0, .2) = " + getConfidence(0d, .2d));
-        System.out.println("getConfidence(1, .2) = " + getConfidence(1d, .2d));
-        System.out.println("getConfidence(2, .2) = " + getConfidence(2d, .2d));
-        System.out.println("getConfidence(4, .2) = " + getConfidence(4d, .2d));
-        System.out.println("getConfidence(8, .2) = " + getConfidence(8d, .2d));
-        System.out.println("getConfidence(16, .2) = " + getConfidence(16d, .2d));
-        System.out.println("getConfidence(32, .2) = " + getConfidence(32d, .2d));
+        System.out.println("sampleSizeToConfidenceFast(0, .2) = " + sampleSizeToConfidenceFast(0d, .2d));
+        System.out.println("sampleSizeToConfidenceFast(1, .2) = " + sampleSizeToConfidenceFast(1d, .2d));
+        System.out.println("sampleSizeToConfidenceFast(2, .2) = " + sampleSizeToConfidenceFast(2d, .2d));
+        System.out.println("sampleSizeToConfidenceFast(4, .2) = " + sampleSizeToConfidenceFast(4d, .2d));
+        System.out.println("sampleSizeToConfidenceFast(8, .2) = " + sampleSizeToConfidenceFast(8d, .2d));
+        System.out.println("sampleSizeToConfidenceFast(16, .2) = " + sampleSizeToConfidenceFast(16d, .2d));
+        System.out.println("sampleSizeToConfidenceFast(32, .2) = " + sampleSizeToConfidenceFast(32d, .2d));
 
-        System.out.println("getConfidence(0, 5) = " + getConfidence(0d, 5d));
-        System.out.println("getConfidence(1, 5) = " + getConfidence(1d, 5d));
-        System.out.println("getConfidence(2, 5) = " + getConfidence(2d, 5d));
-        System.out.println("getConfidence(4, 5) = " + getConfidence(4d, 5d));
-        System.out.println("getConfidence(8, 5) = " + getConfidence(8d, 5d));
+        System.out.println("sampleSizeToConfidenceFast(0, 5) = " + sampleSizeToConfidenceFast(0d, 5d));
+        System.out.println("sampleSizeToConfidenceFast(1, 5) = " + sampleSizeToConfidenceFast(1d, 5d));
+        System.out.println("sampleSizeToConfidenceFast(2, 5) = " + sampleSizeToConfidenceFast(2d, 5d));
+        System.out.println("sampleSizeToConfidenceFast(4, 5) = " + sampleSizeToConfidenceFast(4d, 5d));
+        System.out.println("sampleSizeToConfidenceFast(8, 5) = " + sampleSizeToConfidenceFast(8d, 5d));
     }
 
     @Test

@@ -73,6 +73,13 @@ public class IndicationMatcher extends TypeSafeMatcher<Indication>
         return new IndicationMatcher(value - epsilon, value + epsilon, confidence - epsilon, confidence + epsilon);
     }
 
+    // Alias
+    @Factory
+    public static <T> Matcher<Indication> indicationCloseTo(double value, double confidence, double epsilon)
+    {
+        return closeTo(value, confidence, epsilon);
+    }
+
     @Factory
     public static <T> Matcher<Indication> isValidIndication()
     {

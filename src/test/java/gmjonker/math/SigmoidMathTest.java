@@ -10,10 +10,24 @@ import static org.hamcrest.Matchers.closeTo;
 public class SigmoidMathTest
 {
     @Test
+    public void sigmoidd()
+    {
+        double x = 1;
+        double s1 = SigmoidMath.sigmoid(1);
+        double s2 = 1 / (1 + Math.exp(-x));
+        System.out.println("s1 = " + s1);
+        System.out.println("s2 = " + s2);
+    }
+    @Test
     public void toMinusOneOneIntervalTest() throws Exception
     {
-        double gp = 1;
+        double gp = 3;
+        System.out.println(toMinusOneOneInterval(.01  , gp));
+        System.out.println(toMinusOneOneInterval(.02  , gp));
+        System.out.println(toMinusOneOneInterval(.1   , gp));
+        System.out.println(toMinusOneOneInterval(.2   , gp));
         System.out.println(toMinusOneOneInterval(1.0  , gp));
+        System.out.println(toMinusOneOneInterval(2.0  , gp));
         System.out.println(toMinusOneOneInterval(10.0 , gp));
         System.out.println(toMinusOneOneInterval(20.0 , gp));
         System.out.println(toMinusOneOneInterval(100.0, gp));
@@ -23,15 +37,15 @@ public class SigmoidMathTest
     @Test
     public void getGrowthParameterTest() throws Exception
     {
-        System.out.println(getGrowthParameter(10, .9));
-        System.out.println(getGrowthParameter( 1, .9));
-        System.out.println(getGrowthParameter(10, .5));
-        System.out.println(getGrowthParameter(20, .9));
+        System.out.println(getGrowthParameterFast(10, .9));
+        System.out.println(getGrowthParameterFast( 1, .9));
+        System.out.println(getGrowthParameterFast(10, .5));
+        System.out.println(getGrowthParameterFast(20, .9));
         
-        assertThat(toMinusOneOneInterval( 10, getGrowthParameter( 10, .9)), closeTo(.9, .00001));
-        assertThat(toMinusOneOneInterval(  1, getGrowthParameter(  1, .9)), closeTo(.9, .00001));
-        assertThat(toMinusOneOneInterval( 10, getGrowthParameter( 10, .5)), closeTo(.5, .00001));
-        assertThat(toMinusOneOneInterval(100, getGrowthParameter(100, .5)), closeTo(.5, .00001));
+        assertThat(toMinusOneOneInterval( 10, getGrowthParameterFast( 10, .9)), closeTo(.9, .00001));
+        assertThat(toMinusOneOneInterval(  1, getGrowthParameterFast(  1, .9)), closeTo(.9, .00001));
+        assertThat(toMinusOneOneInterval( 10, getGrowthParameterFast( 10, .5)), closeTo(.5, .00001));
+        assertThat(toMinusOneOneInterval(100, getGrowthParameterFast(100, .5)), closeTo(.5, .00001));
     }
     
     @Test
@@ -39,8 +53,10 @@ public class SigmoidMathTest
     {
         System.out.println("logit(.5) = " + logit(.5));
         System.out.println("logit(0) = " + logit(0));
+
+        System.out.println(sigmoid(1, -1, 1));
+        System.out.println(sigmoid(logit(.5, -1, 1) + logit(.5, -1, 1), -1, 1));
     }
-    
     
     @Test
     public void ssl()

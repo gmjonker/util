@@ -91,10 +91,11 @@ public class LambdaLogger implements Logger
             FormattingTuple formattingTuple = MessageFormatter.arrayFormat(message, argumentArray);
             String formattedMessage = formattingTuple.getMessage();
             Throwable throwable = formattingTuple.getThrowable();
-            if (rememberedErrors.contains(formattedMessage + throwable.getMessage()))
+            String throwableMessage = throwable != null ? throwable.getMessage() : "";
+            if (rememberedErrors.contains(formattedMessage + throwableMessage))
                 return;
             error(formattedMessage + " (Won't show this warning again)", throwable);
-            rememberedErrors.add(formattedMessage + throwable.getMessage());
+            rememberedErrors.add(formattedMessage + throwableMessage);
         }
     }
 

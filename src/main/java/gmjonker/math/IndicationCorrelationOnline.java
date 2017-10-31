@@ -10,6 +10,13 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
+/**
+ * Note that covariance, Pearson similarity and cosine similarity are conceptually similar. One could say that consine similarity
+ * is covariance normalized for scale, and Pearson is centered covariance.
+ * 
+ * Note that the covariance/cosine similarity/Pearson similarity of two vectors that are all zeros is zero or undefined.
+ * This may or may not be desired. If not, one could opt for someting based on euclidean distance instead.
+ */
 public class IndicationCorrelationOnline
 {
     @Getter private List<Indication> series1 = new ArrayList<>();
@@ -50,9 +57,49 @@ public class IndicationCorrelationOnline
         }
         return total / n;
     }
+    
+    public static double getCovariance0(List<Indication> series1, List<Indication> series2)
+    {
+        IndicationCorrelationOnline indicationCorrelationOnline = new IndicationCorrelationOnline();
+        indicationCorrelationOnline.series1 = series1;
+        indicationCorrelationOnline.series2 = series2;
+        return indicationCorrelationOnline.getCovariance0();        
+    }
 
-    // Not doing this, because determining resulting confidence should be up to the caller
-    //    /**
+    /**
+     * @return Indication where confidence is the average of the pairwise products of the confidences
+     */
+    public Indication getCovariance0AsIndication()
+    {
+        assert series1.size() == series2.size();
+
+        int numPairs = series1.size();
+        double cumValue = 0;
+        double cumJointConfidence = 0;
+        double cumSumConfidence = 0;
+        for (int i = 0; i < numPairs; i++) {
+            Indication indication1 = series1.get(i);
+            Indication indication2 = series2.get(i);
+            double jointConfidence = indication1.confidence * indication2.confidence;
+            cumValue += indication1.value * indication2.value * jointConfidence;
+            cumJointConfidence += jointConfidence;
+            cumSumConfidence += indication1.confidence * indication2.confidence;
+        }
+        double value = cumValue / cumJointConfidence;
+        double confidence = cumSumConfidence / numPairs;
+        return new Indication(value, confidence);
+    }
+
+    public static Indication getCovariance0AsIndication(List<Indication> series1, List<Indication> series2)
+    {
+        IndicationCorrelationOnline indicationCorrelationOnline = new IndicationCorrelationOnline();
+        indicationCorrelationOnline.series1 = series1;
+        indicationCorrelationOnline.series2 = series2;
+        return indicationCorrelationOnline.getCovariance0AsIndication();
+    }
+
+// Not doing this, because determining resulting confidence should be up to the caller
+//    /**
 //     * @return Indication where confidence is only based on the total sum of confidences in the series (the more high-confidence
 //     * indications there are, the more confidence we have in the covariance).
 //     * 

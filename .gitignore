@@ -14,3 +14,5 @@ hs_err_pid*
 /*.hprof
 target/
 out/
+/.gradle/
+/build/

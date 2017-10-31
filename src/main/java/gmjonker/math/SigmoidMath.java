@@ -66,14 +66,14 @@ public class SigmoidMath
      * @param growthParameter The higher this value, the faster this function will approach 1 for increasing sample size
      * @return A value in [0,1)
      */
-    public static double getConfidence(double sampleSize, double growthParameter)
+    public static double sampleSizeToConfidenceFast(double sampleSize, double growthParameter)
     {
         if (sampleSize < 0)
-            throw new RuntimeException("getConfidence not defined for sampleSize < 0");
+            throw new RuntimeException("sampleSizeToConfidenceFast not defined for sampleSize < 0");
         return toMinusOneOneInterval(sampleSize, growthParameter);
     }
     
-    public static double getGrowthParameter(double sampleSize, double desiredConfidence)
+    public static double getGrowthParameterFast(double sampleSize, double desiredConfidence)
     {
         if (desiredConfidence == 1)
             throw new IllegalArgumentException("desiredConfidence cannot be 0");

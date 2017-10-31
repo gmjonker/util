@@ -2,6 +2,7 @@ package gmjonker.math;
 
 import lombok.Data;
 
+import static gmjonker.math.GeneralMath.round;
 import static gmjonker.util.FormattingUtil.asPercentage;
 
 @Data
@@ -20,6 +21,6 @@ public class ValueConf
 
     public String toShortString()
     {
-        return value + "/" + asPercentage(confidence);
+        return round(value, 4) + "|" + asPercentage(confidence);
     }
 }

@@ -271,7 +271,7 @@ public class Util
         return function.apply(s);
     }
 
-    public boolean isAssertionsEnabled()
+    public static boolean isAssertionsEnabled()
     {
         boolean assertsEnabled = false;
         assert assertsEnabled = true; // Intentional side-effect!!!

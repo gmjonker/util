@@ -15,8 +15,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-import static gmjonker.math.NaType.*;
+import static gmjonker.math.NaType.NA;
+import static gmjonker.math.NaType.NA_I;
+import static gmjonker.math.NaType.isValue;
 import static gmjonker.util.CollectionsUtil.filterNulls;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
@@ -112,6 +116,26 @@ public class GeneralMath
             return NA;
 
         return Math.round(value * pow(10, decimals)) / pow(10, decimals);
+    }
+
+    /**
+     * @param decimals decimals after the dot.
+     */
+    public static Iterable<Double> round(Iterable<Double> values, int decimals)
+    {
+//        return () -> new Iterator<Double>() {
+//            @Override
+//            public boolean hasNext() {
+//                return values.iterator().hasNext();
+//            }
+//            @Override
+//            public Double next() {
+//                return round(values.iterator().next(), decimals);
+//            }
+//        };
+        return StreamSupport.stream(values.spliterator(), false)
+                .map(x -> round(x, decimals))
+                .collect(Collectors.toList());
     }
 
     public static double max(double x1, double x2)

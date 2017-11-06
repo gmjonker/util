@@ -1,5 +1,7 @@
 package gmjonker.math;
 
+import static gmjonker.math.NaType.NA;
+
 /**
  * Copied from Mahout.
  * 
@@ -14,7 +16,8 @@ public class CosineDistance
      * @param p2
      * @return Result in (0,2)
      */
-    public static double distance(double[] p1, double[] p2) {
+    public static double distance(double[] p1, double[] p2) 
+    {
         assert p1.length == p2.length;
         double dotProduct = 0.0;
         double lengthSquaredp1 = 0.0;
@@ -33,7 +36,7 @@ public class CosineDistance
 
         // correct for zero-vector corner case
         if (denominator == 0 && dotProduct == 0) {
-            return 0;
+            return NA;
         }
 
         return 1.0 - dotProduct / denominator;

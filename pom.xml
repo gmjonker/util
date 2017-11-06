@@ -58,6 +58,24 @@
             <groupId>com.github.gaohanghbut</groupId>
             <artifactId>freetookit</artifactId>
             <version>33864cb4ce</version>
+            <exclusions>
+                    <!--|    +-&#45;&#45; org.springframework:spring-core:4.1.6.RELEASE-->
+                    <!--|    |    \-&#45;&#45; commons-logging:commons-logging:1.2-->
+                    <!--|    +-&#45;&#45; javax.validation:validation-api:1.1.0.Final-->
+                    <!--|    +-&#45;&#45; redis.clients:jedis:2.1.0-->
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <!--<exclusion>-->
+                    <!--<groupId></groupId>-->
+                    <!--<artifactId>validation-api</artifactId>-->
+                <!--</exclusion>-->
+                <exclusion>
+                    <groupId>redis.clients</groupId>
+                    <artifactId>jedis</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>

@@ -217,6 +217,23 @@ public class LambdaLogger implements Logger
         }
     }
 
+    /** Log separate lines separately, indents all lines of argument.toString() except the first and the last **/
+    @SafeVarargs
+    public final void debugv(String format, Supplier<String>... arguments)
+    {
+        if (logger.isDebugEnabled()) {
+            Object[] resolvedArgs = Arrays.stream(arguments).map(Supplier::get).toArray();
+            String formattedMessage = MessageFormatter.arrayFormat(format, resolvedArgs).getMessage();
+            String[] lines = formattedMessage.split("\n");
+            for (int i = 0; i < lines.length; i++) {
+                if (i == 0 || i == lines.length - 1)
+                    logger.debug(lines[i]);
+                else 
+                    logger.debug("  " + lines[i]);
+            }
+        }
+    }
+
     public final void debug(Supplier<String> argument)
     {
         if (logger.isDebugEnabled())

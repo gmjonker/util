@@ -39,16 +39,32 @@ public class CollectionsUtil
     protected static final LambdaLogger log = new LambdaLogger(CollectionsUtil.class);
 
     @Nonnull
-    public static <T, R> Iterable<R> map(Iterable<T> collection, Function<T, R> function)
+    public static <T, R> List<R> map(Iterable<T> iterable, Function<T, R> function)
     {
-        if (collection == null)
+        if (iterable == null)
             return emptyList();
         
         List<R> list = new ArrayList<>();
-        for (T el : collection) {
+        for (T el : iterable) {
             if (el == null) 
                 continue;
             list.add(function.apply(el));
+        }
+        return list;
+    }
+
+    @Nonnull
+    public static <T, R> List<R> map(Iterator<T> iterator, Function<T, R> function)
+    {
+        if (iterator == null)
+            return emptyList();
+        
+        List<R> list = new ArrayList<>();
+        while(iterator.hasNext()) {
+            T t = iterator.next();
+            if (t == null)
+                continue;
+            list.add(function.apply(t));
         }
         return list;
     }

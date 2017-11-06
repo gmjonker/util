@@ -2,7 +2,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 
 appender("STDOUT", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
-        pattern = "T|%-5.-5level %-20.20logger{5} - %msg %n"
+        pattern = "S|%-5.-5level %-20.20logger{5} - %msg %n"
     }
 }
 

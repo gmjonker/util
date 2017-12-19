@@ -606,55 +606,86 @@ public class IoUtil
 
 
 
+    private static Function<Object, String> toStringer = FormattingUtil::toStringer;
 
-    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName) throws IOException
+    public static <R, C, V> void writeTableToCsv(
+            Table<R, C, V> table, 
+            String fileName) throws IOException
     {
-        writeTableToCsv(table, fileName, FormattingUtil::toStringer);
+        writeTableToCsv(table, fileName, toStringer);
     }
 
-    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, @Nullable Function<V, String> valueTransformer) throws IOException
+    public static <R, C extends Comparable, V> void writeTableToCsvColumnsSorted(
+            Table<R, C, V> table, 
+            String fileName, 
+            boolean ascending) throws IOException
     {
-        writeTableToCsv(table, fileName, FormattingUtil::toStringer, FormattingUtil::toStringer, valueTransformer);
+        Ordering<C> comparator = ascending ? Ordering.natural() : Ordering.natural().reverse();
+        writeTableToCsv(table, fileName, toStringer, toStringer, toStringer, null, comparator);
+    }
+
+    public static <R, C, V> void writeTableToCsv(
+            Table<R, C, V> table, 
+            String fileName, 
+            @Nullable Function<? super V, String> valueTransformer) throws IOException
+    {
+        writeTableToCsv(table, fileName, toStringer, toStringer, valueTransformer);
     }
 
     /**
      * @param valueTransformer NOP form: (row, column) -> ((value) -> value)
      */
-    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, 
-            BiFunction<R, C, Function<V, String>> valueTransformer) throws IOException
+    public static <R, C, V> void writeTableToCsv(
+            Table<R, C, V> table, 
+            String fileName, 
+            BiFunction<R, C, Function<? super V, String>> valueTransformer) throws IOException
     {
-        writeTableToCsv(table, fileName, FormattingUtil::toStringer, FormattingUtil::toStringer, valueTransformer);
+        writeTableToCsv(table, fileName, toStringer, toStringer, valueTransformer);
     }
 
-    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, @Nullable Function<R, String> rowHeaderTransformer,
-            @Nullable Function<C, String> columnHeaderTransformer, @Nullable Function<V, String> valueTransformer) throws IOException
+    public static <R, C, V> void writeTableToCsv(
+            Table<R, C, V> table, 
+            String fileName, 
+            @Nullable Function<? super R, String> rowHeaderTransformer,
+            @Nullable Function<? super C, String> columnHeaderTransformer, 
+            @Nullable Function<? super V, String> valueTransformer) throws IOException
     {
         writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, valueTransformer, null, null);
     }
 
-    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, @Nullable Function<R, String> rowHeaderTransformer,
-            @Nullable Function<C, String> columnHeaderTransformer, @Nullable BiFunction<R, C, Function<V, String>> valueTransformer) throws IOException
+    public static <R, C, V> void writeTableToCsv(
+            Table<R, C, V> table, 
+            String fileName, 
+            @Nullable Function<? super R, String> rowHeaderTransformer,
+            @Nullable Function<? super C, String> columnHeaderTransformer, 
+            @Nullable BiFunction<R, C, Function<? super V, String>> valueTransformer) throws IOException
     {
         writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, valueTransformer, null, null);
     }
 
-    public static <R, C, V> void writeTableToCsv(Table<R, C, V> table, String fileName, @Nullable Function<R, String> rowHeaderTransformer, 
-            @Nullable Function<C, String> columnHeaderTransformer, @Nullable Function<V, String> valueTransformer, @Nullable Comparator<R> rowComparator, 
-            @Nullable Comparator<C> columnComparator) throws IOException
+    public static <R, C, V> void writeTableToCsv(
+            Table<R, C, V> table, 
+            String fileName, 
+            @Nullable Function<? super R, String> rowHeaderTransformer, 
+            @Nullable Function<? super C, String> columnHeaderTransformer, 
+            @Nullable Function<? super V, String> valueTransformer, 
+            @Nullable Comparator<? super R> rowComparator, 
+            @Nullable Comparator<? super C> columnComparator) throws IOException
     {
-        writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, 
-                valueTransformer != null ? (R row, C column) -> valueTransformer : null, rowComparator, columnComparator);
+        BiFunction<R, C, Function<? super V, String>> valueTransformer1 
+                = valueTransformer != null ? (R row, C column) -> valueTransformer : null;
+        writeTableToCsv(table, fileName, rowHeaderTransformer, columnHeaderTransformer, valueTransformer1, rowComparator, 
+                columnComparator);
     }
 
     public static <R, C, V> void writeTableToCsv(
             Table<R, C, V> table,
             String fileName,
-            @Nullable Function<R, String> rowHeaderTransformer,
-            @Nullable Function<C, String> columnHeaderTransformer,
-            @Nullable BiFunction<R, C, Function<V, String>> valueTransformer,
-            @Nullable Comparator<R> rowComparator,
-            @Nullable Comparator<C> columnComparator
-    ) throws IOException
+            @Nullable Function<? super R, String> rowHeaderTransformer,
+            @Nullable Function<? super C, String> columnHeaderTransformer,
+            @Nullable BiFunction<R, C, Function<? super V, String>> valueTransformer,
+            @Nullable Comparator<? super R> rowComparator,
+            @Nullable Comparator<? super C> columnComparator) throws IOException
     {
         FileWriter fileWriter = new FileWriter(fileName);
         CSVPrinter csvPrinter = new CSVPrinter(fileWriter, CSVFormat.EXCEL);
@@ -679,7 +710,7 @@ public class IoUtil
         for (R rowKey : rowKeys) {
             csvPrinter.print(rowHeaderTransformer != null ? rowHeaderTransformer.apply(rowKey) : rowKey);
             for (C columnKey : columnKeys) {
-                Function<V, String> function = valueTransformer != null ? valueTransformer.apply(rowKey, columnKey) : Object::toString;
+                Function<? super V, String> function = valueTransformer != null ? valueTransformer.apply(rowKey, columnKey) : Object::toString;
                 V cell = table.get(rowKey, columnKey);
                 String string;
                 // Try-catching this to catch a mysterious null pointer exception when cell is null, but function should accept null variables AFAIK

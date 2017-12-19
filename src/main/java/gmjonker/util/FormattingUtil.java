@@ -11,6 +11,7 @@ import com.google.gson.JsonParser;
 import jdk.nashorn.internal.objects.NativeString;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -347,12 +348,11 @@ public class FormattingUtil
         return result.toString();        
     }
     
-    public static <T> String toStringLineByLine(Iterable<T> collection)
+    public static <T> String toStringLineByLine(Iterable<T> iterable)
     {
-        char[] outer = collection instanceof List ? new char[]{'[', ']'} : new char[]{'{', '}'};
-        String result = outer[0] + "\n";
-        for (T t : collection)
-//            result += "    " + t.toString() + "\n";
+        char[] outer = iterable instanceof List ? new char[]{'[', ']'} : new char[]{'{', '}'};
+        String result = outer[0] + (IterableUtils.isEmpty(iterable) ? "" : "\n");
+        for (T t : iterable)
             result += indent(t != null ? t.toString() : "", 3) + "\n";
         result += outer[1];
         return result;
@@ -360,9 +360,19 @@ public class FormattingUtil
 
     public static <K,V> String toStringLineByLine(Map<K,V> map)
     {
-        String result = "[\n";
+        String result = "[" + (MapUtils.isEmpty(map) ? "" : "\n");
         for (Map.Entry<K, V> entry : map.entrySet())
             result += "  " + entry.getKey().toString() + " -> " + entry.getValue() + "\n";
+        result += "]";
+        return result;
+    }
+
+    public static <K,V> String toStringLineByLine(Map<K,V> map, Function<K,?> keyMapper, Function<V,?> valueMapper)
+    {
+        String result = "[" + (MapUtils.isEmpty(map) ? "" : "\n");
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            result += "  " + keyMapper.apply(entry.getKey()) + " -> " + valueMapper.apply(entry.getValue()) + "\n";
+        }
         result += "]";
         return result;
     }
@@ -377,7 +387,7 @@ public class FormattingUtil
 
     public static <K,V> String toStringLineByLine(Multimap<K,V> map)
     {
-        String result = "[\n";
+        String result = "[" + (map == null || map.isEmpty() ? "" : "\n");
         for (Map.Entry<K, V> entry : map.entries())
             result += "  " + entry.getKey().toString() + " -> " + entry.getValue() + "\n";
         result += "]";
@@ -387,6 +397,11 @@ public class FormattingUtil
     public static <K> String mapToString(Map<K,?> map, Function<K,?> keyMapper)
     {
         return CollectionsUtil.map(map, keyMapper, v -> v).toString();
+    }
+
+    public static <K,V> String mapToString(Map<K,V> map, Function<K,?> keyMapper, Function<V,?> valueMapper)
+    {
+        return CollectionsUtil.map(map, keyMapper, valueMapper).toString();
     }
 
     // This method is needed because the mapToString above will always select CollectionsUtil.map(Map...)

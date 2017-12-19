@@ -664,10 +664,11 @@ public class CollectionsUtil
     
     public static <T,K,V> Map<K,V> toMap(Collection<T> coll, Function<T,K> keyMapper, Function<T,V> valueMapper)
     {
+        if (coll == null)
+            return emptyMap();
         Map<K,V> map = new HashMap<>();
-        for (T el : coll) {
+        for (T el : coll) 
             map.put(keyMapper.apply(el), valueMapper.apply(el));
-        }
         return map;        
     }
 

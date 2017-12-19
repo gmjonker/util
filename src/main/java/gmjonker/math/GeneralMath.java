@@ -810,6 +810,7 @@ public class GeneralMath
 
     /**
      * This function could also be called 'expand' or 'changeContrast'. It's a S-shaped function meant to expand values in the (-1,1) interval
+     * http://rechneronline.de/function-graphs/
      * a0=2&a1=1.1x/(.1+abs(x))&a2=&a3=&a4=1&a5=4&a6=8&a7=1&a8=1&a9=1&b0=480&b1=480&b2=-2&b3=2&b4=-2&b5=2&b6=8&b7=8&b8=5&b9=5&c0=3&c1=0&c2=1&c3=1&c4=1&c5=1&c6=1&c7=0&c8=0&c9=0&d0=1&d1=16&d2=16&d3=0&d4=&d5=&d6=&d7=&d8=&d9=&e0=&e1=&e2=&e3=&e4=14&e5=14&e6=13&e7=12&e8=0&e9=0&f0=0&f1=1&f2=1&f3=0&f4=0&f5=&f6=&f7=&f8=&f9=&g0=&g1=1&g2=1&g3=0&g4=0&g5=0&g6=Y&g7=ffffff&g8=a0b0c0&g9=6080a0&h0=1&h1=&h2=&h3=&h4=0&z
      * <p> 
      * <p>alpha 0  -> maximum expansion, maximum contrast increase, y=-1 before x=0 and y=1 after that

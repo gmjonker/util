@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 import static gmjonker.math.NaType.getValueOr;
 import static gmjonker.math.NaType.isValue;
 import static java.util.Collections.*;
-import static java.util.Collections.reverseOrder;
 import static java.util.Comparator.*;
 import static org.apache.commons.collections4.CollectionUtils.emptyCollection;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
@@ -429,7 +428,7 @@ public class CollectionsUtil
         if (map == null)
             return new HashMap<>();
 
-        HashMap<K,V> newMap = new HashMap<>();
+        HashMap<K,V> newMap = new LinkedHashMap<>(); // Keep iteration order, = sometimes nice
 
         for (Map.Entry<K, V> kvEntry : map.entrySet()) {
             K key = kvEntry.getKey();
@@ -895,21 +894,34 @@ public class CollectionsUtil
     // ###################################################### SORTING ##################################################
     //
 
+    public static <T extends Comparable<? super T>> List<T> sort(Collection<T> collection) 
+    {
+        return sortAsc(collection);
+    }
+    
     public static <T extends Comparable<? super T>> List<T> sortAsc(Collection<T> collection) 
     {
         ArrayList<T> list = new ArrayList<>(collection);
-        sort(list);
+        Collections.sort(list);
         return list;
     }
     
     public static <T extends Comparable<? super T>> List<T> sortDesc(Collection<T> collection) 
     {
         ArrayList<T> list = new ArrayList<>(collection);
-        sort(list);
-        reverse(list);
+        Collections.sort(list);
+        Collections.reverse(list);
         return list;
     }
-    
+
+    public static <T> List<T> sortAscBy(Collection<T> collection, Function<T, ? extends Comparable> mapper)
+    {
+        ArrayList<T> list = new ArrayList<>(collection);
+        Collections.sort(list, Comparator.comparing(mapper::apply));
+        return list;
+    }
+
+
     /**
      * Sorts a map by value. Adapted from http://stackoverflow.com/a/2581754/1901037
      *
@@ -948,7 +960,7 @@ public class CollectionsUtil
             return result;
 
         Stream<Map.Entry<K,V>> st = map.entrySet().stream();
-        Comparator<V> order = ascending ? naturalOrder() : reverseOrder();
+        Comparator<V> order = ascending ? naturalOrder() : Comparator.reverseOrder();
         Comparator<Map.Entry<K, V>> comparator = comparing(Map.Entry::getValue, nullsLast(order));
         Stream<Map.Entry<K, V>> sorted = st.sorted(comparator);
         sorted.forEach(e -> result.put(e.getKey(), e.getValue()));
@@ -1127,7 +1139,7 @@ public class CollectionsUtil
     public static <K, V> Map<K, V> shuffleMap(Map<K, V> map)
     {
         List<K> keys = newListFrom(map.keySet());
-        shuffle(keys);
+        Collections.shuffle(keys);
         LinkedHashMap<K,V> result = new LinkedHashMap<>();
         for (K key : keys) {
             result.put(key, map.get(key));

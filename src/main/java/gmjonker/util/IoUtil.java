@@ -605,7 +605,6 @@ public class IoUtil
 
 
 
-
     private static Function<Object, String> toStringer = FormattingUtil::toStringer;
 
     public static <R, C, V> void writeTableToCsv(

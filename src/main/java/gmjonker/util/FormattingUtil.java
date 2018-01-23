@@ -497,28 +497,30 @@ public class FormattingUtil
         return gson.toJson(je);
     }
 
+    private static Function<Object, String> toStringer = FormattingUtil::toStringer;
+    
     // Implementation is a bit slow, beware.
     public static <R, C, V> String tableToString(Table<R, C, V> table)
     {
-        return tableToString(table, FormattingUtil::toStringer, FormattingUtil::toStringer, FormattingUtil::toStringer, null, null);
+        return tableToString(table, toStringer, toStringer, toStringer, null, null);
     }
 
     // Implementation is a bit slow, beware.
-    public static <R, C, V> String tableToString(Table<R, C, V> table, Function<V, String> valueFormatter)
+    public static <R, C, V> String tableToString(Table<R, C, V> table, Function<? super V, String> valueFormatter)
     {
-        return tableToString(table, FormattingUtil::toStringer, FormattingUtil::toStringer, valueFormatter, null, null);
+        return tableToString(table, toStringer, toStringer, valueFormatter, null, null);
     }
 
     // Implementation is a bit slow, beware.
-    public static <R, C, V> String tableToString(Table<R, C, V> table, Function<R, String> rowHeaderFormatter,
-            Function<C, String> columnHeaderFormatter, Function<V, String> valueFormatter)
+    public static <R, C, V> String tableToString(Table<R, C, V> table, Function<? super R, String> rowHeaderFormatter,
+            Function<? super C, String> columnHeaderFormatter, Function<? super V, String> valueFormatter)
     {
         return tableToString(table, rowHeaderFormatter, columnHeaderFormatter, valueFormatter, null, null);
     }
 
     // Implementation is a bit slow, beware.
-    public static <R, C, V> String tableToString(Table<R, C, V> table, Function<R, String> rowHeaderFormatter,
-            Function<C, String> columnHeaderFormatter, Function<V, String> valueFormatter,
+    public static <R, C, V> String tableToString(Table<R, C, V> table, Function<? super R, String> rowHeaderFormatter,
+            Function<? super C, String> columnHeaderFormatter, Function<? super V, String> valueFormatter,
             @Nullable Comparator<R> rowComparator, @Nullable Comparator<C> columnComparator)
     {
         StringBuilder result = new StringBuilder();

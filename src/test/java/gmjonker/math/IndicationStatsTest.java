@@ -10,7 +10,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static spock.util.matcher.HamcrestMatchers.closeTo;
+import static org.hamcrest.Matchers.closeTo;
 
 public class IndicationStatsTest
 {

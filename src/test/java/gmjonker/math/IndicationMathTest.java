@@ -1,25 +1,26 @@
 package gmjonker.math;
 
 import lombok.val;
-import org.apache.commons.math3.util.MathArrays;
-import org.junit.*;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static gmjonker.TestUtil.ind;
-import static gmjonker.math.GeneralMath.*;
+import static gmjonker.math.GeneralMath.abs;
+import static gmjonker.math.GeneralMath.round;
 import static gmjonker.math.Indication.toPrimitiveIndicationArray;
-import static gmjonker.math.IndicationMath.*;
+import static gmjonker.math.IndicationMath.combine;
+import static gmjonker.math.IndicationMath.combineNoDisagreementEffect;
+import static gmjonker.math.IndicationMath.combineStrict;
+import static gmjonker.math.IndicationMath.combineTightAndNoDisagreementEffect;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.util.CollectionsUtil.toPrimitiveDoubleArray;
 import static gmjonker.util.FormattingUtil.asPercentage;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static spock.util.matcher.HamcrestMatchers.closeTo;
 
 public class IndicationMathTest
 {

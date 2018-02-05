@@ -297,6 +297,17 @@ public class Indication implements Comparable<Indication>
         return asPercentage(value) + "/" + asPercentage(confidence);
     }
 
+    public String toMediumString()
+    {
+        return asPercentage(deriveDouble()) + " (" + asPercentage(value) + "/" + asPercentage(confidence) + ")";
+    }
+
+    public String toMediumStringAligned()
+    {
+        return String.format("%3.3s  (%3.3s/%3.3s)", asPercentage(deriveDouble()), asPercentage(value), 
+                asPercentage(confidence));
+    }
+
     public String toShortStringWithComment()
     {
         return toShortString() + " (" + comment + ")";

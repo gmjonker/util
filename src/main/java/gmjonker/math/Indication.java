@@ -10,10 +10,16 @@ import lombok.Setter;
 
 import java.util.List;
 
-import static gmjonker.math.GeneralMath.*;
+import static gmjonker.math.GeneralMath.abs;
+import static gmjonker.math.GeneralMath.limit;
+import static gmjonker.math.GeneralMath.sign;
 import static gmjonker.math.NaType.NA;
 import static gmjonker.math.NaType.isValue;
-import static gmjonker.util.FormattingUtil.*;
+import static gmjonker.util.FormattingUtil.asPercentage;
+import static gmjonker.util.FormattingUtil.asPercentageTwoSpaces;
+import static gmjonker.util.FormattingUtil.toMicroFormatABC;
+import static gmjonker.util.FormattingUtil.toMicroFormatM11;
+import static gmjonker.util.FormattingUtil.toMicroFormatSub;
 import static gmjonker.util.ScoreValueUtil.scoreValueEquals;
 
 /**
@@ -53,6 +59,7 @@ public class Indication implements Comparable<Indication>
     @Getter
     @Setter
     @JsonIgnore
+    @org.springframework.data.annotation.Transient
     public String comment; // can be handy for explanations
 
     protected static final LambdaLogger log = new LambdaLogger(Indication.class);

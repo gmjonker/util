@@ -1,7 +1,7 @@
-Tag: v0.2.4 Made CollectionsUtil null-safe, added some methods, updated some dependency version numbers
+Tag: v0.2.6 
 Last commit: 
-commit 550a6a22bb949a06e6da24443ac7857421f84ec6
+commit 521d040ca2cc40c23faedd9c7db5f2c9f2020c75
 Author: Geert Jonker <gmjonker@gmail.com>
-Date:   Mon May 16 16:50:39 2016 +0200
+Date:   Sat May 19 11:06:20 2018 +0200
 
-    Made CollectionsUtil null-safe, added some methods, updated some dependency version numbers
+    Stopwatch improvment, readcsv2, infov, toStringLineByLine(MultiMap)

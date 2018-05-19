@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -122,6 +123,15 @@ public class IoUtil
         return CSVParser.parse(fileContent, format);
     }
 
+    public static CSVParser readCsvFile2(String fileName, Charset charset, boolean hasHeaders,
+                                         char delimiter) throws IOException
+    {
+        CSVFormat format = CSVFormat.EXCEL.withIgnoreEmptyLines().withIgnoreSurroundingSpaces().withDelimiter(delimiter).withEscape('\\');
+        if (hasHeaders)
+            format = format.withHeader().withAllowMissingColumnNames();
+        return CSVParser.parse(new File(fileName), charset, format);
+    }
+
     public static CSVParser readCsvFileWithHeaders(String fileName) throws IOException
     {
         return readCsvFile(fileName, true);
@@ -130,6 +140,11 @@ public class IoUtil
     public static CSVParser readCsvFileWithHeaders(String fileName, char delimiter) throws IOException
     {
         return readCsvFile(fileName, true, delimiter);
+    }
+
+    public static CSVParser readCsvFileWithHeaders2(String fileName, Charset charset, char delimiter) throws IOException
+    {
+        return readCsvFile2(fileName, charset, true, delimiter);
     }
 
     public static CSVParser readCsvFileWithoutHeaders(String fileName) throws IOException

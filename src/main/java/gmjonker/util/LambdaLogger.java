@@ -180,6 +180,23 @@ public class LambdaLogger implements Logger
         }
     }
 
+    /** Log separate lines separately, indents all lines of argument.toString() except the first and the last **/
+    public void infov(String format, Object... arguments)
+    {
+        if (logger.isInfoEnabled()) {
+            String formattedMessage = MessageFormatter.arrayFormat(format, arguments).getMessage();
+            String[] lines = formattedMessage.split("\n");
+            for (int i = 0; i < lines.length; i++) {
+                if (i == 0 || i == lines.length - 1)
+                    logger.info(lines[i]);
+                else
+                    logger.info("  " + lines[i]);
+            }
+        }
+    }
+
+
+
     // --------------------------------------------------------------------------------------------
 
 //    /** Log separate lines separately, indents all lines of argument.toString() **/

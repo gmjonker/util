@@ -3,6 +3,7 @@ package gmjonker.util;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multiset;
 import com.google.common.collect.Table;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -382,6 +383,16 @@ public class FormattingUtil
         String result = "";
         for (Map.Entry<K, V> entry : map.entrySet())
             result += entry.getKey().toString() + " -> " + entry.getValue() + "\n";
+        return result;
+    }
+
+    public static <V> String toStringLineByLine(Multiset<V> map)
+    {
+        String result = "[" + (map == null || map.isEmpty() ? "" : "\n");
+        for (Multiset.Entry<V> entry : map.entrySet()) {
+            result += "  " + entry.getElement().toString() + " -> " + entry.getCount() + "\n";
+        }
+        result += "]";
         return result;
     }
 

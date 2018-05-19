@@ -15,7 +15,8 @@ public class StopwatchTest
         Util.simpleSleep(40);
         stopwatch.mark("C");
         stopwatch.stop();
-        
+
+        System.out.println("stopwatch = \n" + stopwatch);
 //        Assert.assertThat(stopwatch.elapsedBetween("A", "B"), closeTo(30 * MILIS_TO_NANOS, 5 * MILIS_TO_NANOS));
         System.out.println(stopwatch.elapsedBetween("A", "B"));
         System.out.println(stopwatch.elapsedBetween("B", "C"));

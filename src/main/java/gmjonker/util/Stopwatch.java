@@ -17,14 +17,16 @@ package gmjonker.util;
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Ticker;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static gmjonker.math.GeneralMath.max;
 import static gmjonker.math.NaType.NA_L;
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.HOURS;
@@ -197,10 +199,11 @@ public final class Stopwatch
         return this;
     }
     
-    Map<String, Long> markers = new HashMap<>();
+    Map<String, Long> markers = new LinkedHashMap<>();
     public Stopwatch mark(String marker)
     {
-        long now = elapsedNanos();
+//        long now = elapsedNanos();
+        long now = ticker.read();
         markers.put(marker, now);
         return this;
     }
@@ -250,7 +253,47 @@ public final class Stopwatch
     @Override
     public String toString()
     {
-        return nanosToString(elapsedNanos());
+        if (markers.isEmpty())
+            return nanosToString(elapsedNanos());
+        
+        StringBuilder s = new StringBuilder();
+        String marker1 = "START";
+        int maxWidth = marker1.length();
+        for (String marker2 : markers.keySet()) {
+            maxWidth = max(maxWidth, marker1.length() + marker2.length());
+            marker1 = marker2;
+        }
+        maxWidth = max(maxWidth, marker1.length() + "END".length());
+
+        marker1 = "START";
+        long tick1 = this.startTick;
+        for (String marker2 : markers.keySet()) {
+            Long tick2 = markers.get(marker2);
+            s
+                    .append(marker1)
+                    .append(" - ")
+                    .append(marker2)
+                    .append(StringUtils.repeat(" ", max(0, maxWidth - marker1.length() - marker2.length())))
+                    .append(": ")
+                    .append(nanosToString(tick2 - tick1))
+                    .append("\n");
+            tick1 = tick2;
+            marker1 = marker2;
+        }
+        long tick2 = this.startTick + this.elapsedNanos;
+        String marker2 = "END";
+        s
+                .append(marker1)
+                .append(" - ")
+                .append(marker2)
+                .append(StringUtils.repeat(" ", max(0, maxWidth - marker1.length() - marker2.length())))
+                .append(": ")
+                .append(nanosToString(tick2 - tick1))
+                .append("\n");
+        s
+                .append("Total: ")
+                .append(nanosToString(elapsedNanos));
+        return s.toString();        
     }
 
     public String nanosToString(long nanos)
